@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "EventManagement.WebApp": {
+    "event-management": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -52,18 +52,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "EventManagement.WebApp:build"
+            "browserTarget": "event-management:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "EventManagement.WebApp:build:production"
+              "browserTarget": "event-management:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "EventManagement.WebApp:build"
+            "browserTarget": "event-management:build"
           }
         },
         "test": {
@@ -122,7 +122,7 @@
         }
       }
     },
-    "EventManagement.WebApp-e2e": {
+    "event-management-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -130,7 +130,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "EventManagement.WebApp:serve"
+            "devServerTarget": "event-management:serve"
           }
         },
         "lint": {
@@ -145,5 +145,5 @@
       }
     }
   },
-  "defaultProject": "EventManagement.WebApp"
+  "defaultProject": "event-management"
 }
