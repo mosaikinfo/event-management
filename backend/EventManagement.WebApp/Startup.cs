@@ -1,4 +1,5 @@
 using EventManagement.DataAccess;
+using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,25 @@ namespace EventManagement.WebApp
                 options => options.UseSqlServer(
                     @"Server=(localdb)\mssqllocaldb;Database=EventManagement;Trusted_Connection=True;"));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .AddApplicationPart(typeof(AccountController).Assembly)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddIdentityServer()
+                .AddDeveloperSigningCredential(persistKey: false)
+                .AddInMemoryApiResources(IdentityServerConfig.GetApis())
+                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
+                .AddInMemoryClients(IdentityServerConfig.GetClients())
+                .AddTestUsers(TestUsers.Users);
+
+            // The authentication is to protect the web api.
+            services.AddAuthentication()
+                .AddIdentityServerAuthentication(Constants.JwtAuthScheme, options =>
+                {
+                    options.Authority = "http://localhost:5000";
+                    options.ApiName = "eventmanagement.admin";
+                    options.RequireHttpsMetadata = false;
+                });
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -49,6 +68,8 @@ namespace EventManagement.WebApp
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+
+            app.UseIdentityServer();
 
             app.UseMvc(routes =>
             {

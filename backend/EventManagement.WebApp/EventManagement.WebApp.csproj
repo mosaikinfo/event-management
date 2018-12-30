@@ -13,6 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="IdentityServer4" Version="2.3.2" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
   </ItemGroup>
@@ -25,7 +27,82 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Account\LoggedOut.cshtml" />
+    <Content Remove="Views\Account\Login.cshtml" />
+    <Content Remove="Views\Account\Logout.cshtml" />
+    <Content Remove="Views\Consent\Index.cshtml" />
+    <Content Remove="Views\Device\Success.cshtml" />
+    <Content Remove="Views\Device\UserCodeCapture.cshtml" />
+    <Content Remove="Views\Device\UserCodeConfirmation.cshtml" />
+    <Content Remove="Views\Diagnostics\Index.cshtml" />
+    <Content Remove="Views\Grants\Index.cshtml" />
+    <Content Remove="Views\Shared\Error.cshtml" />
+    <Content Remove="Views\Shared\Redirect.cshtml" />
+    <Content Remove="Views\Shared\_Layout.cshtml" />
+    <Content Remove="Views\Shared\_ScopeListItem.cshtml" />
+    <Content Remove="Views\Shared\_ValidationSummary.cshtml" />
+    <Content Remove="Views\_ViewImports.cshtml" />
+    <Content Remove="Views\_ViewStart.cshtml" />
+    <Content Remove="wwwroot\css\site.css" />
+    <Content Remove="wwwroot\css\site.less" />
+    <Content Remove="wwwroot\css\site.min.css" />
+    <Content Remove="wwwroot\js\signin-redirect.js" />
+    <Content Remove="wwwroot\js\signout-redirect.js" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap.css" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap.css.map" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap.min.css" />
+    <Content Remove="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.eot" />
+    <Content Remove="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Remove="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Remove="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.woff" />
+    <Content Remove="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Remove="wwwroot\lib\bootstrap\js\bootstrap.js" />
+    <Content Remove="wwwroot\lib\bootstrap\js\bootstrap.min.js" />
+    <Content Remove="wwwroot\lib\jquery\jquery.js" />
+    <Content Remove="wwwroot\lib\jquery\jquery.min.js" />
+    <Content Remove="wwwroot\lib\jquery\jquery.min.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Account\LoggedOut.cshtml" />
+    <None Include="Views\Account\Login.cshtml" />
+    <None Include="Views\Account\Logout.cshtml" />
+    <None Include="Views\Consent\Index.cshtml" />
+    <None Include="Views\Device\Success.cshtml" />
+    <None Include="Views\Device\UserCodeCapture.cshtml" />
+    <None Include="Views\Device\UserCodeConfirmation.cshtml" />
+    <None Include="Views\Diagnostics\Index.cshtml" />
+    <None Include="Views\Grants\Index.cshtml" />
+    <None Include="Views\Shared\Error.cshtml" />
+    <None Include="Views\Shared\Redirect.cshtml" />
+    <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Views\Shared\_ScopeListItem.cshtml" />
+    <None Include="Views\Shared\_ValidationSummary.cshtml" />
+    <None Include="Views\_ViewImports.cshtml" />
+    <None Include="Views\_ViewStart.cshtml" />
+    <None Include="wwwroot\css\site.css" />
+    <None Include="wwwroot\css\site.less" />
+    <None Include="wwwroot\css\site.min.css" />
+    <None Include="wwwroot\js\signin-redirect.js" />
+    <None Include="wwwroot\js\signout-redirect.js" />
+    <None Include="wwwroot\lib\bootstrap\css\bootstrap.css" />
+    <None Include="wwwroot\lib\bootstrap\css\bootstrap.css.map" />
+    <None Include="wwwroot\lib\bootstrap\css\bootstrap.min.css" />
+    <None Include="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.eot" />
+    <None Include="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <None Include="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
+    <None Include="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.woff" />
+    <None Include="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="wwwroot\lib\bootstrap\js\bootstrap.js" />
+    <None Include="wwwroot\lib\bootstrap\js\bootstrap.min.js" />
+    <None Include="wwwroot\lib\jquery\jquery.js" />
+    <None Include="wwwroot\lib\jquery\jquery.min.js" />
+    <None Include="wwwroot\lib\jquery\jquery.min.map" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\EventManagement.DataAccess\EventManagement.DataAccess.csproj" />
+    <ProjectReference Include="..\EventManagement.Identity\EventManagement.Identity.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
