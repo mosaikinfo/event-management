@@ -23,7 +23,7 @@ namespace EventManagement.WebApp
         {
             services.AddDbContext<EventsDbContext>(
                 options => options.UseSqlServer(
-                    @"Server=(localdb)\mssqllocaldb;Database=EventManagement;Trusted_Connection=True;"));
+                    Configuration.GetConnectionString("EventManagement")));
 
             services.AddMvc()
                 .AddApplicationPart(typeof(AccountController).Assembly)
