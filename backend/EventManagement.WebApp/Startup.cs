@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NSwag.AspNetCore;
 
 namespace EventManagement.WebApp
 {
@@ -50,6 +51,8 @@ namespace EventManagement.WebApp
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddSwaggerDocument();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,6 +71,9 @@ namespace EventManagement.WebApp
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+
+            app.UseSwagger();
+            app.UseSwaggerUi3();
 
             app.UseIdentityServer();
 

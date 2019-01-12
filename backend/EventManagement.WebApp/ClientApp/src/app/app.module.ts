@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AuthService } from './services/auth.service';
+import { EventManagementApiClient } from './services/event-management-api.client';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -31,7 +32,8 @@ import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
   ],
   providers: [
     AuthService,
-    AuthGuardService
+    AuthGuardService,
+    EventManagementApiClient
   ],
   bootstrap: [AppComponent]
 })

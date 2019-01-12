@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
+import { EventManagementApiClient, WeatherForecast } from '../services/event-management-api.client';
 
 @Component({
   selector: 'app-fetch-data',
@@ -12,19 +13,12 @@ export class FetchDataComponent {
   constructor(
     http: HttpClient,
     @Inject('BASE_URL') baseUrl: string,
-    private authService: AuthService)
+    private authService: AuthService,
+    private apiClient: EventManagementApiClient)
   {
-    let headers = new HttpHeaders({'Authorization': this.authService.getAuthorizationHeaderValue()});
-    http.get<WeatherForecast[]>(baseUrl + 'api/SampleData/WeatherForecasts', {headers: headers})
+    this.apiClient.sampleData_WeatherForecasts()
       .subscribe(result => {
         this.forecasts = result;
       }, error => console.error(error));
   }
-}
-
-interface WeatherForecast {
-  dateFormatted: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
 }
