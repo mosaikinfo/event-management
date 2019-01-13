@@ -1,0 +1,30 @@
+<h1>Event anlegen</h1>
+
+<form class="mt-4" (ngSubmit)="submit()" #eventForm="ngForm">
+
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" name="name" id="name" maxlength="300" placeholder="Planetshakers LIVE | ONE Events 2019"
+           [(ngModel)]="model.name" required>
+  </div>
+
+  <div class="form-group">
+    <div class="input-group">
+      <input class="form-control" placeholder="yyyy-mm-dd" autocomplete="off"
+              name="dp" [(ngModel)]="model" (click)="d.open()" ngbDatepicker #d="ngbDatepicker" [minDate]="today">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+          <i class="material-icons md-18">calendar_today</i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="location">Location</label>
+    <input type="text" class="form-control" name="location" id="location" maxlength="300" placeholder="Ratiopharm Arena Neu-Ulm, Europastraße 25, 89231 Neu-Ulm"
+           [(ngModel)]="model.location" required>
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="!eventForm.form.valid">Speichern</button>
+</form>

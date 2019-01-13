@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventManagement.WebApp.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     [Authorize(AuthenticationSchemes = Constants.JwtAuthScheme)]
     public class EventsController : ControllerBase
@@ -17,7 +18,7 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Event> CreateEvent(Event model)
+        public ActionResult<Event> CreateEvent([FromBody] Event model)
         {
             var entity = new DataAccess.Models.Event();
             Map(model, entity);

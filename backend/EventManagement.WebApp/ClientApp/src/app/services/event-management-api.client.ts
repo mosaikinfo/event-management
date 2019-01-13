@@ -41,32 +41,18 @@ export class EventManagementApiClient extends ServiceBase {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    events_CreateEvent(id: number | undefined, name: string | null | undefined, startTime: Date | undefined, endTime: Date | undefined, entranceTime: Date | null | undefined, location: string | null | undefined): Observable<Event | null> {
-        let url_ = this.baseUrl + "/api/Events?";
-        if (id === null)
-            throw new Error("The parameter 'id' cannot be null.");
-        else if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (name !== undefined)
-            url_ += "Name=" + encodeURIComponent("" + name) + "&"; 
-        if (startTime === null)
-            throw new Error("The parameter 'startTime' cannot be null.");
-        else if (startTime !== undefined)
-            url_ += "StartTime=" + encodeURIComponent(startTime ? "" + startTime.toJSON() : "") + "&"; 
-        if (endTime === null)
-            throw new Error("The parameter 'endTime' cannot be null.");
-        else if (endTime !== undefined)
-            url_ += "EndTime=" + encodeURIComponent(endTime ? "" + endTime.toJSON() : "") + "&"; 
-        if (entranceTime !== undefined)
-            url_ += "EntranceTime=" + encodeURIComponent(entranceTime ? "" + entranceTime.toJSON() : "") + "&"; 
-        if (location !== undefined)
-            url_ += "Location=" + encodeURIComponent("" + location) + "&"; 
+    events_CreateEvent(model: Event): Observable<Event | null> {
+        let url_ = this.baseUrl + "/api/Events";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(model);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Content-Type": "application/json", 
                 "Accept": "application/json"
             })
         };

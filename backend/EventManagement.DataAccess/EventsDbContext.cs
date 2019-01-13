@@ -16,6 +16,7 @@ namespace EventManagement.DataAccess
             modelBuilder.Entity<Event>(entity =>
             {
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.Location).HasMaxLength(300);
             });
         }
     }

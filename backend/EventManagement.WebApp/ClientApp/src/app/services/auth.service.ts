@@ -1,5 +1,7 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
 import { UserManager, UserManagerSettings, User } from 'oidc-client';
+import { Router } from '@angular/router';
+import { windowWhen } from 'rxjs/operators';
 
 @Injectable()
 export class AuthService {
@@ -9,7 +11,7 @@ export class AuthService {
 
   @Output() onUserLoggedIn = new EventEmitter<any>();
 
-  constructor() {
+  constructor(private router: Router) {
     this.manager.getUser().then(user => {
       this.user = user;
     });
@@ -27,7 +29,8 @@ export class AuthService {
     return `${this.user.token_type} ${this.user.access_token}`;
   }
 
-  startAuthentication(): Promise<void> {
+  startAuthentication(currentUrl: string = null): Promise<void> {
+    this.persistState(currentUrl);
     return this.manager.signinRedirect();
   }
 
@@ -39,7 +42,21 @@ export class AuthService {
     return this.manager.signinRedirectCallback().then(user => {
       this.user = user;
       this.onUserLoggedIn.emit(user.profile);
+      this.restoreState();
     });
+  }
+
+  private persistState(currentUrl: string) {
+    if (currentUrl) {
+      window.sessionStorage.setItem("currentUrl", currentUrl);
+    }
+  }
+
+  private restoreState() {
+    let currentUrl = window.sessionStorage.getItem("currentUrl");
+    if (currentUrl) {
+      this.router.navigateByUrl(currentUrl);
+    }
   }
 }
 
