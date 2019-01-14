@@ -21,12 +21,12 @@ const routes: Routes = [
         component: AuthCallbackComponent
     },
     { 
-        path: 'events-list', 
+        path: 'events', 
         component: EventsListComponent, 
         canActivate: [AuthGuardService] 
     },
     { 
-        path: 'event/new', 
+        path: 'events/new', 
         component: EventFormComponent, 
         canActivate: [AuthGuardService] 
     },

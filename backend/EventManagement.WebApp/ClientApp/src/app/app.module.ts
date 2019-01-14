@@ -1,8 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CalendarModule, Calendar } from 'primeng/calendar';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AuthService } from './services/auth.service';
@@ -33,9 +35,11 @@ import { EventFormComponent } from './event-form/event-form.component';
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
     NgbModule,
+    CalendarModule,
     AppRoutingModule
   ],
   providers: [

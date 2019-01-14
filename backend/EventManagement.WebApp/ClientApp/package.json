@@ -30,6 +30,8 @@
     "jquery": "3.3.1",
     "oidc-client": "^1.6.1",
     "popper.js": "^1.14.3",
+    "primeicons": "^1.0.0",
+    "primeng": "^7.0.4",
     "rxjs": "^6.3.3",
     "zone.js": "^0.8.26"
   },
