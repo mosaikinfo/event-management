@@ -31,6 +31,11 @@ const routes: Routes = [
         canActivate: [AuthGuardService] 
     },
     { 
+        path: 'events/:id', 
+        component: EventFormComponent, 
+        canActivate: [AuthGuardService] 
+    },
+    { 
         path: 'counter', 
         component: CounterComponent, 
         canActivate: [AuthGuardService] 

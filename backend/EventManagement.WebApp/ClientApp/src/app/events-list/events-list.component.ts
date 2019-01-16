@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { EventManagementApiClient } from '../services/event-management-api.client';
 
 @Component({
   selector: 'app-events-list',
@@ -9,9 +10,11 @@ export class EventsListComponent implements OnInit {
 
   events = [];
 
-  constructor() { }
+  constructor(private apiClient: EventManagementApiClient) { }
 
   ngOnInit() {
+    this.apiClient.events_GetAll()
+      .subscribe(events => this.events = events);
   }
 
 }
