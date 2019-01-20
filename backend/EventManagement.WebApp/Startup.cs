@@ -1,4 +1,5 @@
 using EventManagement.DataAccess;
+using EventManagement.WebApp.Configuration;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,6 +26,7 @@ namespace EventManagement.WebApp
             services.AddDbContext<EventsDbContext>(
                 options => options.UseSqlServer(
                     Configuration.GetConnectionString("EventManagement")));
+            services.AddTransient<EventsDbInitializer>();
 
             services.AddMvc()
                 .AddApplicationPart(typeof(AccountController).Assembly)
@@ -56,9 +58,14 @@ namespace EventManagement.WebApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, EventsDbContext dbContext)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, EventsDbContext dbContext, EventsDbInitializer dbInitializer)
         {
             dbContext.Database.Migrate();
+
+            if (env.IsDevelopment())
+            {
+                dbInitializer.EnsureData(new TestData());
+            }
 
             if (env.IsDevelopment())
             {

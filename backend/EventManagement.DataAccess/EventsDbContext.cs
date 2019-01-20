@@ -9,10 +9,19 @@ namespace EventManagement.DataAccess
         {
         }
 
+        public DbSet<User> Users { get; set; }
         public DbSet<Event> Events { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property(e => e.EmailAddress).IsRequired().HasMaxLength(300);
+                entity.HasIndex(e => e.EmailAddress).IsUnique();
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.Role).IsRequired().HasMaxLength(300);
+            });
+
             modelBuilder.Entity<Event>(entity =>
             {
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(300);

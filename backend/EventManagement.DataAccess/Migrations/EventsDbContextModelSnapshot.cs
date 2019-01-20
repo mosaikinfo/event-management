@@ -42,6 +42,34 @@ namespace EventManagement.DataAccess.Migrations
 
                     b.ToTable("Events");
                 });
+
+            modelBuilder.Entity("EventManagement.DataAccess.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<string>("Password");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmailAddress")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+                });
 #pragma warning restore 612, 618
         }
     }
