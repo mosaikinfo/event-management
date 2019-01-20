@@ -53,6 +53,10 @@ namespace EventManagement.DataAccess.Migrations
                         .IsRequired()
                         .HasMaxLength(300);
 
+                    b.Property<bool>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(true);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(300);
@@ -63,9 +67,16 @@ namespace EventManagement.DataAccess.Migrations
                         .IsRequired()
                         .HasMaxLength(300);
 
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
                     b.HasKey("Id");
 
                     b.HasIndex("EmailAddress")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("Users");

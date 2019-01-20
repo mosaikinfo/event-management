@@ -16,10 +16,13 @@ namespace EventManagement.DataAccess
         {
             modelBuilder.Entity<User>(entity =>
             {
+                entity.Property(e => e.Username).IsRequired().HasMaxLength(300);
+                entity.HasIndex(e => e.Username).IsUnique();
                 entity.Property(e => e.EmailAddress).IsRequired().HasMaxLength(300);
                 entity.HasIndex(e => e.EmailAddress).IsUnique();
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
                 entity.Property(e => e.Role).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.Enabled).HasDefaultValue(true);
             });
 
             modelBuilder.Entity<Event>(entity =>

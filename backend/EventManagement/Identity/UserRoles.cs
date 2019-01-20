@@ -1,4 +1,4 @@
-﻿namespace EventManagement.WebApp.Models
+﻿namespace EventManagement.Identity
 {
     public static class UserRoles
     {

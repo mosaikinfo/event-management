@@ -1,19 +1,19 @@
+using EventManagement.Identity;
+using IdentityModel;
+using IdentityServer4.Events;
+using IdentityServer4.Quickstart.UI;
+using IdentityServer4.Services;
+using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
-using IdentityModel;
-using IdentityServer4.Events;
-using IdentityServer4.Quickstart.UI;
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
-using IdentityServer4.Test;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Host.Quickstart.Account
 {
@@ -21,7 +21,7 @@ namespace Host.Quickstart.Account
     [AllowAnonymous]
     public class ExternalController : Controller
     {
-        private readonly TestUserStore _users;
+        private readonly IUserStore _users;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IEventService _events;
@@ -30,15 +30,12 @@ namespace Host.Quickstart.Account
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IEventService events,
-            TestUserStore users = null)
+            IUserStore users)
         {
-            // if the TestUserStore is not in DI, then we'll just use the global users collection
-            // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-            _users = users ?? new TestUserStore(TestUsers.Users);
-
             _interaction = interaction;
             _clientStore = clientStore;
             _events = events;
+            _users = users;
         }
 
         /// <summary>
@@ -182,7 +179,7 @@ namespace Host.Quickstart.Account
             }
         }
 
-        private (TestUser user, string provider, string providerUserId, IEnumerable<Claim> claims) FindUserFromExternalProvider(AuthenticateResult result)
+        private (User user, string provider, string providerUserId, IEnumerable<Claim> claims) FindUserFromExternalProvider(AuthenticateResult result)
         {
             var externalUser = result.Principal;
 
@@ -206,7 +203,7 @@ namespace Host.Quickstart.Account
             return (user, provider, providerUserId, claims);
         }
 
-        private TestUser AutoProvisionUser(string provider, string providerUserId, IEnumerable<Claim> claims)
+        private User AutoProvisionUser(string provider, string providerUserId, IEnumerable<Claim> claims)
         {
             var user = _users.AutoProvisionUser(provider, providerUserId, claims.ToList());
             return user;

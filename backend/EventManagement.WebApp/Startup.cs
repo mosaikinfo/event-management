@@ -1,4 +1,5 @@
 using EventManagement.DataAccess;
+using EventManagement.Identity;
 using EventManagement.WebApp.Configuration;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
@@ -33,11 +34,12 @@ namespace EventManagement.WebApp
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddIdentityServer()
-                .AddDeveloperSigningCredential(persistKey: false)
+                .AddDeveloperSigningCredential(persistKey: true)
                 .AddInMemoryApiResources(IdentityServerConfig.GetApis())
                 .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
                 .AddInMemoryClients(IdentityServerConfig.GetClients())
-                .AddTestUsers(TestUsers.Users);
+                .AddProfileService<UserProfileService>();
+            services.AddTransient<IUserStore, UserStore>();
 
             // The authentication is to protect the web api.
             services.AddAuthentication()

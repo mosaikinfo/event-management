@@ -17,9 +17,11 @@ namespace EventManagement.WebApp
 
         public static IEnumerable<ApiResource> GetApis()
         {
+            var requiredClaims = new[] { "role" };
+
             return new List<ApiResource>
             {
-                new ApiResource("eventmanagement.admin", "Event Management Admin API")
+                new ApiResource("eventmanagement.admin", "Event Management Admin API", requiredClaims)
             };
         }
 

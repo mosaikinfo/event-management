@@ -1,8 +1,8 @@
 ﻿using EventManagement.DataAccess;
-using EventManagement.DataAccess.Models;
-using EventManagement.WebApp.Models;
+using EventManagement.Identity;
 using IdentityServer4.Models;
 using System.Collections.Generic;
+using User = EventManagement.DataAccess.Models.User;
 
 namespace EventManagement.WebApp.Configuration
 {
@@ -13,8 +13,9 @@ namespace EventManagement.WebApp.Configuration
             new User
             {
                 Name = "Demo Admin",
+                Username = "admin",
                 EmailAddress = "event-admin@itsnotabug.de",
-                Password = "Start123$".Sha256(),
+                Password = "admin".Sha256(),
                 Role = UserRoles.Admin
             }
         };
