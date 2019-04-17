@@ -17,7 +17,7 @@ export class NavMenuComponent {
   }
 
   logout() {
-    this.authService.startLogout();
+    this.authService.logout();
   }
 
   collapse() {
