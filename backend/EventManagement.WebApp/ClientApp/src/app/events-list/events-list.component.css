@@ -1,0 +1,7 @@
+.link-icon {
+    color: inherit;
+    cursor: pointer;
+}
+.link-icon:hover {
+    color: #596471;
+}

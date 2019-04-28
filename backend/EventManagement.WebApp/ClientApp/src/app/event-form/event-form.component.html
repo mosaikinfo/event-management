@@ -49,5 +49,8 @@
            [(ngModel)]="model.location" required>
   </div>
 
-  <button type="submit" class="btn btn-primary" [disabled]="!eventForm.form.valid">Speichern</button>
+  <div>
+    <a class="btn btn-secondary mr-5" [routerLink]="['..']">Zurück</a>
+    <button type="submit" class="btn btn-primary" [disabled]="!eventForm.form.valid">Speichern</button>
+  </div>
 </form>

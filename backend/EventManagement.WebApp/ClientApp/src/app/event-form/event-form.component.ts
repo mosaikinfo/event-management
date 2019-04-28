@@ -10,7 +10,6 @@ import { Router } from '@angular/router';
 export class EventFormComponent implements OnInit {
 
   model : Event = new Event();
-  minDate = new Date();
 
   constructor(
     private apiClient : EventManagementApiClient,
