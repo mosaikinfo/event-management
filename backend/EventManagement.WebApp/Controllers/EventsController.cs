@@ -30,14 +30,42 @@ namespace EventManagement.WebApp.Controllers
                 .Select(CreateViewModel);
         }
 
+        [HttpGet("{id}")]
+        public ActionResult<Event> GetEvent(int id)
+        {
+            // TODO: validate permissions.
+            return _context.Events
+                .AsNoTracking()
+                .Where(x => x.Id == id)
+                .Select(CreateViewModel)
+                .FirstOrDefault();
+        }
+
         [HttpPost]
         public ActionResult<Event> CreateEvent([FromBody] Event model)
         {
+            // TODO: validate permissions.
+            if (model.Id > 0)
+                return BadRequest();
             var entity = new DataAccess.Models.Event();
             Map(model, entity);
             _context.Add(entity);
             _context.SaveChanges();
             return CreateViewModel(entity);
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult<Event> UpdateEvent(int id, [FromBody] Event model)
+        {
+            // TODO: validate permissions.
+            if (id != model.Id)
+                return BadRequest();
+            var entity = _context.Events.Find(model.Id);
+            if (entity == null)
+                return NotFound();
+            Map(model, entity);
+            _context.SaveChanges();
+            return NoContent();
         }
 
         private Event CreateViewModel(DataAccess.Models.Event source)

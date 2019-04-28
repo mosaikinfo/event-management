@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EventManagementApiClient, Event } from '../services/event-management-api.client';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-event-form',
@@ -13,14 +13,25 @@ export class EventFormComponent implements OnInit {
 
   constructor(
     private apiClient : EventManagementApiClient,
-    private router: Router 
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
+    const id = +this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.apiClient.events_GetEvent(id)
+        .subscribe((evt: Event) => this.model = evt);
+    }
   }
 
   submit() {
-    this.apiClient.events_CreateEvent(this.model)
-      .subscribe(() => this.router.navigate(['/events']));
+    if (this.model.id > 0) {
+      this.apiClient.events_UpdateEvent(this.model.id, this.model)
+        .subscribe(() => this.router.navigate(['/events']));
+    } else {
+      this.apiClient.events_CreateEvent(this.model)
+        .subscribe(() => this.router.navigate(['/events']));
+    }
   }
 }
