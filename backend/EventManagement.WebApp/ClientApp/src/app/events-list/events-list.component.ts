@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { EventManagementApiClient } from '../services/event-management-api.client';
+import { EventManagementApiClient, Event } from '../services/event-management-api.client';
+import { SessionService } from '../services/session.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-events-list',
@@ -10,11 +12,18 @@ export class EventsListComponent implements OnInit {
 
   events = [];
 
-  constructor(private apiClient: EventManagementApiClient) { }
+  constructor(
+    private router: Router,
+    private apiClient: EventManagementApiClient,
+    private session: SessionService) { }
 
   ngOnInit() {
     this.apiClient.events_GetAll()
       .subscribe(events => this.events = events);
   }
 
+  select(evt: Event) {
+    this.session.setCurrentEvent(evt);
+    this.router.navigate(['/']);
+  }
 }

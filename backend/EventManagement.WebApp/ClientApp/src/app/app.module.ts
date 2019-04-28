@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -8,9 +8,10 @@ import { CalendarModule, Calendar } from 'primeng/calendar';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AuthService } from './services/auth.service';
+import { SessionService } from './services/session.service';
+import { AlertService } from './services/alert.service';
 import { EventManagementApiClient } from './services/event-management-api.client';
 import { HttpErrorInterceptor } from './services/http-error.interceptor';
-import { AlertService } from './services/alert.service';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -54,7 +55,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     AuthService,
     AuthGuardService,
     AlertService,
-    EventManagementApiClient
+    EventManagementApiClient,
+    SessionService
   ],
   bootstrap: [AppComponent]
 })
