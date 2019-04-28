@@ -11,8 +11,11 @@
   <div class="form-group">
     <label for="startTime">Beginn</label>
     <div class="input-group">
-      <p-calendar name="startTime" id="startTime" required
-                  [(ngModel)]="model.startTime" [minDate]="minDate" showTime="true" dateFormat="dd.mm.yy" hourFormat="24">
+      <p-calendar name="startTime" required
+                  [(ngModel)]="model.startTime"
+                  [showTime]="true" [showOnFocus]="false"
+                  dateFormat="dd.mm.yy" hourFormat="24"
+                  placeholder="dd.mm.yyyy hh:mm">
       </p-calendar>
     </div>
   </div>
@@ -20,8 +23,11 @@
   <div class="form-group">
     <label for="endTime">Ende</label>
     <div class="input-group">
-      <p-calendar name="endTime" id="endTime" required
-                  [(ngModel)]="model.endTime" [minDate]="minDate" showTime="true" dateFormat="dd.mm.yy" hourFormat="24">
+      <p-calendar name="endTime" required
+                  [(ngModel)]="model.endTime"
+                  [showTime]="true" [showOnFocus]="false"
+                  dateFormat="dd.mm.yy" hourFormat="24"
+                  placeholder="dd.mm.yyyy hh:mm">
       </p-calendar>
     </div>
   </div>
@@ -30,7 +36,9 @@
     <label for="entranceTime">Einlasszeit</label>
     <div class="input-group">
       <p-calendar name="entranceTime" id="entranceTime"
-                  [(ngModel)]="model.entranceTime" [timeOnly]="true" hourFormat="24">
+                  [(ngModel)]="model.entranceTime"
+                  [timeOnly]="true" hourFormat="24"
+                  [showOnFocus]="false" placeholder="hh:mm">
       </p-calendar>
     </div>
   </div>
