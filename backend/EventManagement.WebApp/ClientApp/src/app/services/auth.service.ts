@@ -26,6 +26,14 @@ export class AuthService {
         loadUserInfo: true,
     };
     this._userManager = new UserManager(settings);
+
+    // If the user is was already logged in before 
+    // we trigger this event on application startup.
+    this._userManager.getUser().then((user: User) => {
+      if (user) {
+        this.onUserLoggedIn.emit(user.profile);
+      }
+    })
   }
 
   public getUser(): Promise<User> {
