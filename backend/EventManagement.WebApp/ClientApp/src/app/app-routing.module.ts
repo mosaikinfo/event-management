@@ -3,16 +3,14 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AuthGuardService } from './services/auth-guard.service';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
-import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { EventsListComponent } from './events-list/events-list.component';
 import { EventFormComponent } from './event-form/event-form.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
     { 
         path: '', 
-        component: HomeComponent, 
+        component: DashboardComponent, 
         pathMatch: 'full', 
         canActivate: [AuthGuardService] 
     },
@@ -34,17 +32,7 @@ const routes: Routes = [
         path: 'events/:id', 
         component: EventFormComponent, 
         canActivate: [AuthGuardService] 
-    },
-    { 
-        path: 'counter', 
-        component: CounterComponent, 
-        canActivate: [AuthGuardService] 
-    },
-    { 
-        path: 'fetch-data', 
-        component: FetchDataComponent, 
-        canActivate: [AuthGuardService] 
-    },
+    }
 ];
 
 @NgModule({

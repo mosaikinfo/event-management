@@ -8,6 +8,7 @@ import { CalendarModule, Calendar } from 'primeng/calendar';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AuthService } from './services/auth.service';
+import { AuthGuardService } from './services/auth-guard.service';
 import { SessionService } from './services/session.service';
 import { AlertService } from './services/alert.service';
 import { EventManagementApiClient } from './services/event-management-api.client';
@@ -15,10 +16,7 @@ import { HttpErrorInterceptor } from './services/http-error.interceptor';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
-import { AuthGuardService } from './services/auth-guard.service';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 import { EventsListComponent } from './events-list/events-list.component';
 import { EventFormComponent } from './event-form/event-form.component';
@@ -33,9 +31,7 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
   declarations: [
     AppComponent,
     NavMenuComponent,
-    HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
+    DashboardComponent,
     AuthCallbackComponent,
     EventsListComponent,
     EventFormComponent
