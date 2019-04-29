@@ -23,7 +23,6 @@ namespace EventManagement.DataAccess
                 entity.Property(e => e.EmailAddress).IsRequired().HasMaxLength(300);
                 entity.HasIndex(e => e.EmailAddress).IsUnique();
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
-                entity.Property(e => e.Enabled).HasDefaultValue(true);
 
                 entity.Property(e => e.Role)
                     .IsRequired()

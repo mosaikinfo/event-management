@@ -8,6 +8,6 @@
         public string EmailAddress { get; set; }
         public string Password { get; set; }
         public UserRole Role { get; set; }
-        public bool Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
     }
 }
