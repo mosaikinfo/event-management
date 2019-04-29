@@ -37,6 +37,18 @@ namespace EventManagement.DataAccess
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
                 entity.Property(e => e.Location).HasMaxLength(300);
             });
+
+            modelBuilder.Entity<TicketType>(entity =>
+            {
+                entity.ToTable("TicketTypes");
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.Price).HasColumnType("decimal(5, 2)");
+
+                entity
+                    .HasOne(e => e.Event)
+                    .WithMany(e => e.TicketTypes)
+                    .HasForeignKey(e => e.EventId);
+            });
         }
     }
 }
