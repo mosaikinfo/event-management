@@ -1,3 +1,4 @@
+using AutoMapper;
 using EventManagement.DataAccess;
 using EventManagement.Identity;
 using EventManagement.WebApp.Configuration;
@@ -57,6 +58,7 @@ namespace EventManagement.WebApp
             });
 
             services.AddSwaggerDocument();
+            services.AddAutoMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
