@@ -1,4 +1,5 @@
 ﻿using EventManagement.DataAccess;
+using EventManagement.DataAccess.Extensions;
 using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
@@ -37,7 +38,7 @@ namespace EventManagement.Identity
                     {
                         new Claim(JwtClaimTypes.Name, user.Name),
                         new Claim(JwtClaimTypes.Email, user.EmailAddress),
-                        new Claim(JwtClaimTypes.Role, user.Role)
+                        new Claim(JwtClaimTypes.Role, user.Role.GetStringValue())
                     });
                 }
             }
