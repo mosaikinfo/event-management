@@ -1,6 +1,6 @@
 import { Constants } from '../../constants';
 import { Injectable, Output, EventEmitter, Inject } from '@angular/core';
-import { UserManager, UserManagerSettings, User } from 'oidc-client';
+import { UserManager, UserManagerSettings, User, WebStorageStateStore } from 'oidc-client';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -27,6 +27,8 @@ export class AuthService {
         scope: Constants.clientScope,
         filterProtocolClaims: true,
         loadUserInfo: true,
+        stateStore: new WebStorageStateStore({ store: window.sessionStorage }),
+        userStore: new WebStorageStateStore({ store: window.localStorage }),
     };
     this._userManager = new UserManager(settings);
 
