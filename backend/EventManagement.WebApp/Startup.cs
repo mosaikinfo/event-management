@@ -70,7 +70,7 @@ namespace EventManagement.WebApp
             });
 
             services.AddSwaggerDocument();
-            services.AddAutoMapper();
+            services.AddAutoMapper(GetType());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

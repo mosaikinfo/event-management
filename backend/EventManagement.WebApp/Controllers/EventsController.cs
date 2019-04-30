@@ -57,7 +57,7 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Event> UpdateEvent(int id, [FromBody] Event model)
+        public ActionResult UpdateEvent(int id, [FromBody] Event model)
         {
             // TODO: validate permissions.
             if (id != model.Id)
