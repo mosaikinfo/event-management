@@ -56,13 +56,11 @@ namespace EventManagement.WebApp
                 .AddProfileService<UserProfileService>();
             services.AddTransient<IUserStore, UserStore>();
 
-            // The authentication is to protect the web api.
+            // Configure authentication to protect our web api.
             services.AddAuthentication()
-                .AddIdentityServerAuthentication(Constants.JwtAuthScheme, options =>
+                .AddLocalApi(Constants.JwtAuthScheme, options =>
                 {
-                    options.Authority = "http://localhost:5000";
-                    options.ApiName = "eventmanagement.admin";
-                    options.RequireHttpsMetadata = false;
+                    options.ExpectedScope = "eventmanagement.admin";
                 });
 
             // In production, the Angular files will be served from this directory
