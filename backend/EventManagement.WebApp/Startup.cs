@@ -6,6 +6,7 @@ using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +30,12 @@ namespace EventManagement.WebApp
                 options => options.UseSqlServer(
                     Configuration.GetConnectionString("EventManagement")));
             services.AddTransient<EventsDbInitializer>();
+
+            services.Configure<RouteOptions>(options =>
+            {
+                // Generated path urls should be lowercase.
+                options.LowercaseUrls = true;
+            });
 
             services.AddMvc()
                 .AddApplicationPart(typeof(AccountController).Assembly)
