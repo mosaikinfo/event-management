@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EventManagementApiClient, Event } from '../services/event-management-api.client';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { PageAlertService } from '../page-alert/page-alert.service';
 
 @Component({
   selector: 'app-event-form',
@@ -13,8 +14,8 @@ export class EventFormComponent implements OnInit {
 
   constructor(
     private apiClient : EventManagementApiClient,
-    private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private alertService: PageAlertService
   ) {}
 
   ngOnInit() {
@@ -28,10 +29,10 @@ export class EventFormComponent implements OnInit {
   submit() {
     if (this.model.id > 0) {
       this.apiClient.events_UpdateEvent(this.model.id, this.model)
-        .subscribe(() => this.router.navigate(['/events']));
+        .subscribe(() => this.alertService.showSaveSuccessAlert());
     } else {
       this.apiClient.events_CreateEvent(this.model)
-        .subscribe(() => this.router.navigate(['/events']));
+        .subscribe(() => this.alertService.showSaveSuccessAlert());
     }
   }
 }

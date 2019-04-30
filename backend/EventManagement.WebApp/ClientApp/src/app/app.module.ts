@@ -4,18 +4,19 @@ import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { CalendarModule, Calendar } from 'primeng/calendar';
+import { CalendarModule } from 'primeng/calendar';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
 import { SessionService } from './services/session.service';
-import { AlertService } from './services/alert.service';
+import { PageAlertService } from './page-alert/page-alert.service';
 import { EventManagementApiClient, API_BASE_URL } from './services/event-management-api.client';
 import { HttpErrorInterceptor } from './services/http-error.interceptor';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
+import { PageAlertComponent } from './page-alert/page-alert.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 import { EventsListComponent } from './events-list/events-list.component';
@@ -34,7 +35,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     DashboardComponent,
     AuthCallbackComponent,
     EventsListComponent,
-    EventFormComponent
+    EventFormComponent,
+    PageAlertComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -51,9 +53,9 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     { provide: API_BASE_URL, useExisting: 'BASE_URL'},
     AuthService,
     AuthGuardService,
-    AlertService,
     EventManagementApiClient,
-    SessionService
+    SessionService,
+    PageAlertService
   ],
   bootstrap: [AppComponent]
 })
