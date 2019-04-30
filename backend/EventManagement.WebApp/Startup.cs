@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using NSwag.AspNetCore;
 
 namespace EventManagement.WebApp
@@ -38,8 +39,14 @@ namespace EventManagement.WebApp
             });
 
             services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddApplicationPart(typeof(AccountController).Assembly)
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .AddJsonOptions(options =>
+                {
+                    // Important: ASP.NET Core is serializing dates to JSON as local time.
+                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                });
 
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential(persistKey: true)
