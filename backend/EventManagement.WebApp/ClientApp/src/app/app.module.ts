@@ -11,7 +11,7 @@ import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
 import { SessionService } from './services/session.service';
 import { AlertService } from './services/alert.service';
-import { EventManagementApiClient } from './services/event-management-api.client';
+import { EventManagementApiClient, API_BASE_URL } from './services/event-management-api.client';
 import { HttpErrorInterceptor } from './services/http-error.interceptor';
 
 import { AppComponent } from './app.component';
@@ -46,8 +46,9 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     AppRoutingModule
   ],
   providers: [
-    {provide: LOCALE_ID, useValue: 'de-DE' },
+    { provide: LOCALE_ID, useValue: 'de-DE' },
     { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+    { provide: API_BASE_URL, useExisting: 'BASE_URL'},
     AuthService,
     AuthGuardService,
     AlertService,

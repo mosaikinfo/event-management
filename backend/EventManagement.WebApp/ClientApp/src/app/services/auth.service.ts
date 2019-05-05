@@ -1,5 +1,5 @@
 import { Constants } from '../../constants';
-import { Injectable, Output, EventEmitter } from '@angular/core';
+import { Injectable, Output, EventEmitter, Inject } from '@angular/core';
 import { UserManager, UserManagerSettings, User } from 'oidc-client';
 import { Router } from '@angular/router';
 
@@ -12,14 +12,17 @@ export class AuthService {
 
   @Output() onUserLoggedIn = new EventEmitter<any>();
 
-  constructor(private router: Router) {
-    let settings = {
-        authority: Constants.stsAuthority,
+  constructor(
+    @Inject('BASE_URL') baseUrl: string,
+    private router: Router
+  ) {
+    let settings: UserManagerSettings = {
+        authority: baseUrl,
         client_id: Constants.clientId,
-        redirect_uri: `${Constants.clientRoot}/auth-callback`,
-        silent_redirect_uri: `${Constants.clientRoot}/silent-refresh.html`,
+        redirect_uri: `${baseUrl}/auth-callback`,
+        silent_redirect_uri: `${baseUrl}/silent-refresh.html`,
         automaticSilentRenew: true,
-        post_logout_redirect_uri: Constants.clientRoot,
+        post_logout_redirect_uri: baseUrl,
         response_type: 'id_token token',
         scope: Constants.clientScope,
         filterProtocolClaims: true,
