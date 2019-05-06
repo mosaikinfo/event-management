@@ -43,6 +43,58 @@ namespace EventManagement.DataAccess.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("EventManagement.DataAccess.Models.Ticket", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(1000);
+
+                    b.Property<int?>("Age");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<int?>("CreatorId");
+
+                    b.Property<int?>("EditorId");
+
+                    b.Property<int>("EventId");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(300);
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(300);
+
+                    b.Property<string>("Mail")
+                        .HasMaxLength(254);
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("RoomNumber")
+                        .HasMaxLength(300);
+
+                    b.Property<bool?>("TermsAccepted");
+
+                    b.Property<bool>("Validated");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("EditorId");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Tickets");
+                });
+
             modelBuilder.Entity("EventManagement.DataAccess.Models.TicketType", b =>
                 {
                     b.Property<int>("Id")
@@ -100,6 +152,22 @@ namespace EventManagement.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("EventManagement.DataAccess.Models.Ticket", b =>
+                {
+                    b.HasOne("EventManagement.DataAccess.Models.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("EventManagement.DataAccess.Models.User", "Editor")
+                        .WithMany()
+                        .HasForeignKey("EditorId");
+
+                    b.HasOne("EventManagement.DataAccess.Models.Event", "Event")
+                        .WithMany("Tickets")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("EventManagement.DataAccess.Models.TicketType", b =>
