@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuardService } from './services/auth-guard.service';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 import { EventListComponent } from './event-list/event-list.component';
-import { EventFormComponent } from './event-form/event-form.component';
+import { EventEditComponent } from './event-edit/event-edit.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { EventSettingsComponent } from './event-settings/event-settings.component';
 
