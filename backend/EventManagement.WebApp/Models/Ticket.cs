@@ -1,11 +1,11 @@
-﻿using System;
+﻿using EventManagement.DataAccess.Models;
+using System;
 
-namespace EventManagement.DataAccess.Models
+namespace EventManagement.WebApp.Models
 {
     public class Ticket
     {
         public Guid Id { get; set; }
-        public int EventId { get; set; }
         public bool Validated { get; set; }
         public string Mail { get; set; }
         public string Phone { get; set; }
@@ -18,11 +18,8 @@ namespace EventManagement.DataAccess.Models
         public string RoomNumber { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? EditedAt { get; set; }
-        public int? CreatorId { get; set; }
-        public int? EditorId { get; set; }
 
-        public Event Event { get; set; }
-        public User Creator { get; set; }
-        public User Editor { get; set; }
+        public string Creator { get; set; }
+        public string Editor { get; set; }
     }
 }

@@ -57,6 +57,8 @@ namespace EventManagement.DataAccess.Migrations
 
                     b.Property<int?>("CreatorId");
 
+                    b.Property<DateTime?>("EditedAt");
+
                     b.Property<int?>("EditorId");
 
                     b.Property<int>("EventId");

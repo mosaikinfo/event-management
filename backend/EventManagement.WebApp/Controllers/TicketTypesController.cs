@@ -22,7 +22,7 @@ namespace EventManagement.WebApp.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("api/event/{eventId}/tickettypes")]
+        [HttpGet("api/events/{eventId}/tickettypes")]
         public ActionResult<IList<TicketType>> GetTicketTypes(int eventId)
         {
             return _context.TicketTypes
@@ -33,7 +33,7 @@ namespace EventManagement.WebApp.Controllers
                 .ToList();
         }
 
-        [HttpPost("api/event/{eventId}/tickettypes")]
+        [HttpPost("api/events/{eventId}/tickettypes")]
         public ActionResult<IList<TicketType>> AddOrUpdateTicketTypes(int eventId, [FromBody] TicketType[] items)
         {
             var evt = _context.Events
