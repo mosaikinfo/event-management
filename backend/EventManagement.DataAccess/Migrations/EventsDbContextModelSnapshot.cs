@@ -43,6 +43,28 @@ namespace EventManagement.DataAccess.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("EventManagement.DataAccess.Models.TicketType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("EventId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(5, 2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("TicketTypes");
+                });
+
             modelBuilder.Entity("EventManagement.DataAccess.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -78,6 +100,14 @@ namespace EventManagement.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("EventManagement.DataAccess.Models.TicketType", b =>
+                {
+                    b.HasOne("EventManagement.DataAccess.Models.Event", "Event")
+                        .WithMany("TicketTypes")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

@@ -4,11 +4,11 @@ import { SessionService } from '../services/session.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-events-list',
-  templateUrl: './events-list.component.html',
-  styleUrls: ['./events-list.component.css']
+  selector: 'app-event-list',
+  templateUrl: './event-list.component.html',
+  styleUrls: ['./event-list.component.css']
 })
-export class EventsListComponent implements OnInit {
+export class EventListComponent implements OnInit {
 
   events = [];
 

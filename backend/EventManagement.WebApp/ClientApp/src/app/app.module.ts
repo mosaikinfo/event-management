@@ -4,22 +4,26 @@ import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { CalendarModule, Calendar } from 'primeng/calendar';
+import { CalendarModule } from 'primeng/calendar';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
 import { SessionService } from './services/session.service';
-import { AlertService } from './services/alert.service';
+import { PageAlertService } from './page-alert/page-alert.service';
 import { EventManagementApiClient, API_BASE_URL } from './services/event-management-api.client';
 import { HttpErrorInterceptor } from './services/http-error.interceptor';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
+import { PageAlertComponent } from './page-alert/page-alert.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
-import { EventsListComponent } from './events-list/events-list.component';
-import { EventFormComponent } from './event-form/event-form.component';
+import { EventListComponent } from './event-list/event-list.component';
+import { EventEditComponent } from './event-edit/event-edit.component';
+import { EventSettingsComponent } from './event-settings/event-settings.component';
+import { ButtonBackComponent } from './button-back/button-back.component';
+import { TicketTypesEditComponent } from './ticket-types-edit/ticket-types-edit.component';
 
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
@@ -33,8 +37,12 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     NavMenuComponent,
     DashboardComponent,
     AuthCallbackComponent,
-    EventsListComponent,
-    EventFormComponent
+    EventListComponent,
+    EventEditComponent,
+    PageAlertComponent,
+    EventSettingsComponent,
+    ButtonBackComponent,
+    TicketTypesEditComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -51,9 +59,9 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     { provide: API_BASE_URL, useExisting: 'BASE_URL'},
     AuthService,
     AuthGuardService,
-    AlertService,
     EventManagementApiClient,
-    SessionService
+    SessionService,
+    PageAlertService
   ],
   bootstrap: [AppComponent]
 })

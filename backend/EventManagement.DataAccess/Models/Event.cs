@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace EventManagement.DataAccess.Models
 {
@@ -10,5 +11,7 @@ namespace EventManagement.DataAccess.Models
         public DateTime EndTime { get; set; }
         public DateTime? EntranceTime { get; set; }
         public string Location { get; set; }
+
+        public List<TicketType> TicketTypes { get; set; }
     }
 }

@@ -1,0 +1,51 @@
+<p *ngIf="!ticketTypes || ticketTypes.length === 0" class="my-4">
+  Noch keine Ticket-Typen vorhanden.
+</p>
+
+<form (ngSubmit)="saveChanges()" #ticketTypesForm="ngForm">
+  <table *ngIf="ticketTypes && ticketTypes.length > 0"
+        class="table">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 120px">Preis</th>
+        <th scope="col">Bezeichnung</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ticketType of ticketTypes; index as i">
+        <td>
+          <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">€</span>
+              </div>
+              <input type="number" [name]="'price'+i" [(ngModel)]="ticketType.price" class="form-control" required>
+          </div>
+        </td>
+        <td>
+          <input type="text" [name]="'name'+i"
+                 [(ngModel)]="ticketType.name"
+                 class="form-control"
+                 placeholder="Stehplatz (Ermäßigt)" required>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-danger d-flex align-items-center"
+                  (click)="remove(ticketType)">
+            <i class="material-icons md-18">delete</i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    <button type="button" class="btn btn-secondary btn-sm" (click)="add()">Hinzufügen</button>
+  </p>
+
+  <button type="submit" class="btn btn-primary mt-2"
+          [hidden]="!ticketTypes || ticketTypes.length === 0"
+          [disabled]="!ticketTypesForm.form.valid">
+      Speichern
+  </button>
+
+</form>

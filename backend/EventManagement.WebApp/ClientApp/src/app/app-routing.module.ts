@@ -3,9 +3,10 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AuthGuardService } from './services/auth-guard.service';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
-import { EventsListComponent } from './events-list/events-list.component';
-import { EventFormComponent } from './event-form/event-form.component';
+import { EventListComponent } from './event-list/event-list.component';
+import { EventEditComponent } from './event-edit/event-edit.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { EventSettingsComponent } from './event-settings/event-settings.component';
 
 const routes: Routes = [
     { 
@@ -20,17 +21,17 @@ const routes: Routes = [
     },
     { 
         path: 'events', 
-        component: EventsListComponent, 
+        component: EventListComponent, 
         canActivate: [AuthGuardService] 
     },
     { 
         path: 'events/new', 
-        component: EventFormComponent, 
+        component: EventSettingsComponent, 
         canActivate: [AuthGuardService] 
     },
     { 
         path: 'events/:id', 
-        component: EventFormComponent, 
+        component: EventSettingsComponent, 
         canActivate: [AuthGuardService] 
     }
 ];
