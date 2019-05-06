@@ -12,7 +12,10 @@ export class PageAlertComponent {
 
   constructor(alertService: PageAlertService) {
     alertService.alertCreated$
-      .subscribe(alert => this.alerts.push(alert));
+      .subscribe(alert => {
+        this.alerts.push(alert);
+        setTimeout(() => this.close(alert), 3000);
+      });
   }
 
   close(alert: Alert) {
