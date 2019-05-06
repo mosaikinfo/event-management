@@ -37,7 +37,7 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpGet("api/tickets/{id}")]
-        public ActionResult<Ticket> GetById(Guid id)
+        public ActionResult<Ticket> GetById(int id)
         {
             var entity = _context.Tickets.Find(id);
             return _mapper.Map<Ticket>(entity);
@@ -50,8 +50,11 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpPut("api/tickets/{id}")]
-        public ActionResult UpdateTicket(Ticket model)
+        public ActionResult UpdateTicket(int id, [FromBody] Ticket model)
         {
+            if (id != model.Id)
+                return BadRequest();
+
             throw new NotImplementedException();
         }
     }

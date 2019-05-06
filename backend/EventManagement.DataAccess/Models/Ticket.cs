@@ -4,7 +4,9 @@ namespace EventManagement.DataAccess.Models
 {
     public class Ticket
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
+        public string TicketNumber { get; set; }
+        public Guid TicketGuid { get; set; }
         public int EventId { get; set; }
         public bool Validated { get; set; }
         public string Mail { get; set; }

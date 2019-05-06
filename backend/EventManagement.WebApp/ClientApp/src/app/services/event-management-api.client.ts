@@ -317,7 +317,7 @@ export class EventManagementApiClient extends ServiceBase {
         return _observableOf<Ticket[] | null>(<any>null);
     }
 
-    tickets_GetById(id: string): Observable<Ticket | null> {
+    tickets_GetById(id: number): Observable<Ticket | null> {
         let url_ = this.baseUrl + "/api/tickets/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -370,7 +370,7 @@ export class EventManagementApiClient extends ServiceBase {
         return _observableOf<Ticket | null>(<any>null);
     }
 
-    tickets_UpdateTicket(model: Ticket, id: string): Observable<FileResponse | null> {
+    tickets_UpdateTicket(id: number, model: Ticket): Observable<FileResponse | null> {
         let url_ = this.baseUrl + "/api/tickets/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -655,7 +655,8 @@ export interface IEvent {
 }
 
 export class Ticket implements ITicket {
-    id!: string;
+    id!: number;
+    ticketNumber?: string | undefined;
     validated!: boolean;
     mail?: string | undefined;
     phone?: string | undefined;
@@ -683,6 +684,7 @@ export class Ticket implements ITicket {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.ticketNumber = data["ticketNumber"];
             this.validated = data["validated"];
             this.mail = data["mail"];
             this.phone = data["phone"];
@@ -710,6 +712,7 @@ export class Ticket implements ITicket {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["ticketNumber"] = this.ticketNumber;
         data["validated"] = this.validated;
         data["mail"] = this.mail;
         data["phone"] = this.phone;
@@ -729,7 +732,8 @@ export class Ticket implements ITicket {
 }
 
 export interface ITicket {
-    id: string;
+    id: number;
+    ticketNumber?: string | undefined;
     validated: boolean;
     mail?: string | undefined;
     phone?: string | undefined;

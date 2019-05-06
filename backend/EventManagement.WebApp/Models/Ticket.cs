@@ -5,7 +5,8 @@ namespace EventManagement.WebApp.Models
 {
     public class Ticket
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
+        public string TicketNumber { get; set; }
         public bool Validated { get; set; }
         public string Mail { get; set; }
         public string Phone { get; set; }

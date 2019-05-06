@@ -4,9 +4,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuardService } from './services/auth-guard.service';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 import { EventListComponent } from './event-list/event-list.component';
-import { EventEditComponent } from './event-edit/event-edit.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { EventSettingsComponent } from './event-settings/event-settings.component';
+import { TicketListComponent } from './ticket-list/ticket-list.component';
+import { TicketEditComponent } from './ticket-edit/ticket-edit.component';
 
 const routes: Routes = [
     { 
@@ -33,7 +34,22 @@ const routes: Routes = [
         path: 'events/:id', 
         component: EventSettingsComponent, 
         canActivate: [AuthGuardService] 
-    }
+    },
+    { 
+        path: 'tickets', 
+        component: TicketListComponent, 
+        canActivate: [AuthGuardService] 
+    },
+    { 
+        path: 'tickets/new', 
+        component: TicketEditComponent, 
+        canActivate: [AuthGuardService] 
+    },
+    { 
+        path: 'tickets/:id', 
+        component: TicketEditComponent, 
+        canActivate: [AuthGuardService] 
+    },
 ];
 
 @NgModule({

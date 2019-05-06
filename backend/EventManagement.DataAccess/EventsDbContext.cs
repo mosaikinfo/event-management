@@ -53,6 +53,10 @@ namespace EventManagement.DataAccess
 
             modelBuilder.Entity<Ticket>(entity =>
             {
+                entity.HasAlternateKey(e => e.TicketNumber);
+                entity.HasAlternateKey(e => e.TicketGuid);
+
+                entity.Property(e => e.TicketNumber).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Mail).HasMaxLength(254);
                 entity.Property(e => e.Phone).HasMaxLength(100);
                 entity.Property(e => e.LastName).HasMaxLength(300);

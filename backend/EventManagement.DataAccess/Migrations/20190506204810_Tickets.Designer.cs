@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventManagement.DataAccess.Migrations
 {
     [DbContext(typeof(EventsDbContext))]
-    [Migration("20190506183948_TicketEditedAt")]
-    partial class TicketEditedAt
+    [Migration("20190506204810_Tickets")]
+    partial class Tickets
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -47,8 +47,9 @@ namespace EventManagement.DataAccess.Migrations
 
             modelBuilder.Entity("EventManagement.DataAccess.Models.Ticket", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Address")
                         .HasMaxLength(1000);
@@ -86,9 +87,19 @@ namespace EventManagement.DataAccess.Migrations
 
                     b.Property<bool?>("TermsAccepted");
 
+                    b.Property<Guid>("TicketGuid");
+
+                    b.Property<string>("TicketNumber")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
                     b.Property<bool>("Validated");
 
                     b.HasKey("Id");
+
+                    b.HasAlternateKey("TicketGuid");
+
+                    b.HasAlternateKey("TicketNumber");
 
                     b.HasIndex("CreatorId");
 
