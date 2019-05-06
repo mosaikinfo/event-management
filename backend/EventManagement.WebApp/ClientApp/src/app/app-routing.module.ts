@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AuthGuardService } from './services/auth-guard.service';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
-import { EventsListComponent } from './events-list/events-list.component';
+import { EventListComponent } from './event-list/event-list.component';
 import { EventFormComponent } from './event-form/event-form.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
@@ -20,7 +20,7 @@ const routes: Routes = [
     },
     { 
         path: 'events', 
-        component: EventsListComponent, 
+        component: EventListComponent, 
         canActivate: [AuthGuardService] 
     },
     { 

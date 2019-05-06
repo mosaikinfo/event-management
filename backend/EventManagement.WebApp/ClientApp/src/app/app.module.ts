@@ -19,7 +19,7 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { PageAlertComponent } from './page-alert/page-alert.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
-import { EventsListComponent } from './events-list/events-list.component';
+import { EventListComponent } from './event-list/event-list.component';
 import { EventFormComponent } from './event-form/event-form.component';
 
 import { registerLocaleData } from '@angular/common';
@@ -34,7 +34,7 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     NavMenuComponent,
     DashboardComponent,
     AuthCallbackComponent,
-    EventsListComponent,
+    EventListComponent,
     EventFormComponent,
     PageAlertComponent
   ],
