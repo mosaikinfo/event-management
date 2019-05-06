@@ -1,5 +1,3 @@
-<h1>Event</h1>
-
 <form class="mt-4" (ngSubmit)="submit()" #eventForm="ngForm">
 
   <div class="form-group">
@@ -50,7 +48,6 @@
   </div>
 
   <div>
-    <a class="btn btn-secondary mr-5" [routerLink]="['..']">Zurück</a>
     <button type="submit" class="btn btn-primary" [disabled]="!eventForm.form.valid">Speichern</button>
   </div>
 </form>

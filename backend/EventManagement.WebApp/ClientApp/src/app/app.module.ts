@@ -25,6 +25,8 @@ import { EventFormComponent } from './event-form/event-form.component';
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import localeDeExtra from '@angular/common/locales/extra/de';
+import { EventSettingsComponent } from './event-settings/event-settings.component';
+import { ButtonBackComponent } from './button-back/button-back.component';
 
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
@@ -36,7 +38,9 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     AuthCallbackComponent,
     EventListComponent,
     EventFormComponent,
-    PageAlertComponent
+    PageAlertComponent,
+    EventSettingsComponent,
+    ButtonBackComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
