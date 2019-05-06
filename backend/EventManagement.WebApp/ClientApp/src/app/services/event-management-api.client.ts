@@ -317,14 +317,14 @@ export class EventManagementApiClient extends ServiceBase {
         return _observableOf<TicketType[] | null>(<any>null);
     }
 
-    ticketTypes_CreateTicketType(eventId: number, model: TicketType): Observable<TicketType | null> {
+    ticketTypes_AddOrUpdateTicketTypes(eventId: number, items: TicketType[]): Observable<TicketType[] | null> {
         let url_ = this.baseUrl + "/api/event/{eventId}/tickettypes";
         if (eventId === undefined || eventId === null)
             throw new Error("The parameter 'eventId' must be defined.");
         url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(model);
+        const content_ = JSON.stringify(items);
 
         let options_ : any = {
             body: content_,
@@ -339,20 +339,20 @@ export class EventManagementApiClient extends ServiceBase {
         return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
             return this.http.request("post", url_, transformedOptions_);
         })).pipe(_observableMergeMap((response_: any) => {
-            return this.processTicketTypes_CreateTicketType(response_);
+            return this.processTicketTypes_AddOrUpdateTicketTypes(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processTicketTypes_CreateTicketType(<any>response_);
+                    return this.processTicketTypes_AddOrUpdateTicketTypes(<any>response_);
                 } catch (e) {
-                    return <Observable<TicketType | null>><any>_observableThrow(e);
+                    return <Observable<TicketType[] | null>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<TicketType | null>><any>_observableThrow(response_);
+                return <Observable<TicketType[] | null>><any>_observableThrow(response_);
         }));
     }
 
-    protected processTicketTypes_CreateTicketType(response: HttpResponseBase): Observable<TicketType | null> {
+    protected processTicketTypes_AddOrUpdateTicketTypes(response: HttpResponseBase): Observable<TicketType[] | null> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -363,7 +363,11 @@ export class EventManagementApiClient extends ServiceBase {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? TicketType.fromJS(resultData200) : <any>null;
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TicketType.fromJS(item));
+            }
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -371,65 +375,7 @@ export class EventManagementApiClient extends ServiceBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<TicketType | null>(<any>null);
-    }
-
-    ticketTypes_UpdateTicketType(eventId: number, id: number, model: TicketType): Observable<FileResponse | null> {
-        let url_ = this.baseUrl + "/api/event/{eventId}/tickettypes/{id}";
-        if (eventId === undefined || eventId === null)
-            throw new Error("The parameter 'eventId' must be defined.");
-        url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(model);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
-            return this.http.request("put", url_, transformedOptions_);
-        })).pipe(_observableMergeMap((response_: any) => {
-            return this.processTicketTypes_UpdateTicketType(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processTicketTypes_UpdateTicketType(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse | null>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse | null>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processTicketTypes_UpdateTicketType(response: HttpResponseBase): Observable<FileResponse | null> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse | null>(<any>null);
+        return _observableOf<TicketType[] | null>(<any>null);
     }
 }
 

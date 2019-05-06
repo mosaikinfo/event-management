@@ -13,6 +13,7 @@ namespace EventManagement.DataAccess
 
         public DbSet<User> Users { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<TicketType> TicketTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,7 +30,7 @@ namespace EventManagement.DataAccess
                     .HasMaxLength(300)
                     .HasConversion(
                         value => value.GetStringValue(),
-                        value => (UserRole) Enum.Parse(typeof(UserRole), value, true));
+                        value => (UserRole)Enum.Parse(typeof(UserRole), value, true));
             });
 
             modelBuilder.Entity<Event>(entity =>

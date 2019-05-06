@@ -25,7 +25,7 @@ namespace EventManagement.WebApp.Controllers
         [HttpGet("api/event/{eventId}/tickettypes")]
         public ActionResult<IList<TicketType>> GetTicketTypes(int eventId)
         {
-            return _context.Query<DataAccess.Models.TicketType>()
+            return _context.TicketTypes
                 .AsNoTracking()
                 .Where(e => e.EventId == eventId)
                 .ToList()
@@ -34,26 +34,50 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpPost("api/event/{eventId}/tickettypes")]
-        public ActionResult<TicketType> CreateTicketType(int eventId, [FromBody] TicketType model)
+        public ActionResult<IList<TicketType>> AddOrUpdateTicketTypes(int eventId, [FromBody] TicketType[] items)
         {
-            var entity = _mapper.Map<DataAccess.Models.TicketType>(model);
-            entity.EventId = eventId;
-            _context.Add(entity);
-            _context.SaveChanges();
-            return _mapper.Map<TicketType>(entity);
-        }
-
-        [HttpPut("api/event/{eventId}/tickettypes/{id}")]
-        public ActionResult UpdateTicketType(int eventId, int id, [FromBody] TicketType model)
-        {
-            if (model.Id != id)
-                return BadRequest();
-            var entity = _context.Find<DataAccess.Models.TicketType>(id);
-            if (entity == null || entity.EventId != eventId)
+            var evt = _context.Events
+                .Include(e => e.TicketTypes)
+                .SingleOrDefault(e => e.Id == eventId);
+            if (evt == null)
                 return NotFound();
-            _mapper.Map(model, entity);
+            // Delete ticket types.
+            foreach (DataAccess.Models.TicketType ticketType in evt.TicketTypes)
+            {
+                if (items.All(t => t.Id != ticketType.Id))
+                {
+                    _context.Entry(ticketType).State = EntityState.Deleted;
+                }
+            }
+            var list = new List<TicketType>();
+            foreach (TicketType item in items)
+            {
+                if (item.Id > 0)
+                {
+                    // Update ticket type.
+                    var entity = evt.TicketTypes.SingleOrDefault(t => t.Id == item.Id);
+                    if (entity == null)
+                    {
+                        return BadRequest($"There is no ticket type with id {item.Id}.");
+                    }
+                    else
+                    {
+                        _mapper.Map(item, entity);
+                        _context.SaveChanges();
+                        list.Add(_mapper.Map<TicketType>(entity));
+                    }
+                }
+                else
+                {
+                    // Create new ticket type.
+                    var entity = _mapper.Map<DataAccess.Models.TicketType>(item);
+                    evt.TicketTypes.Add(entity);
+                    _context.SaveChanges();
+                    list.Add(_mapper.Map<TicketType>(entity));
+                }
+            }
             _context.SaveChanges();
-            return NoContent();
+            return list;
         }
     }
 }

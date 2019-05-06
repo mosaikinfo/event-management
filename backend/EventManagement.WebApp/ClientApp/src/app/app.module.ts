@@ -21,12 +21,13 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 import { EventListComponent } from './event-list/event-list.component';
 import { EventEditComponent } from './event-edit/event-edit.component';
+import { EventSettingsComponent } from './event-settings/event-settings.component';
+import { ButtonBackComponent } from './button-back/button-back.component';
+import { TicketTypesEditComponent } from './ticket-types-edit/ticket-types-edit.component';
 
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import localeDeExtra from '@angular/common/locales/extra/de';
-import { EventSettingsComponent } from './event-settings/event-settings.component';
-import { ButtonBackComponent } from './button-back/button-back.component';
 
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
@@ -40,7 +41,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     EventEditComponent,
     PageAlertComponent,
     EventSettingsComponent,
-    ButtonBackComponent
+    ButtonBackComponent,
+    TicketTypesEditComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

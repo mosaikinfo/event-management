@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EventManagementApiClient, Event } from '../services/event-management-api.client';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PageAlertService } from '../page-alert/page-alert.service';
 
 @Component({
@@ -15,6 +15,7 @@ export class EventEditComponent implements OnInit {
   constructor(
     private apiClient : EventManagementApiClient,
     private route: ActivatedRoute,
+    private router: Router,
     private alertService: PageAlertService
   ) {}
 
@@ -27,11 +28,15 @@ export class EventEditComponent implements OnInit {
   }
 
   submit() {
-    if (this.model.id > 0) {
-      this.apiClient.events_UpdateEvent(this.model.id, this.model)
-        .subscribe(() => this.alertService.showSaveSuccessAlert());
-    } else {
+    const isNew = !this.model.id;
+    if (isNew) {
       this.apiClient.events_CreateEvent(this.model)
+        .subscribe((event: Event) => {
+          this.alertService.showSaveSuccessAlert()
+          this.router.navigate(['..', event.id]);
+        });
+    } else {
+      this.apiClient.events_UpdateEvent(this.model.id, this.model)
         .subscribe(() => this.alertService.showSaveSuccessAlert());
     }
   }
