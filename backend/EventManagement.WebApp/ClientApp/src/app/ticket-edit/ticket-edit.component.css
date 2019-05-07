@@ -1,0 +1,8 @@
+.form-group.input-switch {
+    display: table;
+}
+.form-group.input-switch > * {
+    display: table-cell;
+    vertical-align: top;
+    padding-right: 20px;
+}

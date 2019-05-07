@@ -7,6 +7,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarModule } from 'primeng/calendar';
 import { AppRoutingModule } from './app-routing.module';
 import { TableModule } from 'primeng/table';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 
 import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
@@ -57,7 +59,9 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     NgbModule,
     CalendarModule,
     AppRoutingModule,
-    TableModule
+    TableModule,
+    InputSwitchModule,
+    TriStateCheckboxModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-DE' },

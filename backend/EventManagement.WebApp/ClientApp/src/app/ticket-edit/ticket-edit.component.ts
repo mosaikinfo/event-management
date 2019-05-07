@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageAlertService } from '../page-alert/page-alert.service';
-import { Ticket, Event, EventManagementApiClient } from '../services/event-management-api.client';
+import { Ticket, Event, PaymentStatus, EventManagementApiClient } from '../services/event-management-api.client';
 import { SessionService } from '../services/session.service';
 
 @Component({
@@ -11,6 +11,7 @@ import { SessionService } from '../services/session.service';
 })
 export class TicketEditComponent implements OnInit {
   model : Ticket = new Ticket();
+  PaymentStatus = PaymentStatus;
 
   constructor(
     private session: SessionService,
