@@ -3,13 +3,24 @@
 <p *ngIf="!tickets || tickets.length === 0" class="mt-4">
     Es sind noch keine Tickets vorhanden.
 </p>
-  
-<a class="btn btn-primary" [routerLink]='["/tickets/new"]'>Neu</a>
-
-<table *ngIf="tickets && tickets.length > 0">
-    <tbody>
-        <tr *ngFor="let ticket of tickets">
-            <td>{{ ticket.id }}</td>
+<p>
+    <a class="btn btn-primary" [routerLink]='["/tickets/new"]'>Neu</a>
+</p>
+<p-table [value]="tickets" *ngIf="tickets && tickets.length > 0">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Ticket-Nr.</th>
+            <th style="width:8em"></th>
         </tr>
-    </tbody>
-</table>
+    </ng-template>
+    <ng-template pTemplate="body" let-ticket>
+        <tr>
+            <td>{{ticket.ticketNumber}}</td>
+            <td style="text-align:center">
+                <button pButton type="button" icon="pi pi-pencil"
+                        [routerLink]="['/tickets', ticket.id]">
+                </button>       
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
