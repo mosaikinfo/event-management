@@ -30,8 +30,8 @@ const routes: Routes = [
         component: EventSettingsComponent, 
         canActivate: [AuthGuardService] 
     },
-    { 
-        path: 'events/:id', 
+    {
+        path: 'events/:id',
         component: EventSettingsComponent, 
         canActivate: [AuthGuardService] 
     },

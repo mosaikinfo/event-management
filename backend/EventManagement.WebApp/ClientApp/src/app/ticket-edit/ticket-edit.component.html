@@ -3,7 +3,7 @@
 <form class="mt-4" (ngSubmit)="saveChanges()" #form="ngForm">
 
     <div class="form-group" *ngIf="!isNew()">
-        <label>Ticket-Nr.</label>
+        <label class="mr-1">Ticket-Nr.</label>
         <label>{{ model.ticketNumber }}</label>
       </div>
 

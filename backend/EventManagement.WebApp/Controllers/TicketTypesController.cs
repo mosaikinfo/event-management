@@ -58,7 +58,8 @@ namespace EventManagement.WebApp.Controllers
                     var entity = evt.TicketTypes.SingleOrDefault(t => t.Id == item.Id);
                     if (entity == null)
                     {
-                        return BadRequest($"There is no ticket type with id {item.Id}.");
+                        return BadRequest(
+                            new ProblemDetails { Detail = $"There is no ticket type with id {item.Id}." });
                     }
                     else
                     {
