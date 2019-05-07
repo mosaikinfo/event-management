@@ -8,13 +8,14 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { EventSettingsComponent } from './event-settings/event-settings.component';
 import { TicketListComponent } from './ticket-list/ticket-list.component';
 import { TicketEditComponent } from './ticket-edit/ticket-edit.component';
+import { EventGuardService } from './services/event-guard.service';
 
 const routes: Routes = [
     { 
         path: '', 
         component: DashboardComponent, 
         pathMatch: 'full', 
-        canActivate: [AuthGuardService] 
+        canActivate: [AuthGuardService, EventGuardService] 
     },
     {
         path: 'auth-callback',
@@ -38,17 +39,17 @@ const routes: Routes = [
     { 
         path: 'tickets', 
         component: TicketListComponent, 
-        canActivate: [AuthGuardService] 
+        canActivate: [AuthGuardService, EventGuardService] 
     },
     { 
         path: 'tickets/new', 
         component: TicketEditComponent, 
-        canActivate: [AuthGuardService] 
+        canActivate: [AuthGuardService, EventGuardService] 
     },
     { 
         path: 'tickets/:id', 
         component: TicketEditComponent, 
-        canActivate: [AuthGuardService] 
+        canActivate: [AuthGuardService, EventGuardService] 
     },
 ];
 

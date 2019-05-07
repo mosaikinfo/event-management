@@ -39,6 +39,41 @@
     </div>
   </div>
 
+  <hr>
+  <h2 class="h5">Kontaktdaten</h2>
+  <div class="form-group">
+    <label for="mail">E-Mail-Adresse</label>
+    <input name="mail" type="email" class="form-control"
+            [(ngModel)]="model.mail" maxlength="254">
+  </div>
+  <div class="form-group">
+    <label for="phone">Telefonnummer</label>
+    <input name="phone" type="tel" class="form-control"
+            [(ngModel)]="model.phone" maxlength="100">
+  </div>
+
+  <hr>
+  <h2 class="h5">Personendaten</h2>
+  <div class="form-group">
+    <label for="lastName">Nachname</label>
+    <input name="lastName" type="text" class="form-control"
+    [(ngModel)]="model.lastName" maxlength="300">
+  </div>
+  <div class="form-group">
+    <label for="firstName">Vorname</label>
+    <input name="firstName" type="text" class="form-control"
+           [(ngModel)]="model.firstName" maxlength="300">
+  </div>
+  <div class="form-group">
+    <label for="age">Alter</label>
+    <input name="age" type="number" class="form-control"
+            [(ngModel)]="model.age">
+  </div>
+
+  <!-- Address -->
+
+  <!-- RoomNumber -->
+  
   <div>
     <button type="submit" class="btn btn-primary" [disabled]="!form.form.valid">Speichern</button>
   </div>

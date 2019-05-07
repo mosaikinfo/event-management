@@ -12,6 +12,7 @@ import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 
 import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
+import { EventGuardService } from './services/event-guard.service';
 import { SessionService } from './services/session.service';
 import { PageAlertService } from './page-alert/page-alert.service';
 import { EventManagementApiClient, API_BASE_URL } from './services/event-management-api.client';
@@ -69,6 +70,7 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     { provide: API_BASE_URL, useExisting: 'BASE_URL'},
     AuthService,
     AuthGuardService,
+    EventGuardService,
     EventManagementApiClient,
     SessionService,
     PageAlertService
