@@ -7,7 +7,6 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./event-settings.component.css']
 })
 export class EventSettingsComponent implements OnInit {
-
   eventId: number;
 
   constructor(private route: ActivatedRoute) { }

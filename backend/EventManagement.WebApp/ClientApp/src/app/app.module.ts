@@ -6,9 +6,13 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarModule } from 'primeng/calendar';
 import { AppRoutingModule } from './app-routing.module';
+import { TableModule } from 'primeng/table';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 
 import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
+import { EventGuardService } from './services/event-guard.service';
 import { SessionService } from './services/session.service';
 import { PageAlertService } from './page-alert/page-alert.service';
 import { EventManagementApiClient, API_BASE_URL } from './services/event-management-api.client';
@@ -24,6 +28,8 @@ import { EventEditComponent } from './event-edit/event-edit.component';
 import { EventSettingsComponent } from './event-settings/event-settings.component';
 import { ButtonBackComponent } from './button-back/button-back.component';
 import { TicketTypesEditComponent } from './ticket-types-edit/ticket-types-edit.component';
+import { TicketListComponent } from './ticket-list/ticket-list.component';
+import { TicketEditComponent } from './ticket-edit/ticket-edit.component';
 
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
@@ -42,7 +48,9 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     PageAlertComponent,
     EventSettingsComponent,
     ButtonBackComponent,
-    TicketTypesEditComponent
+    TicketTypesEditComponent,
+    TicketListComponent,
+    TicketEditComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -51,7 +59,10 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     FormsModule,
     NgbModule,
     CalendarModule,
-    AppRoutingModule
+    AppRoutingModule,
+    TableModule,
+    InputSwitchModule,
+    TriStateCheckboxModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-DE' },
@@ -59,6 +70,7 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     { provide: API_BASE_URL, useExisting: 'BASE_URL'},
     AuthService,
     AuthGuardService,
+    EventGuardService,
     EventManagementApiClient,
     SessionService,
     PageAlertService

@@ -137,19 +137,28 @@ export class EventManagementApiClient extends ServiceBase {
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
+        if (status === 201) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? Event.fromJS(resultData200) : <any>null;
-            return _observableOf(result200);
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = resultData201 ? Event.fromJS(resultData201) : <any>null;
+            return _observableOf(result201);
             }));
-        } else if (status !== 200 && status !== 204) {
+        } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = resultDatadefault ? ProblemDetails.fromJS(resultDatadefault) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, resultdefault);
             }));
         }
-        return _observableOf<Event | null>(<any>null);
     }
 
     events_GetEvent(id: number): Observable<Event | null> {
@@ -205,7 +214,7 @@ export class EventManagementApiClient extends ServiceBase {
         return _observableOf<Event | null>(<any>null);
     }
 
-    events_UpdateEvent(id: number, model: Event): Observable<FileResponse | null> {
+    events_UpdateEvent(id: number, model: Event): Observable<void> {
         let url_ = this.baseUrl + "/api/events/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -220,7 +229,6 @@ export class EventManagementApiClient extends ServiceBase {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/octet-stream"
             })
         };
 
@@ -233,35 +241,357 @@ export class EventManagementApiClient extends ServiceBase {
                 try {
                     return this.processEvents_UpdateEvent(<any>response_);
                 } catch (e) {
-                    return <Observable<FileResponse | null>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<FileResponse | null>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processEvents_UpdateEvent(response: HttpResponseBase): Observable<FileResponse | null> {
+    protected processEvents_UpdateEvent(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        if (status === 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = resultDatadefault ? ProblemDetails.fromJS(resultDatadefault) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, resultdefault);
+            }));
+        }
+    }
+
+    tickets_GetTickets(eventId: number): Observable<Ticket[] | null> {
+        let url_ = this.baseUrl + "/api/events/{eventId}/tickets";
+        if (eventId === undefined || eventId === null)
+            throw new Error("The parameter 'eventId' must be defined.");
+        url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processTickets_GetTickets(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTickets_GetTickets(<any>response_);
+                } catch (e) {
+                    return <Observable<Ticket[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Ticket[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processTickets_GetTickets(response: HttpResponseBase): Observable<Ticket[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Ticket.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<FileResponse | null>(<any>null);
+        return _observableOf<Ticket[] | null>(<any>null);
+    }
+
+    tickets_GetById(id: number): Observable<Ticket | null> {
+        let url_ = this.baseUrl + "/api/tickets/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processTickets_GetById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTickets_GetById(<any>response_);
+                } catch (e) {
+                    return <Observable<Ticket | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Ticket | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processTickets_GetById(response: HttpResponseBase): Observable<Ticket | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? Ticket.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<Ticket | null>(<any>null);
+    }
+
+    tickets_UpdateTicket(id: number, model: Ticket): Observable<void> {
+        let url_ = this.baseUrl + "/api/tickets/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(model);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("put", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processTickets_UpdateTicket(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTickets_UpdateTicket(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processTickets_UpdateTicket(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = resultDatadefault ? ProblemDetails.fromJS(resultDatadefault) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, resultdefault);
+            }));
+        }
+    }
+
+    tickets_DeleteTicket(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/tickets/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("delete", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processTickets_DeleteTicket(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTickets_DeleteTicket(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processTickets_DeleteTicket(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = resultDatadefault ? ProblemDetails.fromJS(resultDatadefault) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, resultdefault);
+            }));
+        }
+    }
+
+    tickets_CreateTicket(model: Ticket): Observable<Ticket | null> {
+        let url_ = this.baseUrl + "/api/tickets";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(model);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("post", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processTickets_CreateTicket(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTickets_CreateTicket(<any>response_);
+                } catch (e) {
+                    return <Observable<Ticket | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Ticket | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processTickets_CreateTicket(response: HttpResponseBase): Observable<Ticket | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 201) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = resultData201 ? Ticket.fromJS(resultData201) : <any>null;
+            return _observableOf(result201);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = resultDatadefault ? ProblemDetails.fromJS(resultDatadefault) : <any>null;
+            return throwException("A server error occurred.", status, _responseText, _headers, resultdefault);
+            }));
+        }
     }
 
     ticketTypes_GetTicketTypes(eventId: number): Observable<TicketType[] | null> {
-        let url_ = this.baseUrl + "/api/event/{eventId}/tickettypes";
+        let url_ = this.baseUrl + "/api/events/{eventId}/tickettypes";
         if (eventId === undefined || eventId === null)
             throw new Error("The parameter 'eventId' must be defined.");
         url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
@@ -318,7 +648,7 @@ export class EventManagementApiClient extends ServiceBase {
     }
 
     ticketTypes_AddOrUpdateTicketTypes(eventId: number, items: TicketType[]): Observable<TicketType[] | null> {
-        let url_ = this.baseUrl + "/api/event/{eventId}/tickettypes";
+        let url_ = this.baseUrl + "/api/events/{eventId}/tickettypes";
         if (eventId === undefined || eventId === null)
             throw new Error("The parameter 'eventId' must be defined.");
         url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
@@ -435,6 +765,168 @@ export interface IEvent {
     location?: string | undefined;
 }
 
+export class ProblemDetails implements IProblemDetails {
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
+
+    constructor(data?: IProblemDetails) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.type = data["type"];
+            this.title = data["title"];
+            this.status = data["status"];
+            this.detail = data["detail"];
+            this.instance = data["instance"];
+        }
+    }
+
+    static fromJS(data: any): ProblemDetails {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProblemDetails();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["title"] = this.title;
+        data["status"] = this.status;
+        data["detail"] = this.detail;
+        data["instance"] = this.instance;
+        return data; 
+    }
+}
+
+export interface IProblemDetails {
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
+}
+
+export class Ticket implements ITicket {
+    id!: number;
+    ticketNumber?: string | undefined;
+    eventId!: number;
+    ticketTypeId!: number;
+    validated!: boolean;
+    mail?: string | undefined;
+    phone?: string | undefined;
+    paymentStatus!: PaymentStatus;
+    termsAccepted?: boolean | undefined;
+    lastName?: string | undefined;
+    firstName?: string | undefined;
+    age?: number | undefined;
+    address?: string | undefined;
+    roomNumber?: string | undefined;
+    createdAt!: Date;
+    editedAt?: Date | undefined;
+    creator?: string | undefined;
+    editor?: string | undefined;
+
+    constructor(data?: ITicket) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.ticketNumber = data["ticketNumber"];
+            this.eventId = data["eventId"];
+            this.ticketTypeId = data["ticketTypeId"];
+            this.validated = data["validated"];
+            this.mail = data["mail"];
+            this.phone = data["phone"];
+            this.paymentStatus = data["paymentStatus"];
+            this.termsAccepted = data["termsAccepted"];
+            this.lastName = data["lastName"];
+            this.firstName = data["firstName"];
+            this.age = data["age"];
+            this.address = data["address"];
+            this.roomNumber = data["roomNumber"];
+            this.createdAt = data["createdAt"] ? new Date(data["createdAt"].toString()) : <any>undefined;
+            this.editedAt = data["editedAt"] ? new Date(data["editedAt"].toString()) : <any>undefined;
+            this.creator = data["creator"];
+            this.editor = data["editor"];
+        }
+    }
+
+    static fromJS(data: any): Ticket {
+        data = typeof data === 'object' ? data : {};
+        let result = new Ticket();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["ticketNumber"] = this.ticketNumber;
+        data["eventId"] = this.eventId;
+        data["ticketTypeId"] = this.ticketTypeId;
+        data["validated"] = this.validated;
+        data["mail"] = this.mail;
+        data["phone"] = this.phone;
+        data["paymentStatus"] = this.paymentStatus;
+        data["termsAccepted"] = this.termsAccepted;
+        data["lastName"] = this.lastName;
+        data["firstName"] = this.firstName;
+        data["age"] = this.age;
+        data["address"] = this.address;
+        data["roomNumber"] = this.roomNumber;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["editedAt"] = this.editedAt ? this.editedAt.toISOString() : <any>undefined;
+        data["creator"] = this.creator;
+        data["editor"] = this.editor;
+        return data; 
+    }
+}
+
+export interface ITicket {
+    id: number;
+    ticketNumber?: string | undefined;
+    eventId: number;
+    ticketTypeId: number;
+    validated: boolean;
+    mail?: string | undefined;
+    phone?: string | undefined;
+    paymentStatus: PaymentStatus;
+    termsAccepted?: boolean | undefined;
+    lastName?: string | undefined;
+    firstName?: string | undefined;
+    age?: number | undefined;
+    address?: string | undefined;
+    roomNumber?: string | undefined;
+    createdAt: Date;
+    editedAt?: Date | undefined;
+    creator?: string | undefined;
+    editor?: string | undefined;
+}
+
+export enum PaymentStatus {
+    Open = 0, 
+    Paid = 1, 
+    Presold = 2, 
+}
+
 export class TicketType implements ITicketType {
     id!: number;
     name?: string | undefined;
@@ -477,13 +969,6 @@ export interface ITicketType {
     id: number;
     name?: string | undefined;
     price: number;
-}
-
-export interface FileResponse {
-    data: Blob;
-    status: number;
-    fileName?: string;
-    headers?: { [name: string]: any };
 }
 
 export class SwaggerException extends Error {

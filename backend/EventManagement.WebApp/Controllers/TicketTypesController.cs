@@ -10,6 +10,7 @@ using System.Linq;
 namespace EventManagement.WebApp.Controllers
 {
     [ApiController]
+    [Route("api")]
     [Authorize(AuthenticationSchemes = Constants.JwtAuthScheme)]
     public class TicketTypesController : ControllerBase
     {
@@ -22,7 +23,7 @@ namespace EventManagement.WebApp.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("api/event/{eventId}/tickettypes")]
+        [HttpGet("events/{eventId}/tickettypes")]
         public ActionResult<IList<TicketType>> GetTicketTypes(int eventId)
         {
             return _context.TicketTypes
@@ -33,7 +34,7 @@ namespace EventManagement.WebApp.Controllers
                 .ToList();
         }
 
-        [HttpPost("api/event/{eventId}/tickettypes")]
+        [HttpPost("events/{eventId}/tickettypes")]
         public ActionResult<IList<TicketType>> AddOrUpdateTicketTypes(int eventId, [FromBody] TicketType[] items)
         {
             var evt = _context.Events
@@ -58,7 +59,8 @@ namespace EventManagement.WebApp.Controllers
                     var entity = evt.TicketTypes.SingleOrDefault(t => t.Id == item.Id);
                     if (entity == null)
                     {
-                        return BadRequest($"There is no ticket type with id {item.Id}.");
+                        return BadRequest(
+                            new ProblemDetails { Detail = $"There is no ticket type with id {item.Id}." });
                     }
                     else
                     {

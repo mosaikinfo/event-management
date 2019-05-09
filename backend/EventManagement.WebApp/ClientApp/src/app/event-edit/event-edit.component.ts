@@ -33,7 +33,7 @@ export class EventEditComponent implements OnInit {
       this.apiClient.events_CreateEvent(this.model)
         .subscribe((event: Event) => {
           this.alertService.showSaveSuccessAlert()
-          this.router.navigate(['..', event.id]);
+          this.router.navigate(['/events', event.id]);
         });
     } else {
       this.apiClient.events_UpdateEvent(this.model.id, this.model)

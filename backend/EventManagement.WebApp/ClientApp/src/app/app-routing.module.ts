@@ -4,16 +4,18 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuardService } from './services/auth-guard.service';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 import { EventListComponent } from './event-list/event-list.component';
-import { EventEditComponent } from './event-edit/event-edit.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { EventSettingsComponent } from './event-settings/event-settings.component';
+import { TicketListComponent } from './ticket-list/ticket-list.component';
+import { TicketEditComponent } from './ticket-edit/ticket-edit.component';
+import { EventGuardService } from './services/event-guard.service';
 
 const routes: Routes = [
     { 
         path: '', 
         component: DashboardComponent, 
         pathMatch: 'full', 
-        canActivate: [AuthGuardService] 
+        canActivate: [AuthGuardService, EventGuardService] 
     },
     {
         path: 'auth-callback',
@@ -29,11 +31,26 @@ const routes: Routes = [
         component: EventSettingsComponent, 
         canActivate: [AuthGuardService] 
     },
-    { 
-        path: 'events/:id', 
+    {
+        path: 'events/:id',
         component: EventSettingsComponent, 
         canActivate: [AuthGuardService] 
-    }
+    },
+    { 
+        path: 'tickets', 
+        component: TicketListComponent, 
+        canActivate: [AuthGuardService, EventGuardService] 
+    },
+    { 
+        path: 'tickets/new', 
+        component: TicketEditComponent, 
+        canActivate: [AuthGuardService, EventGuardService] 
+    },
+    { 
+        path: 'tickets/:id', 
+        component: TicketEditComponent, 
+        canActivate: [AuthGuardService, EventGuardService] 
+    },
 ];
 
 @NgModule({

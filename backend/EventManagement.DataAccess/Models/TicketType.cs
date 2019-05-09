@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace EventManagement.DataAccess.Models
 {
@@ -12,5 +10,6 @@ namespace EventManagement.DataAccess.Models
         public decimal Price { get; set; }
 
         public Event Event { get; set; }
+        public List<Ticket> Tickets { get; set; }
     }
 }

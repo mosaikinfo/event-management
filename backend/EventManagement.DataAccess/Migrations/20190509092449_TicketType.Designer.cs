@@ -4,14 +4,16 @@ using EventManagement.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EventManagement.DataAccess.Migrations
 {
     [DbContext(typeof(EventsDbContext))]
-    partial class EventsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190509092449_TicketType")]
+    partial class TicketType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,8 +68,6 @@ namespace EventManagement.DataAccess.Migrations
 
                     b.Property<string>("FirstName")
                         .HasMaxLength(300);
-
-                    b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(300);

@@ -35,7 +35,6 @@ namespace EventManagement.WebApp.Controllers
         [HttpGet("{id}")]
         public ActionResult<Event> GetEvent(int id)
         {
-            // TODO: validate permissions.
             return _context.Events
                 .AsNoTracking()
                 .Where(x => x.Id == id)
@@ -44,22 +43,25 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpPost]
+        [ApiConventionMethod(typeof(DefaultApiConventions),
+            nameof(DefaultApiConventions.Post))]
         public ActionResult<Event> CreateEvent([FromBody] Event model)
         {
-            // TODO: validate permissions.
             if (model.Id > 0)
                 return BadRequest();
             var entity = new DataAccess.Models.Event();
             _mapper.Map(model, entity);
             _context.Add(entity);
             _context.SaveChanges();
-            return _mapper.Map<Event>(entity);
+            model = _mapper.Map<Event>(entity);
+            return CreatedAtAction(nameof(GetEvent), new { id = model.Id }, model);
         }
 
         [HttpPut("{id}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions),
+            nameof(DefaultApiConventions.Put))]
         public ActionResult UpdateEvent(int id, [FromBody] Event model)
         {
-            // TODO: validate permissions.
             if (id != model.Id)
                 return BadRequest();
             var entity = _context.Events.Find(model.Id);

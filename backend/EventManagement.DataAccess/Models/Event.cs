@@ -13,5 +13,6 @@ namespace EventManagement.DataAccess.Models
         public string Location { get; set; }
 
         public List<TicketType> TicketTypes { get; set; }
+        public List<Ticket> Tickets { get; set; }
     }
 }
