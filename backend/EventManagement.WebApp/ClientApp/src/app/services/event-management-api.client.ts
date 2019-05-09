@@ -756,6 +756,7 @@ export class Ticket implements ITicket {
     id!: number;
     ticketNumber?: string | undefined;
     eventId!: number;
+    ticketTypeId!: number;
     validated!: boolean;
     mail?: string | undefined;
     phone?: string | undefined;
@@ -785,6 +786,7 @@ export class Ticket implements ITicket {
             this.id = data["id"];
             this.ticketNumber = data["ticketNumber"];
             this.eventId = data["eventId"];
+            this.ticketTypeId = data["ticketTypeId"];
             this.validated = data["validated"];
             this.mail = data["mail"];
             this.phone = data["phone"];
@@ -814,6 +816,7 @@ export class Ticket implements ITicket {
         data["id"] = this.id;
         data["ticketNumber"] = this.ticketNumber;
         data["eventId"] = this.eventId;
+        data["ticketTypeId"] = this.ticketTypeId;
         data["validated"] = this.validated;
         data["mail"] = this.mail;
         data["phone"] = this.phone;
@@ -836,6 +839,7 @@ export interface ITicket {
     id: number;
     ticketNumber?: string | undefined;
     eventId: number;
+    ticketTypeId: number;
     validated: boolean;
     mail?: string | undefined;
     phone?: string | undefined;

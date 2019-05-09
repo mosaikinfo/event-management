@@ -8,6 +8,7 @@ namespace EventManagement.DataAccess.Models
         public string TicketNumber { get; set; }
         public Guid TicketGuid { get; set; }
         public int EventId { get; set; }
+        public int TicketTypeId { get; set; }
         public bool Validated { get; set; }
         public string Mail { get; set; }
         public string Phone { get; set; }
@@ -24,6 +25,7 @@ namespace EventManagement.DataAccess.Models
         public int? EditorId { get; set; }
 
         public Event Event { get; set; }
+        public TicketType TicketType { get; set; }
         public User Creator { get; set; }
         public User Editor { get; set; }
     }

@@ -11,7 +11,7 @@
     </span>
   </h2>
 
-<form class="mt-4" (ngSubmit)="saveChanges()" #form="ngForm">    
+<form class="mt-4" (ngSubmit)="saveChanges()" #form="ngForm">
 
   <div *ngIf="!isNew()">
     <h2 class="h5">Einlasskontrolle</h2>
@@ -23,6 +23,17 @@
   </div>
 
   <hr *ngIf="!isNew()">
+  <h2 class="h5">Ticket-Typ</h2>
+  <div class="form-group">
+    <select name="ticketType" class="custom-select"
+            [(ngModel)]="model.ticketTypeId" required>
+      <option [ngValue]="ticketType.id" *ngFor="let ticketType of ticketTypes">
+        {{ ticketType.name }} ({{ ticketType.price }} €)
+      </option>
+    </select>
+  </div>
+
+  <hr>
   <h2 class="h5">Zahlungsstatus</h2>
   <div class="form-group">
     <select name="paymentStatus" [(ngModel)]="model.paymentStatus" class="custom-select">

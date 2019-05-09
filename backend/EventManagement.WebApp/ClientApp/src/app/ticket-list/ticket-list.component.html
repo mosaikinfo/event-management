@@ -10,12 +10,16 @@
     <ng-template pTemplate="header">
         <tr>
             <th>Ticket-Nr.</th>
+            <th>Ticket-Typ</th>
+            <th>Erstellt am</th>
             <th style="width:8em"></th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-ticket>
         <tr>
-            <td>{{ticket.ticketNumber}}</td>
+            <td>{{ ticket.ticketNumber }}</td>
+            <td>{{ getTicketType(ticket.ticketTypeId)?.name }}</td>
+            <td>{{ ticket.createdAt | date:'short' }}</td>
             <td style="text-align:center">
                 <button pButton type="button" icon="pi pi-pencil"
                         [routerLink]="['/tickets', ticket.id]">

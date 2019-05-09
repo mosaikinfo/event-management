@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageAlertService } from '../page-alert/page-alert.service';
-import { Ticket, Event, PaymentStatus, EventManagementApiClient } from '../services/event-management-api.client';
+import { Ticket, Event, PaymentStatus, EventManagementApiClient, TicketType } from '../services/event-management-api.client';
 import { SessionService } from '../services/session.service';
 
 @Component({
@@ -11,6 +11,7 @@ import { SessionService } from '../services/session.service';
 })
 export class TicketEditComponent implements OnInit {
   model : Ticket = new Ticket();
+  ticketTypes: TicketType[] = [];
   PaymentStatus = PaymentStatus;
 
   constructor(
@@ -20,11 +21,14 @@ export class TicketEditComponent implements OnInit {
     private router: Router,
     private alertService: PageAlertService
   ) {
-    this.session.getCurrentEvent()
-      .then((evt: Event) => this.model.eventId = evt.id);
+    this.model.paymentStatus = PaymentStatus.Open;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    let event = <Event>await this.session.getCurrentEvent();
+    this.model.eventId = event.id;
+    this.apiClient.ticketTypes_GetTicketTypes(event.id)
+      .subscribe((items: TicketType[]) => this.ticketTypes = items);
     const id = +this.route.snapshot.paramMap.get('id');
     if (id) {
       this.apiClient.tickets_GetById(id)

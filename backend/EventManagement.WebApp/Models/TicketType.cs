@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace EventManagement.WebApp.Models
+﻿namespace EventManagement.WebApp.Models
 {
     public class TicketType
     {

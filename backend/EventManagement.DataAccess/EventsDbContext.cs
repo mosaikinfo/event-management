@@ -75,6 +75,10 @@ namespace EventManagement.DataAccess
                     .WithMany(e => e.Tickets)
                     .HasForeignKey(e => e.EventId);
 
+                entity.HasOne(e => e.TicketType)
+                    .WithMany(e => e.Tickets)
+                    .HasForeignKey(e => e.TicketTypeId);
+
                 entity.HasOne(e => e.Creator)
                     .WithMany()
                     .HasForeignKey(e => e.CreatorId);

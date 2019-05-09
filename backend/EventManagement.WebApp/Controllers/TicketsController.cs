@@ -52,9 +52,6 @@ namespace EventManagement.WebApp.Controllers
             if (model.Id > 0)
                 return BadRequest(
                     new ProblemDetails { Detail = "This method can't be used to update tickets." });
-            if (model.EventId <= 0)
-                return BadRequest(
-                    new ProblemDetails { Detail = "The field EventId is required." });
             var evt = _context.Events.Find(model.EventId);
             if (evt == null)
                 return BadRequest(
