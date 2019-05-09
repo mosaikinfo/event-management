@@ -12,6 +12,7 @@ using System.Linq;
 namespace EventManagement.WebApp.Controllers
 {
     [ApiController]
+    [Route("api")]
     [Authorize(AuthenticationSchemes = Constants.JwtAuthScheme)]
     public class TicketsController : ControllerBase
     {
@@ -27,7 +28,7 @@ namespace EventManagement.WebApp.Controllers
         /// <summary>
         /// Lists all tickets for a given event.
         /// </summary>
-        [HttpGet("api/events/{eventId}/tickets")]
+        [HttpGet("events/{eventId}/tickets")]
         public IEnumerable<Ticket> GetTickets(int eventId)
         {
             return _context.Tickets
@@ -37,14 +38,14 @@ namespace EventManagement.WebApp.Controllers
                 .Select(_mapper.Map<Ticket>);
         }
 
-        [HttpGet("api/tickets/{id}")]
+        [HttpGet("tickets/{id}")]
         public ActionResult<Ticket> GetById(int id)
         {
             var entity = _context.Tickets.Find(id);
             return _mapper.Map<Ticket>(entity);
         }
 
-        [HttpPost("api/tickets")]
+        [HttpPost("tickets")]
         [ApiConventionMethod(typeof(DefaultApiConventions),
             nameof(DefaultApiConventions.Post))]
         public ActionResult<Ticket> CreateTicket(Ticket model)
@@ -68,7 +69,7 @@ namespace EventManagement.WebApp.Controllers
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
         }
 
-        [HttpPut("api/tickets/{id}")]
+        [HttpPut("tickets/{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions),
             nameof(DefaultApiConventions.Put))]
         public ActionResult UpdateTicket(int id, [FromBody] Ticket model)
@@ -86,6 +87,21 @@ namespace EventManagement.WebApp.Controllers
                     new ProblemDetails { Detail = "The ticket is only valid for a single event." });
             _mapper.Map(model, entity);
             SetAuthorInfo(entity);
+            _context.SaveChanges();
+            return NoContent();
+        }
+
+        [HttpDelete("tickets/{id}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions),
+            nameof(DefaultApiConventions.Delete))]
+        public IActionResult DeleteTicket(int id)
+        {
+            var entity = _context.Tickets.Find(id);
+            if (entity == null)
+                return NotFound();
+            SetAuthorInfo(entity);
+            _context.SaveChanges();
+            _context.Tickets.Remove(entity);
             _context.SaveChanges();
             return NoContent();
         }

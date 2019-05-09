@@ -67,6 +67,8 @@ namespace EventManagement.DataAccess.Migrations
                     b.Property<string>("FirstName")
                         .HasMaxLength(300);
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<string>("LastName")
                         .HasMaxLength(300);
 

@@ -53,6 +53,8 @@ namespace EventManagement.DataAccess
 
             modelBuilder.Entity<Ticket>(entity =>
             {
+                entity.HasQueryFilter(e => !e.IsDeleted);
+
                 entity.HasAlternateKey(e => e.TicketNumber);
                 entity.HasAlternateKey(e => e.TicketGuid);
 

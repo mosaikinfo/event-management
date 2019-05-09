@@ -23,6 +23,7 @@ namespace EventManagement.DataAccess.Models
         public DateTime? EditedAt { get; set; }
         public int? CreatorId { get; set; }
         public int? EditorId { get; set; }
+        public bool IsDeleted { get; set; }
 
         public Event Event { get; set; }
         public TicketType TicketType { get; set; }
