@@ -52,7 +52,7 @@ namespace EventManagement.WebApp
                 .AddDeveloperSigningCredential(persistKey: true)
                 .AddInMemoryApiResources(IdentityServerConfig.GetApis())
                 .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
-                .AddInMemoryClients(IdentityServerConfig.GetClients())
+                .AddClientStore<EventManagementLocalClientStore>()
                 .AddProfileService<UserProfileService>();
             services.AddTransient<IUserStore, UserStore>();
 
