@@ -40,16 +40,41 @@ export class TicketEditComponent implements OnInit {
     return !this.model.id;
   }
   
-  saveChanges() {
+  async saveChanges(): Promise<void> {
     if (this.isNew()) {
-      this.apiClient.tickets_CreateTicket(this.model)
-        .subscribe((ticket: Ticket) => {
-          this.alertService.showSaveSuccessAlert()
-          this.router.navigate(['/tickets', ticket.id]);
-        });
+      let ticket = <Ticket>await this.apiClient
+        .tickets_CreateTicket(this.model)
+        .toPromise();
+      this.alertService.showSaveSuccessAlert()
+      this.router.navigate(['/tickets', ticket.id]);
     } else {
-      this.apiClient.tickets_UpdateTicket(this.model.id, this.model)
-        .subscribe(() => this.alertService.showSaveSuccessAlert());
+      await this.apiClient
+        .tickets_UpdateTicket(this.model.id, this.model)
+        .toPromise();
+      this.alertService.showSaveSuccessAlert();
     }
+  }
+
+  async saveAndGoBack() {
+    await this.saveChanges();
+    this.goBack();
+  }
+
+  async delete() {
+    let yes = confirm(`Sind Sie sicher, dass Sie Ticket ${this.model.ticketNumber} löschen wollen?`);
+    if (yes) {
+      await this.apiClient
+        .tickets_DeleteTicket(this.model.id)
+        .toPromise();
+      this.alertService.showAlert({
+        message: `Ticket ${this.model.ticketNumber} wurde gelöscht.`,
+        type: "success"
+      });
+      this.goBack();
+    }
+  }
+
+  goBack() {
+    this.router.navigate(['/tickets']);
   }
 }

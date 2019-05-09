@@ -99,11 +99,10 @@ namespace EventManagement.WebApp.Controllers
             var entity = _context.Tickets.Find(id);
             if (entity == null)
                 return NotFound();
+            entity.IsDeleted = true;
             SetAuthorInfo(entity);
             _context.SaveChanges();
-            _context.Tickets.Remove(entity);
-            _context.SaveChanges();
-            return NoContent();
+            return Ok();
         }
 
         private void SetAuthorInfo(DataAccess.Models.Ticket entity)

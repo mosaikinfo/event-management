@@ -6,25 +6,24 @@
 <p>
     <a class="btn btn-primary" [routerLink]='["/tickets/new"]'>Neu</a>
 </p>
-<p-table [value]="tickets" *ngIf="tickets && tickets.length > 0">
+<p-table [value]="tickets" *ngIf="tickets && tickets.length > 0"
+         selectionMode="single" [(selection)]="selectedTicket">
     <ng-template pTemplate="header">
         <tr>
             <th>Ticket-Nr.</th>
             <th>Ticket-Typ</th>
+            <th>Check-In</th>
             <th>Erstellt am</th>
-            <th style="width:8em"></th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-ticket>
-        <tr>
+        <tr [pSelectableRow]="ticket" (click)="edit()">
             <td>{{ ticket.ticketNumber }}</td>
             <td>{{ getTicketType(ticket.ticketTypeId)?.name }}</td>
-            <td>{{ ticket.createdAt | date:'short' }}</td>
-            <td style="text-align:center">
-                <button pButton type="button" icon="pi pi-pencil"
-                        [routerLink]="['/tickets', ticket.id]">
-                </button>       
+            <td>
+                <input type="checkbox" [checked]="ticket.validated" (click)="false">
             </td>
+            <td>{{ ticket.createdAt | date:'short' }}</td>
         </tr>
     </ng-template>
 </p-table>
