@@ -16,5 +16,11 @@ steps:
 - task: DotNetCoreInstaller@0
   inputs:
     version: '2.2.101'
-- script: dotnet publish --configuration $(buildConfiguration)
+- script: dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
   displayName: 'dotnet publish $(buildConfiguration)'
+  workingDirectory: 'backend/EventManagement.WebApp'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'backend'
+    publishLocation: 'Container'
