@@ -14,3 +14,11 @@
 .material-icons.md-32 { font-size: 32px; }
 .material-icons.md-36 { font-size: 36px; }
 .material-icons.md-48 { font-size: 48px; }
+
+.ng-invalid.ng-untouched
+{  
+    border-left-color: #e74c3c;
+}
+.ng-invalid.ng-touched {
+    border-color: #e74c3c;
+}
