@@ -4,7 +4,11 @@
     Es sind noch keine Tickets vorhanden.
 </p>
 <p>
-    <a class="btn btn-primary" [routerLink]='["/tickets/new"]'>Neu</a>
+    <a class="btn btn-primary mr-2" [routerLink]='["/tickets/new"]'>Neu</a>
+    <button type="button" class="btn btn-light mr-2"
+            (click)="loadTickets(event.id)">
+        <i class="fas fa-redo"></i>
+    </button>
 </p>
 <p-table [value]="tickets" *ngIf="tickets && tickets.length > 0"
          selectionMode="single" [(selection)]="selectedTicket">

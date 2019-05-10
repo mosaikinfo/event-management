@@ -31,9 +31,14 @@ export class TicketEditComponent implements OnInit {
       .subscribe((items: TicketType[]) => this.ticketTypes = items);
     const id = +this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.apiClient.tickets_GetById(id)
-        .subscribe((ticket: Ticket) => this.model = ticket);
+      this.loadTicket(id);
     }
+  }
+
+  async loadTicket(id: number): Promise<void> {
+    let ticket = <Ticket>await this.apiClient
+      .tickets_GetById(id).toPromise();
+    this.model = ticket;
   }
 
   isNew(): boolean {

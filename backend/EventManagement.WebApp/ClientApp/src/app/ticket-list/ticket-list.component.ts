@@ -9,6 +9,7 @@ import { SessionService } from '../services/session.service';
   styleUrls: ['./ticket-list.component.css']
 })
 export class TicketListComponent implements OnInit {
+  event: Event;
   tickets: Ticket[];
   selectedTicket: Ticket;
   ticketTypes: TicketType[];
@@ -20,11 +21,17 @@ export class TicketListComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    let event = <Event>await this.session.getCurrentEvent();
-    this.apiClient.ticketTypes_GetTicketTypes(event.id)
-      .subscribe((items: TicketType[]) => this.ticketTypes = items);
-    this.apiClient.tickets_GetTickets(event.id)
-      .subscribe((tickets: Ticket[]) => this.tickets = tickets);
+    this.event = <Event>await this.session.getCurrentEvent();
+    this.loadTickets(this.event.id);
+  }
+
+  async loadTickets(eventId: number): Promise<void> {
+    await Promise.all([
+      this.apiClient.ticketTypes_GetTicketTypes(eventId)
+        .subscribe((items: TicketType[]) => this.ticketTypes = items),
+      this.apiClient.tickets_GetTickets(eventId)
+        .subscribe((tickets: Ticket[]) => this.tickets = tickets)
+    ]);
   }
 
   edit() {
