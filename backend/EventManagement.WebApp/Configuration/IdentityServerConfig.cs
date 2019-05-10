@@ -1,4 +1,7 @@
-﻿using IdentityServer4.Models;
+﻿using EventManagement.Identity;
+using IdentityServer4.Models;
+using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 
 namespace EventManagement.WebApp
@@ -25,7 +28,11 @@ namespace EventManagement.WebApp
             };
         }
 
-        public static IEnumerable<Client> GetClients()
+        /// <summary>
+        /// Returns a list of local clients that run under
+        /// the same host as the identity provider.
+        /// </summary>
+        public static IEnumerable<Client> GetLocalClients()
         {
             return new List<Client>
             {
@@ -37,15 +44,26 @@ namespace EventManagement.WebApp
                     RequireConsent = false,
 
                     RedirectUris = {
-                        "http://localhost:5000/auth-callback",
-                        "http://localhost:5000/silent-refresh.html"
+                        "~/auth-callback",
+                        "~/silent-refresh.html"
                     },
-                    PostLogoutRedirectUris = { "http://localhost:5000/" },
+                    PostLogoutRedirectUris = { "~" },
 
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowedScopes = { "openid", "profile", "eventmanagement.admin" }
                 }
             };
+        }
+    }
+
+    /// <summary>
+    /// Client store to provide the hard-coded local api clients.
+    /// </summary>
+    public class EventManagementLocalClientStore : LocalClientStore
+    {
+        public EventManagementLocalClientStore(IHttpContextAccessor httpContextAccessor)
+            : base(new InMemoryClientStore(IdentityServerConfig.GetLocalClients()), httpContextAccessor)
+        {
         }
     }
 }
