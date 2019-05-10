@@ -77,11 +77,7 @@ namespace EventManagement.WebApp
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, EventsDbContext dbContext, EventsDbInitializer dbInitializer)
         {
             dbContext.Database.Migrate();
-
-            if (env.IsDevelopment())
-            {
-                dbInitializer.EnsureData(new TestData());
-            }
+            dbInitializer.EnsureInitialData(new TestData());
 
             if (env.IsDevelopment())
             {

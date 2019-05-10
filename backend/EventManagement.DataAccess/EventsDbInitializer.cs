@@ -17,7 +17,11 @@ namespace EventManagement.DataAccess
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void EnsureData(IEventsDbInitialData initialData)
+        /// <summary>
+        /// If it's an empty database after a fresh setup we're
+        /// inserting some initial data.
+        /// </summary>
+        public void EnsureInitialData(IEventsDbInitialData initialData)
         {
             if (initialData.Users != null && !_context.Users.Any())
             {
