@@ -22,6 +22,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="IdentityServer4" Version="2.4.0" />
+    <PackageReference Include="codeessentials.WebOptimizer.Dotless" Version="1.0.10" />
+    <PackageReference Include="LigerShark.WebOptimizer.Core" Version="1.0.236" />
   </ItemGroup>
 
   <ItemGroup>

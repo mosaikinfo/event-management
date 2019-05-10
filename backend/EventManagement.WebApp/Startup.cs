@@ -48,6 +48,12 @@ namespace EventManagement.WebApp
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
 
+            services.AddWebOptimizer(pipeline =>
+            {
+                pipeline.AddLessBundle("css/site.css", "css/site.less");
+                pipeline.AddLessBundle("css/ticket-validation.css", "css/ticket-validation.less");
+            });
+
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential(persistKey: true)
                 .AddInMemoryApiResources(IdentityServerConfig.GetApis())
@@ -88,6 +94,7 @@ namespace EventManagement.WebApp
                 app.UseExceptionHandler("/Error");
             }
 
+            app.UseWebOptimizer();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
