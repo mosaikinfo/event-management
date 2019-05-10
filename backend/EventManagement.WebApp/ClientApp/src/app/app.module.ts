@@ -30,6 +30,7 @@ import { ButtonBackComponent } from './button-back/button-back.component';
 import { TicketTypesEditComponent } from './ticket-types-edit/ticket-types-edit.component';
 import { TicketListComponent } from './ticket-list/ticket-list.component';
 import { TicketEditComponent } from './ticket-edit/ticket-edit.component';
+import { EntranceControlComponent } from './entrance-control/entrance-control.component';
 
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
@@ -50,7 +51,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     ButtonBackComponent,
     TicketTypesEditComponent,
     TicketListComponent,
-    TicketEditComponent
+    TicketEditComponent,
+    EntranceControlComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

@@ -29,13 +29,27 @@ namespace EventManagement.WebApp.Controllers
         /// Lists all tickets for a given event.
         /// </summary>
         [HttpGet("events/{eventId}/tickets")]
-        public IEnumerable<Ticket> GetTickets(int eventId)
+        public ActionResult<IList<Ticket>> GetTickets(int eventId, string filter, string filterValue)
         {
-            return _context.Tickets
-                .AsNoTracking()
-                .Where(e => e.EventId == eventId)
-                .OrderByDescending(x => x.CreatedAt)
-                .Select(_mapper.Map<Ticket>);
+            IQueryable<DataAccess.Models.Ticket> query =
+                _context.Tickets
+                    .AsNoTracking()
+                    .Where(e => e.EventId == eventId)
+                    .OrderByDescending(x => x.CreatedAt);
+            if (filter != null)
+            {
+                filter = filter.ToLowerInvariant();
+                if (filter == "ticketnumber")
+                {
+                    query = query.Where(e => e.TicketNumber == filterValue);
+                }
+                else
+                {
+                    return BadRequest(
+                        new ProblemDetails { Detail = "Invalid value for parameter 'filter'." });
+                }
+            }
+            return query.Select(_mapper.Map<Ticket>).ToList();
         }
 
         [HttpGet("tickets/{id}")]

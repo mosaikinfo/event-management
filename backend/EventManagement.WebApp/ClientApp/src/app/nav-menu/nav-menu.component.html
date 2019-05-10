@@ -16,6 +16,9 @@
           <li *ngIf="currentEvent" class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
             <a class="nav-link text-dark" [routerLink]='["/tickets"]'>Tickets</a>
           </li>
+          <li *ngIf="currentEvent" class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
+            <a class="nav-link text-dark" [routerLink]='["/entrance-control"]'>Einlasskontrolle</a>
+          </li>
         </ul>
         <ul class="navbar-nav">
           <li *ngIf="currentUser" class="nav-item" ngbDropdown placement="bottom-right">
