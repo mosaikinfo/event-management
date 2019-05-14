@@ -1,0 +1,33 @@
+<h1>Tickets</h1>
+
+<p *ngIf="!tickets || tickets.length === 0" class="mt-4">
+    Es sind noch keine Tickets vorhanden.
+</p>
+<p>
+    <a class="btn btn-primary mr-2" [routerLink]='["/tickets/new"]'>Neu</a>
+    <button type="button" class="btn btn-light mr-2"
+            (click)="loadTickets(event.id)">
+        <i class="fas fa-redo"></i>
+    </button>
+</p>
+<p-table [value]="tickets" *ngIf="tickets && tickets.length > 0"
+         selectionMode="single" [(selection)]="selectedTicket">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Ticket-Nr.</th>
+            <th>Ticket-Typ</th>
+            <th>Check-In</th>
+            <th>Erstellt am</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-ticket>
+        <tr [pSelectableRow]="ticket" (click)="edit()">
+            <td>{{ ticket.ticketNumber }}</td>
+            <td>{{ getTicketType(ticket.ticketTypeId)?.name }}</td>
+            <td>
+                <input type="checkbox" [checked]="ticket.validated" (click)="false">
+            </td>
+            <td>{{ ticket.createdAt | date:'short' }}</td>
+        </tr>
+    </ng-template>
+</p-table>

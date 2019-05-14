@@ -1,0 +1,123 @@
+<form (ngSubmit)="saveChanges()" #form="ngForm">
+  
+  <nav class="navbar navbar-light mt-3 mb-3 p-0">
+    <div class="form-inline">
+      <app-button-back class="mr-4 mb-2"></app-button-back>
+      <span class="text-nowrap">
+        <button type="submit" class="btn btn-primary mr-2" [disabled]="!form.form.valid">Speichern</button>
+        <button type="button" class="btn btn-outline-danger mr-2" *ngIf="!isNew()" (click)="delete()">Löschen</button>
+        <button type="button" class="btn btn-light" *ngIf="!isNew()" (click)="loadTicket(model.id)"><i class="fas fa-redo"></i></button>
+      </span>
+    </div>
+  </nav>
+
+  <div class="mt-3 mb-3">
+    <h2 class="h3" *ngIf="isNew()">
+      Neues Ticket
+    </h2>  
+    <h2 class="h3" *ngIf="!isNew()">
+      Ticket-Nr. {{ model.ticketNumber }}
+      <span *ngIf="model.lastName && model.firstName">
+      - {{ model.lastName }}, {{ model.firstName }}
+      </span>
+    </h2>
+  </div>
+
+  <div *ngIf="!isNew()">
+    <h2 class="h5">Einlasskontrolle</h2>
+    <div class="form-group input-switch">
+      <label>Ticket wurde geprüft</label>
+      <p-inputSwitch name="validated" [(ngModel)]="model.validated">
+      </p-inputSwitch>
+    </div>
+  </div>
+
+  <hr *ngIf="!isNew()">
+  <h2 class="h5">Ticket-Typ</h2>
+  <div class="form-group">
+    <select name="ticketType" class="custom-select"
+            [(ngModel)]="model.ticketTypeId" required>
+      <option [ngValue]="ticketType.id" *ngFor="let ticketType of ticketTypes">
+        {{ ticketType.name }} ({{ ticketType.price }} €)
+      </option>
+    </select>
+  </div>
+
+  <hr>
+  <h2 class="h5">Zahlungsstatus</h2>
+  <div class="form-group">
+    <select name="paymentStatus" [(ngModel)]="model.paymentStatus" class="custom-select">
+      <option value="{{ PaymentStatus.Open }}">Offen</option>
+      <option value="{{ PaymentStatus.Paid }}">Bezahlt</option>
+      <option value="{{ PaymentStatus.Presold }}">Vorverkauf</option>
+    </select>
+  </div>
+
+  <hr>
+  <h2 class="h5">Einverständniserklärung</h2>
+  <div class="form-group input-switch">
+    <label>Hat die Person die Bedingungen (z. B. Datenschutzbestimmungen/AGB) des Veranstalters akzeptiert?</label>
+    <div>
+      <p-triStateCheckbox name="termsAccepted" [(ngModel)]="model.termsAccepted"></p-triStateCheckbox>
+      <p [ngSwitch]="model.termsAccepted">
+        (<span *ngSwitchCase="null">unbekannt</span>
+        <span *ngSwitchCase="false">nicht akzeptiert</span>
+        <span *ngSwitchCase="true">akzeptiert</span>)
+      </p>
+    </div>
+  </div>
+
+  <hr>
+  <h2 class="h5">Unterkunft</h2>
+  <div class="form-group">
+    <label for="roomNumber">Zimmernummer</label>
+    <input name="roomNumber" type="text" class="form-control"
+            [(ngModel)]="model.roomNumber" maxlength="300">
+  </div>
+
+  <hr>
+  <h2 class="h5">Kontaktdaten</h2>
+  <div class="form-group">
+    <label for="mail">E-Mail-Adresse</label>
+    <input name="mail" type="email" class="form-control"
+            [(ngModel)]="model.mail" maxlength="254">
+  </div>
+  <div class="form-group">
+    <label for="phone">Telefonnummer</label>
+    <input name="phone" type="tel" class="form-control"
+            [(ngModel)]="model.phone" maxlength="100">
+  </div>
+
+  <hr>
+  <h2 class="h5">Personendaten</h2>
+  <div class="form-group">
+    <label for="lastName">Nachname</label>
+    <input name="lastName" type="text" class="form-control"
+    [(ngModel)]="model.lastName" maxlength="300">
+  </div>
+  <div class="form-group">
+    <label for="firstName">Vorname</label>
+    <input name="firstName" type="text" class="form-control"
+           [(ngModel)]="model.firstName" maxlength="300">
+  </div>
+  <div class="form-group">
+    <label for="age">Alter</label>
+    <input name="age" type="number" class="form-control"
+            [(ngModel)]="model.age">
+  </div>
+  <div class="form-group">
+    <label for="address">Adresse</label>
+    <textarea name="address" class="form-control" rows="3"
+              [(ngModel)]="model.address">
+    </textarea>
+  </div>
+  
+  <div>
+    <button type="submit" (click)="saveAndGoBack()" class="btn btn-primary" [disabled]="!form.form.valid">Speichern</button>
+  </div>
+</form>
+
+<div class="mt-3 mb-5 text-muted" *ngIf="!isNew()">
+  Erstellt von {{ model.creator || 'SYSTEM' }} am {{ model.createdAt | date:'short' }}.<br>
+  Zuletzt geändert von {{ model.editor || 'SYSTEM' }} am {{ model.editedAt | date:'short' }}.
+</div>
