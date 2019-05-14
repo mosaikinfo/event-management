@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement.WebApp", "EventManagement.WebApp\EventManagement.WebApp.csproj", "{4ACDA742-59BE-4EC6-A6EA-70E47303AF84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement.WebApp", "src\EventManagement.WebApp\EventManagement.WebApp.csproj", "{4ACDA742-59BE-4EC6-A6EA-70E47303AF84}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement.DataAccess", "EventManagement.DataAccess\EventManagement.DataAccess.csproj", "{F88C940F-AF22-4B7E-A19E-DE77B05BB4A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement.DataAccess", "src\EventManagement.DataAccess\EventManagement.DataAccess.csproj", "{F88C940F-AF22-4B7E-A19E-DE77B05BB4A2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement.Identity", "EventManagement.Identity\EventManagement.Identity.csproj", "{EFC2B752-B15F-4580-99E9-7730116C3823}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement.Identity", "src\EventManagement.Identity\EventManagement.Identity.csproj", "{EFC2B752-B15F-4580-99E9-7730116C3823}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement", "EventManagement\EventManagement.csproj", "{0B9034E8-F080-4FA5-BD6F-39BEA063F95C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement", "src\EventManagement\EventManagement.csproj", "{0B9034E8-F080-4FA5-BD6F-39BEA063F95C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement.UnitTests", "..\test\EventManagement.UnitTests\EventManagement.UnitTests.csproj", "{8F07ED36-F567-4A05-AD97-926EB5F19323}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement.UnitTests", "test\EventManagement.UnitTests\EventManagement.UnitTests.csproj", "{8F07ED36-F567-4A05-AD97-926EB5F19323}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{FF57EECE-8247-416D-9854-2C0782741EB4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{DAD18327-AB3F-4AF8-BE00-A755ECA05FBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,7 +46,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{8F07ED36-F567-4A05-AD97-926EB5F19323} = {FF57EECE-8247-416D-9854-2C0782741EB4}
+		{8F07ED36-F567-4A05-AD97-926EB5F19323} = {DAD18327-AB3F-4AF8-BE00-A755ECA05FBD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A2DA2F9F-3798-4710-8C68-63E1F837DC4C}

@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\backend\EventManagement\EventManagement.csproj" />
+    <ProjectReference Include="..\..\src\EventManagement\EventManagement.csproj" />
   </ItemGroup>
 
   <ItemGroup>
