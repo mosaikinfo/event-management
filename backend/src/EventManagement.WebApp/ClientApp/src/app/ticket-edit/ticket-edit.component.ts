@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageAlertService } from '../page-alert/page-alert.service';
 import { Ticket, Event, PaymentStatus, EventManagementApiClient, TicketType } from '../services/event-management-api.client';
@@ -19,7 +19,8 @@ export class TicketEditComponent implements OnInit {
     private apiClient : EventManagementApiClient,
     private route: ActivatedRoute,
     private router: Router,
-    private alertService: PageAlertService
+    private alertService: PageAlertService,
+    @Inject('BASE_URL') public baseUrl: string,
   ) {
     this.model.paymentStatus = PaymentStatus.Open;
   }
