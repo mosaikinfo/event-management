@@ -1,6 +1,8 @@
-﻿// TODO: We need two-factor authentication for downloading a ticket. A secret url isn't secure enough.
-using EventManagement.DataAccess;
+﻿using EventManagement.DataAccess;
 using EventManagement.TicketGeneration;
+using IdentityServer4;
+using IdentityServer4.Quickstart.UI;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
 
@@ -9,6 +11,8 @@ namespace EventManagement.WebApp.Controllers
     /// <summary>
     /// Controller to download tickets with an internet browser.
     /// </summary>
+    [SecurityHeaders]
+    [Authorize(AuthenticationSchemes = IdentityServerConstants.DefaultCookieAuthenticationScheme)]
     public class TicketDownloadController : Controller
     {
         private readonly EventsDbContext _context;
