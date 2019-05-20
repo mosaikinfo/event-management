@@ -1,6 +1,7 @@
 ﻿using EventManagement.TicketGeneration;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace TicketGenerator
 {
@@ -33,8 +34,17 @@ namespace TicketGenerator
                 BookingNumber = "12892984"
             };
 
-            var generator = new PdfTicketGenerator();
-            string filePath = generator.GenerateTicket(ticketData);
+            // generate a file with a random filename in the system's temp directory.
+            string filePath = Path.GetTempFileName() + ".pdf";
+
+            var fileStream = new FileStream(filePath,
+                FileMode.Create, FileAccess.Write, FileShare.None);
+
+            using (fileStream)
+            {
+                var generator = new PdfTicketGenerator();
+                generator.GenerateTicket(ticketData, fileStream);
+            }
 
             Console.WriteLine("Ticket was saved as file:\n{0}", filePath);
             // Open in pdf viewer.
