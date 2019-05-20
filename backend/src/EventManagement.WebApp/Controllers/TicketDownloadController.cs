@@ -2,16 +2,13 @@
 using EventManagement.DataAccess;
 using EventManagement.TicketGeneration;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.IO;
-using System.Linq;
 
 namespace EventManagement.WebApp.Controllers
 {
     /// <summary>
     /// Controller to download tickets with an internet browser.
     /// </summary>
-    [Route("tickets")]
     public class TicketDownloadController : Controller
     {
         private readonly EventsDbContext _context;
@@ -21,12 +18,14 @@ namespace EventManagement.WebApp.Controllers
             _context = context;
         }
 
-        [Route("{ticketGuid}")]
-        public IActionResult DownloadAsPdf(Guid ticketGuid)
+        [HttpGet("tickets/{id}/pdf")]
+        public IActionResult DownloadAsPdf(int id)
         {
-            var ticket = _context.Tickets.SingleOrDefault(x => x.TicketGuid == ticketGuid);
+            var ticket = _context.Tickets.Find(id);
+
             if (ticket == null)
                 return NotFound();
+
             var ticketData = new TicketData
             {
                 EventName = "ONE",
@@ -51,13 +50,15 @@ namespace EventManagement.WebApp.Controllers
                 BookingDate = "01.04.2019",
                 BookingNumber = "12892984"
             };
+
             var stream = new MemoryStream();
             var generator = new PdfTicketGenerator();
             generator.GenerateTicket(ticketData, stream);
-            stream.Flush();
-            stream.Seek(0, SeekOrigin.Begin);
+            stream.Position = 0;
+
             string fileDownloadName = ticketData.TicketId + ".pdf";
-            return File(stream, "application/pdf", fileDownloadName);
+            Response.Headers.Add("Content-Disposition", $"inline; filename={fileDownloadName}");
+            return File(stream, "application/pdf");
         }
     }
 }

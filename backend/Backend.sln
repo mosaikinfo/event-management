@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement.UnitTests",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{DAD18327-AB3F-4AF8-BE00-A755ECA05FBD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{D800242A-83FD-4EF6-8762-7D35168C5958}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement.TicketGeneration", "..\ticket-generation\src\EventManagement.TicketGeneration\EventManagement.TicketGeneration.csproj", "{22535A80-D678-4A5B-9FF1-87B791F04102}"
 EndProject
 Global
@@ -55,7 +53,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8F07ED36-F567-4A05-AD97-926EB5F19323} = {DAD18327-AB3F-4AF8-BE00-A755ECA05FBD}
-		{22535A80-D678-4A5B-9FF1-87B791F04102} = {D800242A-83FD-4EF6-8762-7D35168C5958}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A2DA2F9F-3798-4710-8C68-63E1F837DC4C}
