@@ -11,18 +11,19 @@
       <div class="navbar-collapse collapse d-sm-inline-flex" [ngClass]='{"show": isExpanded}'>
         <ul class="navbar-nav mr-auto">
           <li *ngIf="currentEvent" class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
-            <a class="nav-link text-dark" [routerLink]='["/"]'>Dashboard</a>
+            <a class="nav-link text-dark" [routerLink]='["/"]' (click)="collapse()">Dashboard</a>
           </li>
           <li *ngIf="currentEvent" class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
-            <a class="nav-link text-dark" [routerLink]='["/tickets"]'>Tickets</a>
+            <a class="nav-link text-dark" [routerLink]='["/tickets"]' (click)="collapse()">Tickets</a>
           </li>
           <li *ngIf="currentEvent" class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
-            <a class="nav-link text-dark" [routerLink]='["/entrance-control"]'>Einlasskontrolle</a>
+            <a class="nav-link text-dark" [routerLink]='["/entrance-control"]' (click)="collapse()">Einlasskontrolle</a>
           </li>
         </ul>
         <ul class="navbar-nav">
           <li *ngIf="currentUser" class="nav-item" ngbDropdown placement="bottom-right">
-            <button class="nav-link btn btn-link text-dark" id="accountDropDown" ngbDropdownToggle>
+            <button class="nav-link btn btn-link text-dark"
+                    id="accountDropDown" ngbDropdownToggle>
               <i class="material-icons md-32 p-0">account_circle</i>
             </button>
             <div ngbDropdownMenu aria-labelledby="accountDropDown">

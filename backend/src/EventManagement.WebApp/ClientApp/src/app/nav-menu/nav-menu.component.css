@@ -16,3 +16,10 @@ html {
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
+
+@media (max-width: 767px) {
+  .dropdown-menu.show {
+    position: relative !important;
+    transform: inherit !important;
+  }
+}
