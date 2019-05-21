@@ -22,4 +22,11 @@ html {
     position: relative !important;
     transform: inherit !important;
   }
+  .navbar-brand {
+    font-size: 0.9rem;
+    max-width: 250px;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
