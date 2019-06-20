@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <RootNamespace>EventManagement.Identity</RootNamespace>
+    <AssemblyName>EventManagement.Identity</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

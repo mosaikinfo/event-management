@@ -1,12 +1,11 @@
-﻿using EventManagement.DataAccess;
-using EventManagement.DataAccess.Models;
+﻿using EventManagement.ApplicationCore.Interfaces;
+using EventManagement.ApplicationCore.Models;
 using IdentityServer4.Models;
 using System.Collections.Generic;
-using User = EventManagement.DataAccess.Models.User;
 
 namespace EventManagement.WebApp.Configuration
 {
-    public class TestData : IEventsDbInitialData
+    public class TestData : ISeedData
     {
         public IList<User> Users => new[]
         {

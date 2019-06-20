@@ -1,6 +1,8 @@
 using AutoMapper;
-using EventManagement.DataAccess;
+using EventManagement.ApplicationCore.Interfaces;
+using EventManagement.ApplicationCore.Services;
 using EventManagement.Identity;
+using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Configuration;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +29,8 @@ namespace EventManagement.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<ITicketNumberService, TicketNumberService>();
+
             services.AddDbContext<EventsDbContext>(
                 options => options.UseSqlServer(
                     Configuration.GetConnectionString("EventManagement")));

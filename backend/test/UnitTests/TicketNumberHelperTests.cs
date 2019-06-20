@@ -1,4 +1,5 @@
-using EventManagement.DataAccess.Models;
+using EventManagement.ApplicationCore.Models;
+using EventManagement.ApplicationCore.Services;
 using FluentAssertions;
 using Xunit;
 
@@ -10,7 +11,8 @@ namespace EventManagement.UnitTests
         public void GenerateTicketNumber()
         {
             var evt = new Event { Id = 1 };
-            string ticketNr = TicketNumberHelper.GenerateTicketNumber(evt);
+            var ticketNumberService = new TicketNumberService();
+            string ticketNr = ticketNumberService.GenerateTicketNumber(evt);
             ticketNr.Should().NotBeNull();
             ticketNr.Should().HaveLength(10);
             // should begin with event id padded right with zeros.

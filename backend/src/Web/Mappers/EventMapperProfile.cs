@@ -6,7 +6,7 @@ namespace EventManagement.WebApp.Mappers
     {
         public EventMapperProfile()
         {
-            CreateMap<DataAccess.Models.Event, Models.Event>()
+            CreateMap<ApplicationCore.Models.Event, Models.Event>()
                 .ReverseMap()
                 .ForMember(e => e.Id, opt => opt.Ignore());
         }

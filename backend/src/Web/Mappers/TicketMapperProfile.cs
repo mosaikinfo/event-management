@@ -6,7 +6,7 @@ namespace EventManagement.WebApp.Mappers
     {
         public TicketMapperProfile()
         {
-            CreateMap<DataAccess.Models.Ticket, Models.Ticket>()
+            CreateMap<ApplicationCore.Models.Ticket, Models.Ticket>()
                 .ForMember(e => e.Creator, opt => opt.MapFrom(e => e.Creator.Name))
                 .ForMember(e => e.Editor, opt => opt.MapFrom(e => e.Editor.Name))
                 .ReverseMap()

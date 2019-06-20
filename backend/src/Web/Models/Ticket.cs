@@ -1,4 +1,4 @@
-﻿using EventManagement.DataAccess.Models;
+﻿using EventManagement.ApplicationCore.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

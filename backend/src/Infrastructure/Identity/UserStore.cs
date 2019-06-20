@@ -1,4 +1,4 @@
-﻿using EventManagement.DataAccess;
+﻿using EventManagement.Infrastructure.Data;
 using IdentityServer4.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;

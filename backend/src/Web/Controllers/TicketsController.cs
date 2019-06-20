@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using EventManagement.DataAccess;
+using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.Identity;
+using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,15 @@ namespace EventManagement.WebApp.Controllers
     {
         private readonly EventsDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ITicketNumberService _ticketNumberService;
 
-        public TicketsController(EventsDbContext context, IMapper mapper)
+        public TicketsController(EventsDbContext context,
+                                 IMapper mapper,
+                                 ITicketNumberService ticketNumberService)
         {
             _context = context;
             _mapper = mapper;
+            _ticketNumberService = ticketNumberService;
         }
 
         /// <summary>
@@ -31,7 +36,7 @@ namespace EventManagement.WebApp.Controllers
         [HttpGet("events/{eventId}/tickets")]
         public ActionResult<IList<Ticket>> GetTickets(int eventId, string filter, string filterValue)
         {
-            IQueryable<DataAccess.Models.Ticket> query =
+            IQueryable<ApplicationCore.Models.Ticket> query =
                 _context.Tickets
                     .AsNoTracking()
                     .Where(e => e.EventId == eventId)
@@ -71,11 +76,11 @@ namespace EventManagement.WebApp.Controllers
             if (evt == null)
                 return BadRequest(
                     new ProblemDetails { Detail = $"There's no event with id {model.EventId}." });
-            var entity = new DataAccess.Models.Ticket();
+            var entity = new ApplicationCore.Models.Ticket();
             _mapper.Map(model, entity);
             entity.TicketGuid = Guid.NewGuid();
             entity.TicketNumber = entity.TicketNumber
-                ?? TicketNumberHelper.GenerateTicketNumber(evt);
+                ?? _ticketNumberService.GenerateTicketNumber(evt);
             SetAuthorInfo(entity);
             _context.Add(entity);
             _context.SaveChanges();
@@ -119,7 +124,7 @@ namespace EventManagement.WebApp.Controllers
             return Ok();
         }
 
-        private void SetAuthorInfo(DataAccess.Models.Ticket entity)
+        private void SetAuthorInfo(ApplicationCore.Models.Ticket entity)
         {
             var timestamp = DateTime.UtcNow;
             int currentUserId = User.GetUserId();

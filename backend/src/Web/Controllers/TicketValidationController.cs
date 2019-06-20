@@ -1,4 +1,4 @@
-﻿using EventManagement.DataAccess;
+﻿using EventManagement.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -28,7 +28,7 @@ namespace EventManagement.WebApp.Controllers
                 _logger.LogInformation("The parameter id is no valid guid.");
                 return TicketNotFound();
             }
-            DataAccess.Models.Ticket ticket =
+            ApplicationCore.Models.Ticket ticket =
                 _context.Tickets
                     .Include(e => e.Event)
                     .Include(e => e.TicketType)

@@ -1,4 +1,4 @@
-﻿using EventManagement.DataAccess;
+﻿using EventManagement.Infrastructure.Data;
 using EventManagement.TicketGeneration;
 using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
@@ -47,7 +47,7 @@ namespace EventManagement.WebApp.Controllers
             return File(stream, "application/pdf");
         }
 
-        private TicketData Map(DataAccess.Models.Ticket ticket)
+        private TicketData Map(ApplicationCore.Models.Ticket ticket)
         {
             var values = new TicketData
             {
@@ -80,7 +80,7 @@ namespace EventManagement.WebApp.Controllers
             return values;
         }
 
-        private string GetTicketValidationUrl(DataAccess.Models.Ticket ticket)
+        private string GetTicketValidationUrl(ApplicationCore.Models.Ticket ticket)
         {
             return Url.Action(
                 "ValidateTicket", "TicketValidation",

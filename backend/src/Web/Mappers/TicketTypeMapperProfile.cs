@@ -6,7 +6,7 @@ namespace EventManagement.WebApp.Mappers
     {
         public TicketTypeMapperProfile()
         {
-            CreateMap<DataAccess.Models.TicketType, Models.TicketType>()
+            CreateMap<ApplicationCore.Models.TicketType, Models.TicketType>()
                 .ReverseMap();
         }
     }

@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>EventManagement.TicketGeneration</RootNamespace>
+    <AssemblyName>EventManagement.TicketGeneration</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

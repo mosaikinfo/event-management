@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EventManagement.DataAccess;
+using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +49,7 @@ namespace EventManagement.WebApp.Controllers
         {
             if (model.Id > 0)
                 return BadRequest();
-            var entity = new DataAccess.Models.Event();
+            var entity = new ApplicationCore.Models.Event();
             _mapper.Map(model, entity);
             _context.Add(entity);
             _context.SaveChanges();

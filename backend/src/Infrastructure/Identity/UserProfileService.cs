@@ -1,5 +1,5 @@
-﻿using EventManagement.DataAccess;
-using EventManagement.DataAccess.Extensions;
+﻿using EventManagement.ApplicationCore.Models;
+using EventManagement.Infrastructure.Data;
 using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;

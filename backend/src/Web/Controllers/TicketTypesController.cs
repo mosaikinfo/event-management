@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EventManagement.DataAccess;
+using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +43,7 @@ namespace EventManagement.WebApp.Controllers
             if (evt == null)
                 return NotFound();
             // Delete ticket types.
-            foreach (DataAccess.Models.TicketType ticketType in evt.TicketTypes)
+            foreach (ApplicationCore.Models.TicketType ticketType in evt.TicketTypes)
             {
                 if (items.All(t => t.Id != ticketType.Id))
                 {
@@ -72,7 +72,7 @@ namespace EventManagement.WebApp.Controllers
                 else
                 {
                     // Create new ticket type.
-                    var entity = _mapper.Map<DataAccess.Models.TicketType>(item);
+                    var entity = _mapper.Map<ApplicationCore.Models.TicketType>(item);
                     evt.TicketTypes.Add(entity);
                     _context.SaveChanges();
                     list.Add(_mapper.Map<TicketType>(entity));
