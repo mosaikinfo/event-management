@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace EventManagement.Infrastructure.Data
 {
-    public class EventsDbInitializer
+    public class EventsDbContextSeed
     {
         private readonly EventsDbContext _context;
         private readonly ILogger _logger;
 
-        public EventsDbInitializer(EventsDbContext context, ILogger<EventsDbInitializer> logger)
+        public EventsDbContextSeed(EventsDbContext context, ILogger<EventsDbContextSeed> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -20,7 +20,7 @@ namespace EventManagement.Infrastructure.Data
         /// If it's an empty database after a fresh setup we're
         /// inserting some initial data.
         /// </summary>
-        public void EnsureInitialData(ISeedData initialData)
+        public void Seed(ISeedData initialData)
         {
             if (initialData.Users != null && !_context.Users.Any())
             {

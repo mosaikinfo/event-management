@@ -33,7 +33,7 @@ namespace EventManagement.WebApp
                 options => options.UseSqlServer(
                     Configuration.GetConnectionString("EventManagement")));
 
-            services.AddTransient<EventsDbInitializer>();
+            services.AddTransient<EventsDbContextSeed>();
 
             services.TryAddTransient<IUserStore, UserStore>();
             services.TryAddTransient<ITicketNumberService, TicketNumberService>();

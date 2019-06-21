@@ -41,8 +41,8 @@ namespace EventManagement.WebApp
             }
             try
             {
-                var dbInitializer = services.GetRequiredService<EventsDbInitializer>();
-                dbInitializer.EnsureInitialData(new TestData());
+                var dbSeed = services.GetRequiredService<EventsDbContextSeed>();
+                dbSeed.Seed(new TestData());
             }
             catch (Exception ex)
             {
