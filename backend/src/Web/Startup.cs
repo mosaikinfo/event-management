@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
 using NSwag.AspNetCore;
 
@@ -28,12 +29,21 @@ namespace EventManagement.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<ITicketNumberService, TicketNumberService>();
-
             services.AddDbContext<EventsDbContext>(
                 options => options.UseSqlServer(
                     Configuration.GetConnectionString("EventManagement")));
+
             services.AddTransient<EventsDbInitializer>();
+
+            services.TryAddTransient<IUserStore, UserStore>();
+            services.TryAddTransient<ITicketNumberService, TicketNumberService>();
+
+            services.AddIdentityServer()
+                .AddDeveloperSigningCredential(persistKey: true)
+                .AddInMemoryApiResources(IdentityServerConfig.GetApis())
+                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
+                .AddClientStore<EventManagementLocalClientStore>()
+                .AddProfileService<UserProfileService>();
 
             services.Configure<RouteOptions>(options =>
             {
@@ -56,14 +66,6 @@ namespace EventManagement.WebApp
                 pipeline.AddLessBundle("css/site.css", "css/site.less");
                 pipeline.AddLessBundle("css/ticket-validation.css", "css/ticket-validation.less");
             });
-
-            services.AddIdentityServer()
-                .AddDeveloperSigningCredential(persistKey: true)
-                .AddInMemoryApiResources(IdentityServerConfig.GetApis())
-                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
-                .AddClientStore<EventManagementLocalClientStore>()
-                .AddProfileService<UserProfileService>();
-            services.AddTransient<IUserStore, UserStore>();
 
             // Configure authentication to protect our web api.
             services.AddAuthentication()
