@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\EventManagement.TicketGeneration\EventManagement.TicketGeneration.csproj" />
+    <ProjectReference Include="..\..\src\TicketGeneration\TicketGeneration.csproj" />
   </ItemGroup>
 
 </Project>

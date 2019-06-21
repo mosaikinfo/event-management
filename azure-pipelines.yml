@@ -18,7 +18,7 @@ steps:
     version: '2.2.101'
 - script: dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
   displayName: 'dotnet publish $(buildConfiguration)'
-  workingDirectory: 'backend/src/EventManagement.WebApp'
+  workingDirectory: 'backend/src/Web'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
