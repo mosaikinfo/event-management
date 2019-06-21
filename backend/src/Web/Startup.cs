@@ -3,7 +3,6 @@ using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Services;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
-using EventManagement.WebApp.Configuration;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -84,11 +83,8 @@ namespace EventManagement.WebApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, EventsDbContext dbContext, EventsDbInitializer dbInitializer)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            dbContext.Database.Migrate();
-            dbInitializer.EnsureInitialData(new TestData());
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using EventManagement.Infrastructure.Data;
+using EventManagement.WebApp.Configuration;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace EventManagement.WebApp
 {
@@ -14,11 +13,41 @@ namespace EventManagement.WebApp
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args).Build();
+
+            using (var scope = host.Services.CreateScope())
+            {
+                SetupDatabase(scope.ServiceProvider);
+            }
+
+            host.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
+
+        private static void SetupDatabase(IServiceProvider services)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            try
+            {
+                var dbContext = services.GetRequiredService<EventsDbContext>();
+                dbContext.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred migrating the DB.");
+            }
+            try
+            {
+                var dbInitializer = services.GetRequiredService<EventsDbInitializer>();
+                dbInitializer.EnsureInitialData(new TestData());
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred seeding the DB.");
+            }
+        }
     }
 }
