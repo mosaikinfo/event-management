@@ -23,9 +23,22 @@ export class PageAlertService {
         type: "success"
       });
     }
+
+    showNotImplemented() {
+      this.showAlert({
+        message: "Diese Funktion ist noch nicht umgesetzt.",
+        type: "warning"
+      });
+    }
 }
 
 export interface Alert {
-    type: string;
-    message: string;
+  /**
+   * Type of the alert.
+   *
+   * Bootstrap provides styles for the following types: `'success'`, `'info'`, `'warning'`, `'danger'`, `'primary'`,
+   * `'secondary'`, `'light'` and `'dark'`.
+   */
+  type: string;
+  message: string;
 }

@@ -10,6 +10,8 @@ import { EventSettingsComponent } from './event-settings/event-settings.componen
 import { TicketListComponent } from './ticket-list/ticket-list.component';
 import { TicketEditComponent } from './ticket-edit/ticket-edit.component';
 import { EntranceControlComponent } from './entrance-control/entrance-control.component';
+import { EntranceControlManualComponent } from './entrance-control-manual/entrance-control-manual.component';
+import { EntranceControlAppComponent } from './entrance-control-app/entrance-control-app.component';
 
 const routes: Routes = [
     { 
@@ -55,6 +57,16 @@ const routes: Routes = [
     { 
         path: 'entrance-control', 
         component: EntranceControlComponent, 
+        canActivate: [AuthGuardService, EventGuardService] 
+    },
+    { 
+        path: 'entrance-control/manual',
+        component: EntranceControlManualComponent, 
+        canActivate: [AuthGuardService, EventGuardService] 
+    },
+    { 
+        path: 'entrance-control/app',
+        component: EntranceControlAppComponent, 
         canActivate: [AuthGuardService, EventGuardService] 
     }
 ];
