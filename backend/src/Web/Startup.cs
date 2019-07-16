@@ -69,7 +69,7 @@ namespace EventManagement.WebApp
 
             // Configure authentication to protect our web api.
             services.AddAuthentication()
-                .AddLocalApi(Constants.JwtAuthScheme, options =>
+                .AddLocalApi(options =>
                 {
                     options.ExpectedScope = "eventmanagement.admin";
                 });

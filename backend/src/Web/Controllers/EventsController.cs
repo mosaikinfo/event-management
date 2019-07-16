@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using static IdentityServer4.IdentityServerConstants;
 
 namespace EventManagement.WebApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = Constants.JwtAuthScheme)]
+    [Authorize(AuthenticationSchemes = LocalApi.AuthenticationScheme)]
     public class EventsController : ControllerBase
     {
         private readonly EventsDbContext _context;
