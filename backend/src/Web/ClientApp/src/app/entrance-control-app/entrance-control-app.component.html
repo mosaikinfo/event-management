@@ -3,3 +3,7 @@
 <div class="mt-4">
   <h2 class="h4">QR-Codes mit App scannen</h2>
 </div>
+
+<div *ngIf="qrCodeImageUrl" class="mt-2">
+  <img [src]="qrCodeImageUrl">
+</div>

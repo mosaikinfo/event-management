@@ -14,6 +14,7 @@ namespace EventManagement.Infrastructure.Data
         public DbSet<Event> Events { get; set; }
         public DbSet<TicketType> TicketTypes { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<MasterQrCode> MasterQrCodes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -89,6 +90,21 @@ namespace EventManagement.Infrastructure.Data
                 entity.HasOne(e => e.Editor)
                     .WithMany()
                     .HasForeignKey(e => e.EditorId);
+            });
+
+            modelBuilder.Entity<MasterQrCode>(entity =>
+            {
+                entity.ToTable("MasterQrCodes");
+
+                entity.HasOne(e => e.Owner)
+                    .WithMany(e => e.MasterQrCodes)
+                    .HasForeignKey(e => e.OwnerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Event)
+                    .WithMany()
+                    .HasForeignKey(e => e.EventId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

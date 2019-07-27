@@ -42,6 +42,28 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.MasterQrCode", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<Guid>("EventId");
+
+                    b.Property<Guid>("OwnerId");
+
+                    b.Property<DateTime?>("RevokedAt");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("MasterQrCodes");
+                });
+
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.Ticket", b =>
                 {
                     b.Property<Guid>("Id")
@@ -168,6 +190,19 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.MasterQrCode", b =>
+                {
+                    b.HasOne("EventManagement.ApplicationCore.Models.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("EventManagement.ApplicationCore.Models.User", "Owner")
+                        .WithMany("MasterQrCodes")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.Ticket", b =>
