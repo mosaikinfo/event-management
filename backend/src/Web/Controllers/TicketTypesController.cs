@@ -4,6 +4,7 @@ using EventManagement.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static IdentityServer4.IdentityServerConstants;
@@ -25,7 +26,7 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpGet("events/{eventId}/tickettypes")]
-        public ActionResult<IList<TicketType>> GetTicketTypes(int eventId)
+        public ActionResult<IList<TicketType>> GetTicketTypes(Guid eventId)
         {
             return _context.TicketTypes
                 .AsNoTracking()
@@ -36,7 +37,7 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpPost("events/{eventId}/tickettypes")]
-        public ActionResult<IList<TicketType>> AddOrUpdateTicketTypes(int eventId, [FromBody] TicketType[] items)
+        public ActionResult<IList<TicketType>> AddOrUpdateTicketTypes(Guid eventId, [FromBody] TicketType[] items)
         {
             var evt = _context.Events
                 .Include(e => e.TicketTypes)
@@ -54,7 +55,7 @@ namespace EventManagement.WebApp.Controllers
             var list = new List<TicketType>();
             foreach (TicketType item in items)
             {
-                if (item.Id > 0)
+                if (item.Id != Guid.Empty)
                 {
                     // Update ticket type.
                     var entity = evt.TicketTypes.SingleOrDefault(t => t.Id == item.Id);

@@ -1,6 +1,7 @@
 ﻿using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Models;
 using IdentityServer4.Models;
+using System;
 using System.Collections.Generic;
 
 namespace EventManagement.WebApp.Configuration
@@ -11,6 +12,7 @@ namespace EventManagement.WebApp.Configuration
         {
             new User
             {
+                Id = new Guid("e946edb0-b020-47cc-a325-4fad8825c84d"),
                 Name = "Demo Admin",
                 Username = "admin",
                 EmailAddress = "event-admin@itsnotabug.de",

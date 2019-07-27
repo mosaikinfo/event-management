@@ -5,9 +5,9 @@ namespace EventManagement.ApplicationCore.Models
     public class Ticket : BaseEntity
     {
         public string TicketNumber { get; set; }
-        public Guid TicketGuid { get; set; }
-        public int EventId { get; set; }
-        public int TicketTypeId { get; set; }
+        public string TicketSecret { get; set; }
+        public Guid EventId { get; set; }
+        public Guid TicketTypeId { get; set; }
         public bool Validated { get; set; }
         public string Mail { get; set; }
         public string Phone { get; set; }
@@ -20,8 +20,8 @@ namespace EventManagement.ApplicationCore.Models
         public string RoomNumber { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? EditedAt { get; set; }
-        public int? CreatorId { get; set; }
-        public int? EditorId { get; set; }
+        public Guid? CreatorId { get; set; }
+        public Guid? EditorId { get; set; }
         public bool IsDeleted { get; set; }
 
         public Event Event { get; set; }

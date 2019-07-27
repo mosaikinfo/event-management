@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Linq;
 
 namespace EventManagement.WebApp.Controllers
@@ -19,23 +18,17 @@ namespace EventManagement.WebApp.Controllers
             _logger = logger;
         }
 
-        [HttpGet("v/{id}")]
-        public IActionResult ValidateTicket(string id)
+        [HttpGet("v/{secret}")]
+        public IActionResult ValidateTicket(string secret)
         {
-            Guid ticketGuid;
-            if (!Guid.TryParse(id, out ticketGuid))
-            {
-                _logger.LogInformation("The parameter id is no valid guid.");
-                return TicketNotFound();
-            }
             ApplicationCore.Models.Ticket ticket =
                 _context.Tickets
                     .Include(e => e.Event)
                     .Include(e => e.TicketType)
-                    .SingleOrDefault(e => e.TicketGuid == ticketGuid);
+                    .SingleOrDefault(e => e.TicketSecret == secret);
             if (ticket == null)
             {
-                _logger.LogInformation("Ticket with id {id} was not found in the database.", ticketGuid);
+                _logger.LogInformation("Ticket with secret {id} was not found in the database.", secret);
                 return TicketNotFound();
             }
             if (ticket.Validated)

@@ -6,7 +6,7 @@ namespace EventManagement.WebApp.Models
 {
     public class Event : IValidatableObject
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Name { get; set; }

@@ -4,6 +4,7 @@ using EventManagement.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static IdentityServer4.IdentityServerConstants;
@@ -34,7 +35,7 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Event> GetEvent(int id)
+        public ActionResult<Event> GetEvent(Guid id)
         {
             return _context.Events
                 .AsNoTracking()
@@ -48,7 +49,7 @@ namespace EventManagement.WebApp.Controllers
             nameof(DefaultApiConventions.Post))]
         public ActionResult<Event> CreateEvent([FromBody] Event model)
         {
-            if (model.Id > 0)
+            if (model.Id != Guid.Empty)
                 return BadRequest();
             var entity = new ApplicationCore.Models.Event();
             _mapper.Map(model, entity);
@@ -61,7 +62,7 @@ namespace EventManagement.WebApp.Controllers
         [HttpPut("{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions),
             nameof(DefaultApiConventions.Put))]
-        public ActionResult UpdateEvent(int id, [FromBody] Event model)
+        public ActionResult UpdateEvent(Guid id, [FromBody] Event model)
         {
             if (id != model.Id)
                 return BadRequest();

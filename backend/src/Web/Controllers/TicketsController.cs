@@ -35,7 +35,7 @@ namespace EventManagement.WebApp.Controllers
         /// Lists all tickets for a given event.
         /// </summary>
         [HttpGet("events/{eventId}/tickets")]
-        public ActionResult<IList<Ticket>> GetTickets(int eventId, string filter, string filterValue)
+        public ActionResult<IList<Ticket>> GetTickets(Guid eventId, string filter, string filterValue)
         {
             IQueryable<ApplicationCore.Models.Ticket> query =
                 _context.Tickets
@@ -59,7 +59,7 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpGet("tickets/{id}")]
-        public ActionResult<Ticket> GetById(int id)
+        public ActionResult<Ticket> GetById(Guid id)
         {
             var entity = _context.Tickets.Find(id);
             return _mapper.Map<Ticket>(entity);
@@ -70,7 +70,7 @@ namespace EventManagement.WebApp.Controllers
             nameof(DefaultApiConventions.Post))]
         public ActionResult<Ticket> CreateTicket(Ticket model)
         {
-            if (model.Id > 0)
+            if (model.Id != Guid.Empty)
                 return BadRequest(
                     new ProblemDetails { Detail = "This method can't be used to update tickets." });
             var evt = _context.Events.Find(model.EventId);
@@ -79,7 +79,7 @@ namespace EventManagement.WebApp.Controllers
                     new ProblemDetails { Detail = $"There's no event with id {model.EventId}." });
             var entity = new ApplicationCore.Models.Ticket();
             _mapper.Map(model, entity);
-            entity.TicketGuid = Guid.NewGuid();
+            entity.TicketSecret = Guid.NewGuid().ToString("N");
             entity.TicketNumber = entity.TicketNumber
                 ?? _ticketNumberService.GenerateTicketNumber(evt);
             SetAuthorInfo(entity);
@@ -92,7 +92,7 @@ namespace EventManagement.WebApp.Controllers
         [HttpPut("tickets/{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions),
             nameof(DefaultApiConventions.Put))]
-        public ActionResult UpdateTicket(int id, [FromBody] Ticket model)
+        public ActionResult UpdateTicket(Guid id, [FromBody] Ticket model)
         {
             if (id != model.Id)
                 return BadRequest(new ProblemDetails { Detail = "wrong id" });
@@ -114,7 +114,7 @@ namespace EventManagement.WebApp.Controllers
         [HttpDelete("tickets/{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions),
             nameof(DefaultApiConventions.Delete))]
-        public IActionResult DeleteTicket(int id)
+        public IActionResult DeleteTicket(Guid id)
         {
             var entity = _context.Tickets.Find(id);
             if (entity == null)
@@ -128,10 +128,10 @@ namespace EventManagement.WebApp.Controllers
         private void SetAuthorInfo(ApplicationCore.Models.Ticket entity)
         {
             var timestamp = DateTime.UtcNow;
-            int currentUserId = User.GetUserId();
+            Guid currentUserId = User.GetUserId();
             entity.EditedAt = timestamp;
             entity.EditorId = currentUserId;
-            if (entity.Id <= 0)
+            if (entity.Id == Guid.Empty)
             {
                 entity.CreatorId = currentUserId;
                 entity.CreatedAt = timestamp;

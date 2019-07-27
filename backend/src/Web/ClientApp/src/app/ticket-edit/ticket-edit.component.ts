@@ -30,13 +30,13 @@ export class TicketEditComponent implements OnInit {
     this.model.eventId = event.id;
     this.apiClient.ticketTypes_GetTicketTypes(event.id)
       .subscribe((items: TicketType[]) => this.ticketTypes = items);
-    const id = +this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.loadTicket(id);
     }
   }
 
-  async loadTicket(id: number): Promise<void> {
+  async loadTicket(id: string): Promise<void> {
     let ticket = <Ticket>await this.apiClient
       .tickets_GetById(id).toPromise();
     this.model = ticket;

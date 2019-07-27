@@ -25,11 +25,11 @@ export class TicketListComponent implements OnInit {
     this.loadTickets(this.event.id);
   }
 
-  async loadTickets(eventId: number): Promise<void> {
+  async loadTickets(eventId: string): Promise<void> {
     await Promise.all([
       this.apiClient.ticketTypes_GetTicketTypes(eventId)
         .subscribe((items: TicketType[]) => this.ticketTypes = items),
-      this.apiClient.tickets_GetTickets(eventId)
+      this.apiClient.tickets_GetTickets(eventId, '', '')
         .subscribe((tickets: Ticket[]) => this.tickets = tickets)
     ]);
   }
@@ -40,7 +40,7 @@ export class TicketListComponent implements OnInit {
     }
   }
 
-  getTicketType(ticketTypeId: number): TicketType {
+  getTicketType(ticketTypeId: string): TicketType {
     if (this.ticketTypes) {
       return this.ticketTypes.find(t => t.id === ticketTypeId);
     }

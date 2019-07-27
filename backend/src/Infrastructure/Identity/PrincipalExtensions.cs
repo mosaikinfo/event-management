@@ -1,4 +1,5 @@
 ﻿using IdentityServer4.Extensions;
+using System;
 using System.Security.Principal;
 
 namespace EventManagement.Identity
@@ -8,11 +9,10 @@ namespace EventManagement.Identity
         /// <summary>
         /// Get the current user id.
         /// </summary>
-        public static int GetUserId(this IPrincipal principal)
+        public static Guid GetUserId(this IPrincipal principal)
         {
-            int userId;
             var subject = principal.GetSubjectId();
-            int.TryParse(subject, out userId);
+            Guid.TryParse(subject, out Guid userId);
             return userId;
         }
     }

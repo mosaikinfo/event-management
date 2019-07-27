@@ -10,7 +10,7 @@ import { TicketType, EventManagementApiClient } from '../services/event-manageme
 })
 export class TicketTypesEditComponent implements OnInit {
 
-  eventId: number;
+  eventId: string;
   ticketTypes: TicketType[] = [];
 
   constructor(
@@ -20,7 +20,7 @@ export class TicketTypesEditComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.eventId = +this.route.snapshot.paramMap.get('id');
+    this.eventId = this.route.snapshot.paramMap.get('id');
     if (this.eventId) {
       this.apiClient.ticketTypes_GetTicketTypes(this.eventId)
         .subscribe((items: TicketType[]) => this.ticketTypes = items);

@@ -13,7 +13,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
-using NSwag.AspNetCore;
 
 namespace EventManagement.WebApp
 {
@@ -80,7 +79,13 @@ namespace EventManagement.WebApp
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddSwaggerDocument();
+            services.AddOpenApiDocument(options =>
+            {
+                options.PostProcess = doc =>
+                {
+                    doc.Info.Title = "Event Management API";
+                };
+            });
             services.AddAutoMapper(GetType());
         }
 
@@ -100,7 +105,7 @@ namespace EventManagement.WebApp
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
-            app.UseSwagger();
+            app.UseOpenApi();
             app.UseSwaggerUi3();
 
             app.UseIdentityServer();

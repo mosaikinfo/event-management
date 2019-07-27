@@ -7,10 +7,10 @@ namespace EventManagement.WebApp.Models
 {
     public class Ticket : IValidatableObject
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string TicketNumber { get; set; }
-        public int EventId { get; set; }
-        public int TicketTypeId { get; set; }
+        public Guid EventId { get; set; }
+        public Guid TicketTypeId { get; set; }
         public bool Validated { get; set; }
         public string Mail { get; set; }
         public string Phone { get; set; }
@@ -29,10 +29,10 @@ namespace EventManagement.WebApp.Models
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (EventId <= 0)
+            if (EventId == Guid.Empty)
                 yield return new ValidationResult(
                     "The field is required.", new[] { nameof(EventId) });
-            if (TicketTypeId <= 0)
+            if (TicketTypeId == Guid.Empty)
                 yield return new ValidationResult(
                     "The field is required.", new[] { nameof(TicketTypeId) });
         }

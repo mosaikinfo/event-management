@@ -5,6 +5,7 @@ using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -25,7 +26,7 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpGet("tickets/{id}/pdf")]
-        public IActionResult DownloadAsPdf(int id)
+        public IActionResult DownloadAsPdf(Guid id)
         {
             var ticket = _context.Tickets
                 .Include(x => x.Event)
@@ -84,7 +85,7 @@ namespace EventManagement.WebApp.Controllers
         {
             return Url.Action(
                 "ValidateTicket", "TicketValidation",
-                new { id = ticket.TicketGuid }, Request.Scheme);
+                new { secret = ticket.TicketSecret }, Request.Scheme);
         }
     }
 }

@@ -55,7 +55,7 @@ namespace EventManagement.Infrastructure.Data
                 entity.HasQueryFilter(e => !e.IsDeleted);
 
                 entity.HasAlternateKey(e => e.TicketNumber);
-                entity.HasAlternateKey(e => e.TicketGuid);
+                entity.HasAlternateKey(e => e.TicketSecret);
 
                 entity.Property(e => e.TicketNumber).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Mail).HasMaxLength(254);
@@ -74,11 +74,13 @@ namespace EventManagement.Infrastructure.Data
 
                 entity.HasOne(e => e.Event)
                     .WithMany(e => e.Tickets)
-                    .HasForeignKey(e => e.EventId);
+                    .HasForeignKey(e => e.EventId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(e => e.TicketType)
                     .WithMany(e => e.Tickets)
-                    .HasForeignKey(e => e.TicketTypeId);
+                    .HasForeignKey(e => e.TicketTypeId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(e => e.Creator)
                     .WithMany()
