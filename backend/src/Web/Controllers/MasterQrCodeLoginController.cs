@@ -1,9 +1,9 @@
-﻿using IdentityModel;
-using IdentityServer4.Validation;
+﻿using EventManagement.ApplicationCore.Models;
+using EventManagement.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Linq;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -12,47 +12,51 @@ namespace EventManagement.WebApp.Controllers
     [AllowAnonymous]
     public class MasterQrCodeLoginController : ControllerBase
     {
-        private readonly ITokenValidator _tokenValidator;
+        private readonly EventsDbContext _context;
         private readonly ILogger _logger;
 
-        public MasterQrCodeLoginController(ITokenValidator tokenValidator,
+        public MasterQrCodeLoginController(EventsDbContext context,
                                            ILogger<MasterQrCodeLoginController> logger)
         {
-            _tokenValidator = tokenValidator;
+            _context = context;
             _logger = logger;
         }
 
         [HttpGet("qrauth/{token}")]
         public async Task<IActionResult> LoginAsync(string token)
         {
-            _logger.LogInformation("Validate access token.");
+            _logger.LogInformation("Validate token");
 
-            var tokenResult = await _tokenValidator.ValidateAccessTokenAsync(
-                token,
-                ApiScopes.EntranceControl.ScanQr);
-
-            if (tokenResult.IsError)
+            if (!Guid.TryParse(token, out Guid masterQrCodeId))
             {
-                _logger.LogInformation("Invalid token: {error}", tokenResult.Error);
+                _logger.LogWarning("Token is no valid GUID.");
                 return AccessDenied();
             }
 
-            var subClaim = tokenResult.Claims.SingleOrDefault(c => c.Type == JwtClaimTypes.Subject);
-            if (subClaim == null)
+            MasterQrCode masterQrCode = 
+                await _context.MasterQrCodes.FindAsync(masterQrCodeId);
+
+            if (masterQrCode == null)
             {
-                _logger.LogInformation("Token contains no sub claim");
+                _logger.LogWarning("Token not found in the database.");
                 return AccessDenied();
             }
 
-            _logger.LogInformation("Sub claim: {sub}", subClaim.Value);
+            if (masterQrCode.RevokedAt != null)
+            {
+                _logger.LogWarning(
+                    "The master qr code has been revoked at {date}",
+                    masterQrCode.RevokedAt);
+                return AccessDenied();
+            }
 
-            return Content(token);
+            return Content("OK");
         }
 
         private IActionResult AccessDenied()
         {
             // TODO: return access denied page.
-            return StatusCode((int)HttpStatusCode.Forbidden);
+            return StatusCode((int) HttpStatusCode.Forbidden);
         }
     }
 }
