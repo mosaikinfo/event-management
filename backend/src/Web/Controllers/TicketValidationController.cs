@@ -1,4 +1,5 @@
 ﻿using EventManagement.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,7 @@ using System.Linq;
 
 namespace EventManagement.WebApp.Controllers
 {
+    [Authorize(Constants.QrScanPolicy)]
     public class TicketValidationController : Controller
     {
         private readonly EventsDbContext _context;
@@ -26,6 +28,9 @@ namespace EventManagement.WebApp.Controllers
                     .Include(e => e.Event)
                     .Include(e => e.TicketType)
                     .SingleOrDefault(e => e.TicketSecret == secret);
+
+            // TODO: check if the user has the permission for the event.
+
             if (ticket == null)
             {
                 _logger.LogInformation("Ticket with secret {id} was not found in the database.", secret);

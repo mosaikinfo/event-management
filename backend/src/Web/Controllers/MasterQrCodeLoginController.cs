@@ -1,10 +1,14 @@
 ﻿using EventManagement.ApplicationCore.Models;
 using EventManagement.Infrastructure.Data;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EventManagement.WebApp.Controllers
@@ -33,7 +37,7 @@ namespace EventManagement.WebApp.Controllers
                 return AccessDenied();
             }
 
-            MasterQrCode masterQrCode = 
+            MasterQrCode masterQrCode =
                 await _context.MasterQrCodes.FindAsync(masterQrCodeId);
 
             if (masterQrCode == null)
@@ -50,7 +54,29 @@ namespace EventManagement.WebApp.Controllers
                 return AccessDenied();
             }
 
-            return Content("OK");
+            await SignInAsync(masterQrCode);
+
+            // TODO: display success page.
+            return Content("Login erfolgreich");
+        }
+
+        private Task SignInAsync(MasterQrCode masterQrCode)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(JwtClaimTypes.Subject, masterQrCode.OwnerId.ToString()),
+                new Claim(CustomClaimTypes.EventId, masterQrCode.EventId.ToString())
+            };
+            var claimsIdentity = new ClaimsIdentity(
+                claims, Constants.MasterQrCodeAuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true
+            };
+            return HttpContext.SignInAsync(
+                Constants.MasterQrCodeAuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
         }
 
         private IActionResult AccessDenied()

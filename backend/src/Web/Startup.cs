@@ -3,6 +3,7 @@ using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Services;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
+using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
+using System;
 
 namespace EventManagement.WebApp
 {
@@ -68,11 +70,31 @@ namespace EventManagement.WebApp
             });
 
             // Configure authentication to protect our web api.
-            services.AddAuthentication()
+            services
+                .AddAuthentication()
                 .AddLocalApi(options =>
                 {
                     options.ExpectedScope = "eventmanagement.admin";
+                })
+                .AddCookie(Constants.MasterQrCodeAuthenticationScheme, options =>
+                {
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.Expiration = TimeSpan.FromDays(1);
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Constants.QrScanPolicy, policy =>
+                {
+                    policy.AddAuthenticationSchemes(
+                        // users which are authenticated with master qr code.
+                        Constants.MasterQrCodeAuthenticationScheme,
+                        // users which are authenticated in the admin backend.
+                        IdentityServerConstants.DefaultCookieAuthenticationScheme);
+
+                    policy.RequireAuthenticatedUser();
+                });
+            });
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
