@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
 
 namespace EventManagement.WebApp
@@ -95,6 +96,10 @@ namespace EventManagement.WebApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                // show personal identifiable information from access tokens 
+                // in the logs during development.
+                IdentityModelEventSource.ShowPII = true;
             }
             else
             {

@@ -59,7 +59,7 @@ namespace EventManagement.WebApp.Controllers
 
             const string placeholder = "__token__";
             string loginUrl = Url.Action(
-                "Login", "MasterQrCodeLogin", new { token = placeholder },
+                "LoginAsync", "MasterQrCodeLogin", new { token = placeholder },
                 // makes sure that an absolute url is created.
                 Request.Scheme);
 
@@ -74,8 +74,9 @@ namespace EventManagement.WebApp.Controllers
             int lifetime = 365 * 24 * 3600; // 365 days.
             return _tools.IssueJwtAsync(lifetime, new[]
             {
-                new Claim("sub", masterQrCode.Id.ToString())
-            });
+                new Claim("sub", masterQrCode.Id.ToString()),
+                new Claim("scope", ApiScopes.EntranceControl.ScanQr)
+            }); 
         }
     }
 }
