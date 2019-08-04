@@ -28,6 +28,9 @@ namespace EventManagement.Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("EntranceTime");
 
+                    b.Property<string>("HomepageUrl")
+                        .HasMaxLength(2083);
+
                     b.Property<string>("Location")
                         .HasMaxLength(300);
 

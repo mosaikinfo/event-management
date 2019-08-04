@@ -2,10 +2,12 @@
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.Shared.Mvc;
+using EventManagement.WebApp.Shared.Mvc;
 using IdentityServer4;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NSwag.Annotations;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +18,7 @@ namespace EventManagement.WebApp.Controllers
     /// Controller to issue master qr codes that can be used to 
     /// authenticate a qr code scanner app for validating tickets.
     /// </summary>
+    [OpenApiIgnore]
     [Route("events/{eventId}/masterqrcodes")]
     [Authorize(AuthenticationSchemes = IdentityServerConstants.DefaultCookieAuthenticationScheme)]
     public class MasterQrCodeIssueController : ControllerBase
@@ -51,11 +54,9 @@ namespace EventManagement.WebApp.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            string loginUrl = Url.Action(
-                "LoginAsync", "MasterQrCodeLogin",
-                new { token = masterQrCode.Id.ToString() },
-                // makes sure that an absolute url is created.
-                Request.Scheme);
+            string loginUrl = Url.ActionAbsoluteUrl<MasterQrCodeLoginController>(
+                nameof(MasterQrCodeLoginController.LoginAsync),
+                new { token = masterQrCode.Id.ToString() });
 
             return new QrCodeResult(loginUrl);
         }

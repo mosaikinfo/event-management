@@ -1,5 +1,6 @@
 ﻿using EventManagement.Infrastructure.Data;
 using EventManagement.TicketGeneration;
+using EventManagement.WebApp.Shared.Mvc;
 using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Authorization;
@@ -83,9 +84,9 @@ namespace EventManagement.WebApp.Controllers
 
         private string GetTicketValidationUrl(ApplicationCore.Models.Ticket ticket)
         {
-            return Url.Action(
-                "ValidateTicket", "TicketValidation",
-                new { secret = ticket.TicketSecret }, Request.Scheme);
+            return Url.ActionAbsoluteUrl<TicketValidationController>(
+                nameof(TicketValidationController.ValidateTicket),
+                new { secret = ticket.TicketSecret });
         }
     }
 }

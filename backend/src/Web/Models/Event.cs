@@ -21,6 +21,9 @@ namespace EventManagement.WebApp.Models
 
         public string Location { get; set; }
 
+        [Required]
+        public string HomepageUrl { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (StartTime > EndTime)

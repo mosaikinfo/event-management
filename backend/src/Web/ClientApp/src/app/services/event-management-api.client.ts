@@ -283,54 +283,6 @@ export class EventManagementApiClient extends ServiceBase {
         }
     }
 
-    masterQrCodeIssue_IssueMasterQrCode(): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/masterqrcode/my";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
-            return this.http.request("get", url_, transformedOptions_);
-        })).pipe(_observableMergeMap((response_: any) => {
-            return this.processMasterQrCodeIssue_IssueMasterQrCode(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMasterQrCodeIssue_IssueMasterQrCode(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processMasterQrCodeIssue_IssueMasterQrCode(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse>(<any>null);
-    }
-
     ticketDownload_DownloadAsPdf(id: string): Observable<FileResponse> {
         let url_ = this.baseUrl + "/tickets/{id}/pdf";
         if (id === undefined || id === null)
@@ -870,6 +822,7 @@ export class Event implements IEvent {
     endTime!: Date;
     entranceTime?: Date | undefined;
     location?: string | undefined;
+    homepageUrl!: string;
 
     constructor(data?: IEvent) {
         if (data) {
@@ -888,6 +841,7 @@ export class Event implements IEvent {
             this.endTime = data["endTime"] ? new Date(data["endTime"].toString()) : <any>undefined;
             this.entranceTime = data["entranceTime"] ? new Date(data["entranceTime"].toString()) : <any>undefined;
             this.location = data["location"];
+            this.homepageUrl = data["homepageUrl"];
         }
     }
 
@@ -906,6 +860,7 @@ export class Event implements IEvent {
         data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
         data["entranceTime"] = this.entranceTime ? this.entranceTime.toISOString() : <any>undefined;
         data["location"] = this.location;
+        data["homepageUrl"] = this.homepageUrl;
         return data; 
     }
 }
@@ -917,6 +872,7 @@ export interface IEvent {
     endTime: Date;
     entranceTime?: Date | undefined;
     location?: string | undefined;
+    homepageUrl: string;
 }
 
 export class ProblemDetails implements IProblemDetails {

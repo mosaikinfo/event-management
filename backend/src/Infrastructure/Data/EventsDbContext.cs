@@ -38,6 +38,7 @@ namespace EventManagement.Infrastructure.Data
             {
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
                 entity.Property(e => e.Location).HasMaxLength(300);
+                entity.Property(e => e.HomepageUrl).HasMaxLength(2083);
             });
 
             modelBuilder.Entity<TicketType>(entity =>

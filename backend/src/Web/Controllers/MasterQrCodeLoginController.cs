@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NSwag.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace EventManagement.WebApp.Controllers
 {
+    [OpenApiIgnore]
     [AllowAnonymous]
     public class MasterQrCodeLoginController : ControllerBase
     {

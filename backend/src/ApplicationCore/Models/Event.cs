@@ -10,6 +10,7 @@ namespace EventManagement.ApplicationCore.Models
         public DateTime EndTime { get; set; }
         public DateTime? EntranceTime { get; set; }
         public string Location { get; set; }
+        public string HomepageUrl { get; set; }
 
         public List<TicketType> TicketTypes { get; set; }
         public List<Ticket> Tickets { get; set; }
