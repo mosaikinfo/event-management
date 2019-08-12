@@ -1,5 +1,6 @@
 ﻿using EventManagement.ApplicationCore.Models;
 using EventManagement.Infrastructure.Data;
+using EventManagement.WebApp.Models;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -16,7 +16,7 @@ namespace EventManagement.WebApp.Controllers
 {
     [OpenApiIgnore]
     [AllowAnonymous]
-    public class MasterQrCodeLoginController : ControllerBase
+    public class MasterQrCodeLoginController : Controller
     {
         private readonly EventsDbContext _context;
         private readonly ILogger _logger;
@@ -57,9 +57,7 @@ namespace EventManagement.WebApp.Controllers
             }
 
             await SignInAsync(masterQrCode);
-
-            // TODO: display success page.
-            return Content("Login erfolgreich");
+            return LogonSuccess();
         }
 
         private Task SignInAsync(MasterQrCode masterQrCode)
@@ -81,10 +79,23 @@ namespace EventManagement.WebApp.Controllers
                 authProperties);
         }
 
+        private IActionResult LogonSuccess()
+        {
+            return View("Status", new StatusMessage
+            {
+                Message = "Anmeldung erfolgreich!",
+                IconCssClass = "fas fa-key"
+            });
+        }
+
         private IActionResult AccessDenied()
         {
-            // TODO: return access denied page.
-            return StatusCode((int) HttpStatusCode.Forbidden);
+            return View("Status", new StatusMessage
+            {
+                Message = "Anmeldung fehlgeschlagen!",
+                BackgroundCssClass = "bg-danger",
+                IconCssClass = "fas fa-key"
+            });
         }
     }
 }

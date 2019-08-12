@@ -1,13 +1,18 @@
 ﻿using EventManagement.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using NSwag.Annotations;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace EventManagement.WebApp.Controllers
 {
-    [Authorize(Constants.QrScanPolicy)]
+    [OpenApiIgnore]
+    [AllowAnonymous]
     public class TicketValidationController : Controller
     {
         private readonly EventsDbContext _context;
@@ -21,29 +26,52 @@ namespace EventManagement.WebApp.Controllers
         }
 
         [HttpGet("v/{secret}")]
-        public IActionResult ValidateTicket(string secret)
+        public async Task<IActionResult> ValidateTicketAsync(string secret)
         {
+            ClaimsPrincipal currentUser = await TryGetAuthenticatedUser();
+
             ApplicationCore.Models.Ticket ticket =
                 _context.Tickets
                     .Include(e => e.Event)
                     .Include(e => e.TicketType)
                     .SingleOrDefault(e => e.TicketSecret == secret);
 
-            // TODO: check if the user has the permission for the event.
-
             if (ticket == null)
             {
                 _logger.LogInformation("Ticket with secret {id} was not found in the database.", secret);
                 return TicketNotFound();
             }
+
+            // TODO: check if the user has the permission for the event.
+
+            if (!currentUser.Identity.IsAuthenticated)
+            {
+                _logger.LogInformation("Unauthorized. Redirect to event homepage.");
+                return Redirect(ticket.Event.HomepageUrl);
+            }
             if (ticket.Validated)
             {
-                _logger.LogInformation("The ticket has been already used before.");
+                _logger.LogInformation("The ticket has already been used before.");
                 return View("TicketUsed", ticket);
             }
             ticket.Validated = true;
             _context.SaveChanges();
             return View("TicketValid", ticket);
+        }
+
+        private async Task<ClaimsPrincipal> TryGetAuthenticatedUser()
+        {
+            // check default auth cookie.
+            if (!User.Identity.IsAuthenticated)
+            {
+                var auth = await HttpContext.AuthenticateAsync(Constants.MasterQrCodeAuthenticationScheme);
+                // check master qr auth cookie.
+                if (auth.Succeeded)
+                {
+                    return auth.Principal;
+                }
+            }
+            return User;
         }
 
         private IActionResult TicketNotFound()

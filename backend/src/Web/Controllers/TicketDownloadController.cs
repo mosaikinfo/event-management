@@ -85,7 +85,7 @@ namespace EventManagement.WebApp.Controllers
         private string GetTicketValidationUrl(ApplicationCore.Models.Ticket ticket)
         {
             return Url.ActionAbsoluteUrl<TicketValidationController>(
-                nameof(TicketValidationController.ValidateTicket),
+                nameof(TicketValidationController.ValidateTicketAsync),
                 new { secret = ticket.TicketSecret });
         }
     }
