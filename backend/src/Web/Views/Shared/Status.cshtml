@@ -1,0 +1,8 @@
+﻿@model EventManagement.WebApp.Models.StatusMessage
+@{
+    Layout = "_TicketStatusLayout";
+}
+<div class="ticket-status text-white text-center @Model.BackgroundCssClass">
+    <h1 class="mt-5">@Model.Message</h1>
+    <i class="icon mt-5 @Model.IconCssClass"></i>
+</div>

@@ -6,7 +6,7 @@ namespace EventManagement.WebApp.Models
 {
     public class Event : IValidatableObject
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -20,6 +20,9 @@ namespace EventManagement.WebApp.Models
         public DateTime? EntranceTime { get; set; }
 
         public string Location { get; set; }
+
+        [Required]
+        public string HomepageUrl { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

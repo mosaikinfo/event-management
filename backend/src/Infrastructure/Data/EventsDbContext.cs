@@ -14,6 +14,7 @@ namespace EventManagement.Infrastructure.Data
         public DbSet<Event> Events { get; set; }
         public DbSet<TicketType> TicketTypes { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<MasterQrCode> MasterQrCodes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,6 +38,7 @@ namespace EventManagement.Infrastructure.Data
             {
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
                 entity.Property(e => e.Location).HasMaxLength(300);
+                entity.Property(e => e.HomepageUrl).HasMaxLength(2083);
             });
 
             modelBuilder.Entity<TicketType>(entity =>
@@ -55,7 +57,7 @@ namespace EventManagement.Infrastructure.Data
                 entity.HasQueryFilter(e => !e.IsDeleted);
 
                 entity.HasAlternateKey(e => e.TicketNumber);
-                entity.HasAlternateKey(e => e.TicketGuid);
+                entity.HasAlternateKey(e => e.TicketSecret);
 
                 entity.Property(e => e.TicketNumber).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Mail).HasMaxLength(254);
@@ -74,11 +76,13 @@ namespace EventManagement.Infrastructure.Data
 
                 entity.HasOne(e => e.Event)
                     .WithMany(e => e.Tickets)
-                    .HasForeignKey(e => e.EventId);
+                    .HasForeignKey(e => e.EventId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(e => e.TicketType)
                     .WithMany(e => e.Tickets)
-                    .HasForeignKey(e => e.TicketTypeId);
+                    .HasForeignKey(e => e.TicketTypeId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(e => e.Creator)
                     .WithMany()
@@ -87,6 +91,21 @@ namespace EventManagement.Infrastructure.Data
                 entity.HasOne(e => e.Editor)
                     .WithMany()
                     .HasForeignKey(e => e.EditorId);
+            });
+
+            modelBuilder.Entity<MasterQrCode>(entity =>
+            {
+                entity.ToTable("MasterQrCodes");
+
+                entity.HasOne(e => e.Owner)
+                    .WithMany(e => e.MasterQrCodes)
+                    .HasForeignKey(e => e.OwnerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Event)
+                    .WithMany()
+                    .HasForeignKey(e => e.EventId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

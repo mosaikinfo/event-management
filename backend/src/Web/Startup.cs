@@ -12,8 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
-using NSwag.AspNetCore;
+using System;
 
 namespace EventManagement.WebApp
 {
@@ -68,10 +69,16 @@ namespace EventManagement.WebApp
             });
 
             // Configure authentication to protect our web api.
-            services.AddAuthentication()
-                .AddLocalApi(Constants.JwtAuthScheme, options =>
+            services
+                .AddAuthentication()
+                .AddLocalApi(options =>
                 {
                     options.ExpectedScope = "eventmanagement.admin";
+                })
+                .AddCookie(Constants.MasterQrCodeAuthenticationScheme, options =>
+                {
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.Expiration = TimeSpan.FromDays(1);
                 });
 
             // In production, the Angular files will be served from this directory
@@ -80,7 +87,13 @@ namespace EventManagement.WebApp
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddSwaggerDocument();
+            services.AddOpenApiDocument(options =>
+            {
+                options.PostProcess = doc =>
+                {
+                    doc.Info.Title = "Event Management API";
+                };
+            });
             services.AddAutoMapper(GetType());
         }
 
@@ -90,6 +103,10 @@ namespace EventManagement.WebApp
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                // show personal identifiable information from access tokens 
+                // in the logs during development.
+                IdentityModelEventSource.ShowPII = true;
             }
             else
             {
@@ -100,7 +117,7 @@ namespace EventManagement.WebApp
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
-            app.UseSwagger();
+            app.UseOpenApi();
             app.UseSwaggerUi3();
 
             app.UseIdentityServer();

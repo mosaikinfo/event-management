@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace EventManagement.ApplicationCore.Models
 {
     public class TicketType : BaseEntity
     {
-        public int EventId { get; set; }
+        public Guid EventId { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
 

@@ -2,20 +2,21 @@
 
 namespace EventManagement.Infrastructure.Data.Migrations
 {
-    public partial class EventLocation : Migration
+    public partial class EventHomepage : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Location",
+                name: "HomepageUrl",
                 table: "Events",
+                maxLength: 2083,
                 nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Location",
+                name: "HomepageUrl",
                 table: "Events");
         }
     }

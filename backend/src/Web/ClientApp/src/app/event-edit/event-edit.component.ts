@@ -20,7 +20,7 @@ export class EventEditComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const id = +this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.apiClient.events_GetEvent(id)
         .subscribe((evt: Event) => this.model = evt);

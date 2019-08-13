@@ -1,12 +1,18 @@
 ﻿using EventManagement.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
+using NSwag.Annotations;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace EventManagement.WebApp.Controllers
 {
+    [OpenApiIgnore]
+    [AllowAnonymous]
     public class TicketValidationController : Controller
     {
         private readonly EventsDbContext _context;
@@ -19,33 +25,53 @@ namespace EventManagement.WebApp.Controllers
             _logger = logger;
         }
 
-        [HttpGet("v/{id}")]
-        public IActionResult ValidateTicket(string id)
+        [HttpGet("v/{secret}")]
+        public async Task<IActionResult> ValidateTicketAsync(string secret)
         {
-            Guid ticketGuid;
-            if (!Guid.TryParse(id, out ticketGuid))
-            {
-                _logger.LogInformation("The parameter id is no valid guid.");
-                return TicketNotFound();
-            }
+            ClaimsPrincipal currentUser = await TryGetAuthenticatedUser();
+
             ApplicationCore.Models.Ticket ticket =
                 _context.Tickets
                     .Include(e => e.Event)
                     .Include(e => e.TicketType)
-                    .SingleOrDefault(e => e.TicketGuid == ticketGuid);
+                    .SingleOrDefault(e => e.TicketSecret == secret);
+
             if (ticket == null)
             {
-                _logger.LogInformation("Ticket with id {id} was not found in the database.", ticketGuid);
+                _logger.LogInformation("Ticket with secret {id} was not found in the database.", secret);
                 return TicketNotFound();
+            }
+
+            // TODO: check if the user has the permission for the event.
+
+            if (!currentUser.Identity.IsAuthenticated)
+            {
+                _logger.LogInformation("Unauthorized. Redirect to event homepage.");
+                return Redirect(ticket.Event.HomepageUrl);
             }
             if (ticket.Validated)
             {
-                _logger.LogInformation("The ticket has been already used before.");
+                _logger.LogInformation("The ticket has already been used before.");
                 return View("TicketUsed", ticket);
             }
             ticket.Validated = true;
             _context.SaveChanges();
             return View("TicketValid", ticket);
+        }
+
+        private async Task<ClaimsPrincipal> TryGetAuthenticatedUser()
+        {
+            // check default auth cookie.
+            if (!User.Identity.IsAuthenticated)
+            {
+                var auth = await HttpContext.AuthenticateAsync(Constants.MasterQrCodeAuthenticationScheme);
+                // check master qr auth cookie.
+                if (auth.Succeeded)
+                {
+                    return auth.Principal;
+                }
+            }
+            return User;
         }
 
         private IActionResult TicketNotFound()

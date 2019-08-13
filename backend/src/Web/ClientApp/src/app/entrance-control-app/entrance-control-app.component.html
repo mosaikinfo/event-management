@@ -1,0 +1,20 @@
+<h1>Einlasskontrolle</h1>
+
+<div class="mt-4">
+  <h2 class="h4">QR-Codes mit App scannen</h2>
+</div>
+
+<div *ngIf="qrCodeImageUrl" class="mt-4">
+  <img [src]="qrCodeImageUrl" class="img-thumbnail">
+</div>
+
+<div class="row mt-4">
+  <div class="col-lg-8">
+    Das ist dein persönlicher Master-QR-Code.
+    Behandle ihn vertraulich und zeige ihn nur Mitarbeitern,
+    die bei der Einlasskontrolle mithelfen.
+    Wenn du den Master-QR-Code mit einer QR-Scanner-App (z.B. barcoo) scannst,
+    bist du damit für die nächsten Stunden angemeldet und kannst mit deinem
+    Smartphone Tickets entwerten.
+  </div>
+</div>

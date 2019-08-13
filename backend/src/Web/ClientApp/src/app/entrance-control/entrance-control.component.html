@@ -1,17 +1,20 @@
 <h1>Einlasskontrolle</h1>
 
-<div class="mt-4">
-  <h2 class="h4">Ticket manuell überprüfen</h2>
-  <div class="my-3">
-    Wenn der QR-Code nicht lesbar ist, können Sie hiermit ein
-    Ticket entwerten, indem Sie die Ticket-Nr. eingeben.
-  </div>
-  <form (ngSubmit)="validateTicket()" #form="ngForm">
-    <div class="form-group">
-      <label for="ticketNumber">Ticket-Nr. eingeben</label>
-      <input name="ticketNumber" type="text" class="form-control"
-            [(ngModel)]="ticketNumber" required>
+<div class="card-deck mt-4">
+  <div class="card">
+    <img class="card-img-top d-md-none" src="assets/images/smartphone.svg">
+    <div class="card-body">
+      <h5 class="card-title">QR-Code scannen</h5>
+      <p class="card-text">Scanne die Tickets mit deinem Smartphone.</p>
+      <a [routerLink]='["/entrance-control/app"]' class="stretched-link"></a>
     </div>
-    <input type="submit" class="btn btn-primary" [disabled]="!form.form.valid" value="Absenden">
-  </form>
+  </div>
+  <div class="card">
+    <img class="card-img-top d-md-none" src="assets/images/textinput.svg">
+    <div class="card-body">
+      <h5 class="card-title">Manuelle Eingabe der Ticketnummer</h5>
+      <p class="card-text">Überprüfe ein Ticket, indem du die Ticketnummer eingibst.</p>
+      <a [routerLink]='["/entrance-control/manual"]' class="stretched-link"></a>
+    </div>
+  </div>
 </div>

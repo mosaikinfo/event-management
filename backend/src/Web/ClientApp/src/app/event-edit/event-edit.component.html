@@ -6,45 +6,57 @@
            [(ngModel)]="model.name" required>
   </div>
 
-  <div class="form-group">
-    <label for="startTime">Beginn</label>
-    <div class="input-group">
-      <p-calendar name="startTime" required
-                  [(ngModel)]="model.startTime"
-                  [showTime]="true" [showOnFocus]="false"
-                  dateFormat="dd.mm.yy" hourFormat="24"
-                  placeholder="dd.mm.yyyy hh:mm">
-      </p-calendar>
+  <div class="form-row">
+    <div class="form-group col">
+      <label for="startTime">Beginn</label>
+      <div class="input-group">
+        <p-calendar name="startTime" required
+                    [(ngModel)]="model.startTime"
+                    [showTime]="true" [showOnFocus]="false"
+                    dateFormat="dd.mm.yy" hourFormat="24"
+                    placeholder="dd.mm.yyyy hh:mm">
+        </p-calendar>
+      </div>
     </div>
-  </div>
-
-  <div class="form-group">
-    <label for="endTime">Ende</label>
-    <div class="input-group">
-      <p-calendar name="endTime" required
-                  [(ngModel)]="model.endTime"
-                  [showTime]="true" [showOnFocus]="false"
-                  dateFormat="dd.mm.yy" hourFormat="24"
-                  placeholder="dd.mm.yyyy hh:mm">
-      </p-calendar>
+    <div class="form-group col">
+      <label for="endTime">Ende</label>
+      <div class="input-group">
+        <p-calendar name="endTime" required
+                    [(ngModel)]="model.endTime"
+                    [showTime]="true" [showOnFocus]="false"
+                    dateFormat="dd.mm.yy" hourFormat="24"
+                    placeholder="dd.mm.yyyy hh:mm">
+        </p-calendar>
+      </div>
     </div>
-  </div>
-
-  <div class="form-group">
-    <label for="entranceTime">Einlasszeit</label>
-    <div class="input-group">
-      <p-calendar name="entranceTime" id="entranceTime"
-                  [(ngModel)]="model.entranceTime"
-                  [timeOnly]="true" hourFormat="24"
-                  [showOnFocus]="false" placeholder="hh:mm">
-      </p-calendar>
+    <div class="form-group col">
+      <label for="entranceTime">Einlasszeit</label>
+      <div class="input-group">
+        <p-calendar name="entranceTime" id="entranceTime"
+                    [(ngModel)]="model.entranceTime"
+                    [timeOnly]="true" hourFormat="24"
+                    [showOnFocus]="false" placeholder="hh:mm">
+        </p-calendar>
+      </div>
     </div>
   </div>
 
   <div class="form-group">
     <label for="location">Location</label>
-    <input type="text" class="form-control" name="location" id="location" maxlength="300" placeholder="Ratiopharm Arena Neu-Ulm, Europastraße 25, 89231 Neu-Ulm"
+    <input type="text" class="form-control" name="location" id="location"
+           maxlength="300" placeholder="Ratiopharm Arena Neu-Ulm, Europastraße 25, 89231 Neu-Ulm"
            [(ngModel)]="model.location" required>
+  </div>
+
+  <div class="form-group">
+    <label for="homepageUrl">Homepage</label>
+    <input type="url" class="form-control" name="homepageUrl" id="homepageUrl"
+           maxlength="2083" placeholder="http://yourevent.com"
+           [(ngModel)]="model.homepageUrl" required>
+     <small class="form-text text-muted">
+       Wenn Besucher den QR-Code auf ihrem Ticket selbst scannen,
+       werden Sie zur Homepage der Veranstaltung weitergeleitet.
+      </small>
   </div>
 
   <div>
