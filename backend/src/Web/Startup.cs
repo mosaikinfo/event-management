@@ -30,9 +30,10 @@ namespace EventManagement.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = Configuration.GetConnectionString("EventManagement");
+
             services.AddDbContext<EventsDbContext>(
-                options => options.UseSqlServer(
-                    Configuration.GetConnectionString("EventManagement")));
+                options => options.UseSqlServer(connectionString));
 
             services.AddTransient<EventsDbContextSeed>();
 
@@ -44,6 +45,7 @@ namespace EventManagement.WebApp
                 .AddInMemoryApiResources(IdentityServerConfig.GetApis())
                 .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
                 .AddClientStore<EventManagementLocalClientStore>()
+                .AddEntityFrameworkStorage(connectionString)
                 .AddProfileService<UserProfileService>();
 
             services.Configure<RouteOptions>(options =>
