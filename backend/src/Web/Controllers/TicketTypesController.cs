@@ -7,13 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static IdentityServer4.IdentityServerConstants;
 
 namespace EventManagement.WebApp.Controllers
 {
     [ApiController]
     [Route("api")]
-    [Authorize(AuthenticationSchemes = LocalApi.AuthenticationScheme)]
+    [Authorize(Constants.EventManagementApiPolicy)]
     public class TicketTypesController : ControllerBase
     {
         private readonly EventsDbContext _context;

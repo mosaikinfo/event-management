@@ -3,6 +3,7 @@ using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Services;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
+using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -81,6 +82,18 @@ namespace EventManagement.WebApp
                     options.Cookie.Expiration = TimeSpan.FromDays(1);
                 });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Constants.EventManagementApiPolicy, policy =>
+                {
+                    policy.AddAuthenticationSchemes(
+                        IdentityServerConstants.DefaultCookieAuthenticationScheme,
+                        IdentityServerConstants.LocalApi.AuthenticationScheme);
+
+                    policy.RequireAuthenticatedUser();
+                });
+            });
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -118,7 +131,10 @@ namespace EventManagement.WebApp
             app.UseSpaStaticFiles();
 
             app.UseOpenApi();
-            app.UseSwaggerUi3();
+            app.UseSwaggerUi3(options =>
+            {
+                options.WithCredentials = true;
+            });
 
             app.UseIdentityServer();
 

@@ -4,18 +4,18 @@ using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static IdentityServer4.IdentityServerConstants;
 
 namespace EventManagement.WebApp.Controllers
 {
     [ApiController]
     [Route("api")]
-    [Authorize(AuthenticationSchemes = LocalApi.AuthenticationScheme)]
+    [Authorize(Constants.EventManagementApiPolicy)]
     public class TicketsController : ControllerBase
     {
         private readonly EventsDbContext _context;
@@ -123,6 +123,35 @@ namespace EventManagement.WebApp.Controllers
             SetAuthorInfo(entity);
             _context.SaveChanges();
             return NoContent();
+        }
+
+        /// <summary>
+        /// Apply some changes to an existing ticket.
+        /// </summary>
+        /// <param name="id">Id of the ticket.</param>
+        /// <param name="patchDoc">JSON Patch Document which describes the changes. 
+        /// See <see href="http://jsonpatch.com"/></param>
+        /// <returns></returns>
+        [HttpPatch("tickets/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public ActionResult UpdateTicketPatch(Guid id, [FromBody] JsonPatchDocument<Ticket> patchDoc)
+        {
+            var entity = _context.Tickets.Find(id);
+            if (entity == null)
+                return NotFound();
+            var model = _mapper.Map<Ticket>(entity);
+            patchDoc.ApplyTo(model);
+            if (model.TicketNumber != entity.TicketNumber)
+                return BadRequest(
+                    new ProblemDetails { Detail = "The TicketNumber can't be changed." });
+            if (model.EventId != entity.EventId)
+                return BadRequest(
+                    new ProblemDetails { Detail = "The ticket is only valid for a single event." });
+            _mapper.Map(model, entity);
+            SetAuthorInfo(entity);
+            _context.SaveChanges();
+            return Ok();
         }
 
         /// <summary>

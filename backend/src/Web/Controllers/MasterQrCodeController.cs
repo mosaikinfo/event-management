@@ -3,7 +3,6 @@ using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.Shared.Mvc;
 using EventManagement.WebApp.Shared.Mvc;
-using IdentityServer4;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +19,7 @@ namespace EventManagement.WebApp.Controllers
     /// </summary>
     [OpenApiIgnore]
     [Route("events/{eventId}/masterqrcodes")]
-    [Authorize(AuthenticationSchemes = IdentityServerConstants.DefaultCookieAuthenticationScheme)]
+    [Authorize(Constants.EventManagementApiPolicy)]
     public class MasterQrCodeIssueController : ControllerBase
     {
         private readonly EventsDbContext _context;
