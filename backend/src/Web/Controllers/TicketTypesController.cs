@@ -25,6 +25,11 @@ namespace EventManagement.WebApp.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// List all available ticket types for an event.
+        /// </summary>
+        /// <param name="eventId">Id of the event.</param>
+        /// <returns>List of ticket types.</returns>
         [HttpGet("events/{eventId}/tickettypes")]
         public ActionResult<IList<TicketType>> GetTicketTypes(Guid eventId)
         {
@@ -36,6 +41,12 @@ namespace EventManagement.WebApp.Controllers
                 .ToList();
         }
 
+        /// <summary>
+        /// Set all available ticket types for an event.
+        /// </summary>
+        /// <param name="eventId">Id of the event.</param>
+        /// <param name="items">Ticket types to set for the event.</param>
+        /// <returns>List of ticket types.</returns>
         [HttpPost("events/{eventId}/tickettypes")]
         public ActionResult<IList<TicketType>> AddOrUpdateTicketTypes(Guid eventId, [FromBody] TicketType[] items)
         {

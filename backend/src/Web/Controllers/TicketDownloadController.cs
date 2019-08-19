@@ -26,6 +26,11 @@ namespace EventManagement.WebApp.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Download a ticket as pdf.
+        /// </summary>
+        /// <param name="id">Id of the ticket.</param>
+        /// <returns>pdf file</returns>
         [HttpGet("tickets/{id}/pdf")]
         public IActionResult DownloadAsPdf(Guid id)
         {
