@@ -10,11 +10,12 @@ namespace EventManagement.Infrastructure.Data
         {
         }
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<Client> Clients { get; set; }
         public DbSet<Event> Events { get; set; }
-        public DbSet<TicketType> TicketTypes { get; set; }
-        public DbSet<Ticket> Tickets { get; set; }
         public DbSet<MasterQrCode> MasterQrCodes { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<TicketType> TicketTypes { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -106,6 +107,12 @@ namespace EventManagement.Infrastructure.Data
                     .WithMany()
                     .HasForeignKey(e => e.EventId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Client>(entity =>
+            {
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(1000);
+                entity.Property(e => e.Secret).IsRequired().HasMaxLength(1000);
             });
         }
     }

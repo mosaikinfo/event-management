@@ -30,6 +30,7 @@ namespace EventManagement.WebApp
         private static void SetupDatabase(IServiceProvider services)
         {
             var logger = services.GetRequiredService<ILogger<Program>>();
+            var env = services.GetRequiredService<IHostingEnvironment>();
             try
             {
                 var dbContext = services.GetRequiredService<EventsDbContext>();
@@ -37,16 +38,19 @@ namespace EventManagement.WebApp
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred migrating the DB.");
+                logger.LogError(ex, "An error occurred migrating the database schema.");
             }
-            try
+            if (env.IsDevelopment())
             {
-                var dbSeed = services.GetRequiredService<EventsDbContextSeed>();
-                dbSeed.Seed(new TestData());
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "An error occurred seeding the DB.");
+                try
+                {
+                    var dbSeed = services.GetRequiredService<EventsDbContextSeed>();
+                    dbSeed.Seed(new TestData());
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "An error occurred seeding the database.");
+                }
             }
         }
     }

@@ -117,7 +117,7 @@ namespace EventManagement.WebApp
             {
                 app.UseDeveloperExceptionPage();
 
-                // show personal identifiable information from access tokens 
+                // show personal identifiable information from access tokens
                 // in the logs during development.
                 IdentityModelEventSource.ShowPII = true;
             }
