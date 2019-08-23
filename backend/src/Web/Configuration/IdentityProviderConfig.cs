@@ -3,6 +3,7 @@ using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using static EventManagement.EventManagementConstants;
 
 namespace EventManagement.WebApp
 {
@@ -24,7 +25,7 @@ namespace EventManagement.WebApp
 
             return new List<ApiResource>
             {
-                new ApiResource("eventmanagement.admin", "Event Management Admin API", requiredClaims)
+                new ApiResource(AdminApi.ScopeName,  AdminApi.DisplayName, requiredClaims)
             };
         }
 
@@ -50,7 +51,21 @@ namespace EventManagement.WebApp
                     PostLogoutRedirectUris = { "~" },
 
                     AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowedScopes = { "openid", "profile", "eventmanagement.admin" }
+                    AllowedScopes = { "openid", "profile", AdminApi.ScopeName }
+                },
+                new Client
+                {
+                    ClientId = "swaggerui",
+                    ClientName = "Swagger UI",
+                    AllowAccessTokensViaBrowser = true,
+                    RequireConsent = false,
+
+                    RedirectUris = {
+                        "~/swagger/oauth2-redirect.html",
+                    },
+
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowedScopes = { AdminApi.ScopeName }
                 }
             };
         }
@@ -68,16 +83,15 @@ namespace EventManagement.WebApp
     }
 
     /// <summary>
-    /// Client store to provide the static local clients and 
+    /// Client store to provide the static local clients and
     /// api clients that are stored in the database.
     /// </summary>
-    internal class EventManagementClientStore: HybridClientStore
+    internal class EventManagementClientStore : HybridClientStore
     {
         public EventManagementClientStore(EventManagementLocalClientStore localClientStore,
-                                          IEventManagementClientStore apiClientStore) 
+                                          IEventManagementClientStore apiClientStore)
             : base(localClientStore, apiClientStore)
         {
-
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using EventManagement.Infrastructure.Data;
 using IdentityServer4.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,15 +14,23 @@ namespace EventManagement.Identity
     public class DatabaseClientStore : IEventManagementClientStore
     {
         private readonly EventsDbContext _dbContext;
+        private readonly ILogger _logger;
 
-        public DatabaseClientStore(EventsDbContext dbContext)
+        public DatabaseClientStore(EventsDbContext dbContext,
+                                   ILogger<DatabaseClientStore> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         public async Task<Client> FindClientByIdAsync(string clientId)
         {
-            var clientGuid = new Guid(clientId);
+            Guid clientGuid;
+            if (!Guid.TryParse(clientId, out clientGuid))
+            {
+                _logger.LogWarning("The client id \"{clientId}\" is no valid GUID.", clientId);
+                return null;
+            }
 
             var client = await _dbContext.Clients
                 .AsNoTracking()
@@ -36,7 +45,7 @@ namespace EventManagement.Identity
                     ClientName = client.Name,
                     ClientSecrets = { new Secret(client.Secret) },
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    AllowedScopes = { "eventmanagement.admin" }
+                    AllowedScopes = { EventManagementConstants.AdminApi.ScopeName }
                 };
             }
             return null;

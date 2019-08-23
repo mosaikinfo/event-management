@@ -15,7 +15,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
+using NSwag;
+using NSwag.AspNetCore;
+using NSwag.Generation.Processors.Security;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using static EventManagement.EventManagementConstants;
 
 namespace EventManagement.WebApp
@@ -77,7 +82,7 @@ namespace EventManagement.WebApp
                 .AddAuthentication()
                 .AddLocalApi(options =>
                 {
-                    options.ExpectedScope = "eventmanagement.admin";
+                    options.ExpectedScope = AdminApi.ScopeName;
                 })
                 .AddCookie(MasterQrCode.AuthenticationScheme, options =>
                 {
@@ -103,12 +108,44 @@ namespace EventManagement.WebApp
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddOpenApiDocument(options =>
+            services.AddOpenApiDocument(document =>
             {
-                options.PostProcess = doc =>
+                document.PostProcess = doc =>
                 {
                     doc.Info.Title = "Event Management API";
                 };
+
+                document.DocumentProcessors.Add(
+                    new SecurityDefinitionAppender(
+                        "bearer", Enumerable.Empty<string>(),
+                        new OpenApiSecurityScheme
+                        {
+                            Type = OpenApiSecuritySchemeType.OAuth2,
+                            Flow = OpenApiOAuth2Flow.Implicit,
+                            Flows = new OpenApiOAuthFlows
+                            {
+                                Implicit = new OpenApiOAuthFlow
+                                {
+                                    Scopes = new Dictionary<string, string>
+                                    {
+                                        { AdminApi.ScopeName, AdminApi.DisplayName },
+                                    },
+                                    AuthorizationUrl = "/connect/authorize",
+                                    TokenUrl = "/connect/token"
+                                },
+                                ClientCredentials = new OpenApiOAuthFlow
+                                {
+                                    Scopes = new Dictionary<string, string>
+                                    {
+                                        { AdminApi.ScopeName, AdminApi.DisplayName },
+                                    },
+                                    TokenUrl = "/connect/token"
+                                }
+                            },
+                        }));
+
+                document.OperationProcessors.Add(
+                    new AspNetCoreOperationSecurityScopeProcessor("bearer"));
             });
             services.AddAutoMapper(GetType());
         }
@@ -134,9 +171,14 @@ namespace EventManagement.WebApp
             app.UseSpaStaticFiles();
 
             app.UseOpenApi();
-            app.UseSwaggerUi3(options =>
+            app.UseSwaggerUi3(settings =>
             {
-                options.WithCredentials = true;
+                settings.OAuth2Client = new OAuth2ClientSettings
+                {
+                    ClientId = "swaggerui",
+                    AppName = "Swagger UI",
+                    Realm = "Event Management IdP"
+                };
             });
 
             app.UseIdentityServer();

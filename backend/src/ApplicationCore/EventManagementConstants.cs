@@ -7,7 +7,12 @@
             /// <summary>
             /// The API scope name that gives access to the Event Management API.
             /// </summary>
-            public const string ScopeName = "IdentityServerApi";
+            public const string ScopeName = "eventmanagement:admin";
+
+            /// <summary>
+            /// Display name for the consent screen.
+            /// </summary>
+            public const string DisplayName = "Access the Admin API";
 
             /// <summary>
             /// The name of the authorization policy for the Event Management API.
