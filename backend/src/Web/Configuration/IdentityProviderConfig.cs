@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace EventManagement.WebApp
 {
-    public class IdentityServerConfig
+    internal class IdentityServerConfig
     {
         public static IEnumerable<IdentityResource> GetIdentityResources()
         {
@@ -57,13 +57,27 @@ namespace EventManagement.WebApp
     }
 
     /// <summary>
-    /// Client store to provide the hard-coded local api clients.
+    /// Client store to provide the static local api clients (eg: Admin App).
     /// </summary>
-    public class EventManagementLocalClientStore : LocalClientStore
+    internal class EventManagementLocalClientStore : LocalClientStore
     {
         public EventManagementLocalClientStore(IHttpContextAccessor httpContextAccessor)
             : base(new InMemoryClientStore(IdentityServerConfig.GetLocalClients()), httpContextAccessor)
         {
+        }
+    }
+
+    /// <summary>
+    /// Client store to provide the static local clients and 
+    /// api clients that are stored in the database.
+    /// </summary>
+    internal class EventManagementClientStore: HybridClientStore
+    {
+        public EventManagementClientStore(EventManagementLocalClientStore localClientStore,
+                                          IEventManagementClientStore apiClientStore) 
+            : base(localClientStore, apiClientStore)
+        {
+
         }
     }
 }

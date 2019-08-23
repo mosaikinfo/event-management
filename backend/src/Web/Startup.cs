@@ -36,15 +36,17 @@ namespace EventManagement.WebApp
                     Configuration.GetConnectionString("EventManagement")));
 
             services.AddTransient<EventsDbContextSeed>();
+            services.AddTransient<EventManagementLocalClientStore>();
 
-            services.TryAddTransient<IUserStore, UserStore>();
+            services.TryAddTransient<IUserStore, DatabaseUserStore>();
+            services.TryAddTransient<IEventManagementClientStore, DatabaseClientStore>();
             services.TryAddTransient<ITicketNumberService, TicketNumberService>();
 
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential(persistKey: true)
                 .AddInMemoryApiResources(IdentityServerConfig.GetApis())
                 .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
-                .AddClientStore<EventManagementLocalClientStore>()
+                .AddClientStore<EventManagementClientStore>()
                 .AddProfileService<UserProfileService>();
 
             services.Configure<RouteOptions>(options =>

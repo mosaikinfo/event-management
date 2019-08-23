@@ -7,11 +7,14 @@ using System.Security.Claims;
 
 namespace EventManagement.Identity
 {
-    public class UserStore : IUserStore
+    /// <summary>
+    /// User store for users in the Event Managemement database.
+    /// </summary>
+    public class DatabaseUserStore : IUserStore
     {
         private readonly EventsDbContext _dbContext;
 
-        public UserStore(EventsDbContext dbContext)
+        public DatabaseUserStore(EventsDbContext dbContext)
         {
             _dbContext = dbContext;
         }
