@@ -64,7 +64,8 @@ namespace EventManagement.WebApp.Controllers
             // check default auth cookie.
             if (!User.Identity.IsAuthenticated)
             {
-                var auth = await HttpContext.AuthenticateAsync(Constants.MasterQrCodeAuthenticationScheme);
+                var auth = await HttpContext.AuthenticateAsync(
+                    EventManagementConstants.MasterQrCode.AuthenticationScheme);
                 // check master qr auth cookie.
                 if (auth.Succeeded)
                 {

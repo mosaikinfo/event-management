@@ -12,7 +12,7 @@ namespace EventManagement.WebApp.Controllers
 {
     [ApiController]
     [Route("api")]
-    [Authorize(Constants.EventManagementApiPolicy)]
+    [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class TicketTypesController : ControllerBase
     {
         private readonly EventsDbContext _context;

@@ -15,7 +15,7 @@ namespace EventManagement.WebApp.Controllers
 {
     [ApiController]
     [Route("api")]
-    [Authorize(Constants.EventManagementApiPolicy)]
+    [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class TicketsController : ControllerBase
     {
         private readonly EventsDbContext _context;
@@ -129,7 +129,7 @@ namespace EventManagement.WebApp.Controllers
         /// Apply some changes to an existing ticket.
         /// </summary>
         /// <param name="id">Id of the ticket.</param>
-        /// <param name="patchDoc">JSON Patch Document which describes the changes. 
+        /// <param name="patchDoc">JSON Patch Document which describes the changes.
         /// See <see href="http://jsonpatch.com"/></param>
         /// <returns></returns>
         [HttpPatch("tickets/{id}")]

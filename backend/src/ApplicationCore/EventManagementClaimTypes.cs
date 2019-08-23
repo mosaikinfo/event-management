@@ -1,9 +1,9 @@
-﻿namespace EventManagement.WebApp
+﻿namespace EventManagement
 {
     /// <summary>
     /// Defines custom claim types used by the Event Management application.
     /// </summary>
-    public static class CustomClaimTypes
+    public static class EventManagementClaimTypes
     {
         public const string EventId = "event_id";
     }

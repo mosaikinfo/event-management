@@ -14,12 +14,12 @@ using System.Threading.Tasks;
 namespace EventManagement.WebApp.Controllers
 {
     /// <summary>
-    /// Controller to issue master qr codes that can be used to 
+    /// Controller to issue master qr codes that can be used to
     /// authenticate a qr code scanner app for validating tickets.
     /// </summary>
     [OpenApiIgnore]
     [Route("events/{eventId}/masterqrcodes")]
-    [Authorize(Constants.EventManagementApiPolicy)]
+    [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class MasterQrCodeIssueController : ControllerBase
     {
         private readonly EventsDbContext _context;

@@ -15,7 +15,7 @@ namespace EventManagement.WebApp.Controllers
     /// Controller to download tickets with an internet browser.
     /// </summary>
     [SecurityHeaders]
-    [Authorize(Constants.EventManagementApiPolicy)]
+    [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class TicketDownloadController : Controller
     {
         private readonly EventsDbContext _context;

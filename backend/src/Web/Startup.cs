@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
 using System;
+using static EventManagement.EventManagementConstants;
 
 namespace EventManagement.WebApp
 {
@@ -78,7 +79,7 @@ namespace EventManagement.WebApp
                 {
                     options.ExpectedScope = "eventmanagement.admin";
                 })
-                .AddCookie(Constants.MasterQrCodeAuthenticationScheme, options =>
+                .AddCookie(MasterQrCode.AuthenticationScheme, options =>
                 {
                     options.Cookie.HttpOnly = true;
                     options.Cookie.Expiration = TimeSpan.FromDays(1);
@@ -86,7 +87,7 @@ namespace EventManagement.WebApp
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(Constants.EventManagementApiPolicy, policy =>
+                options.AddPolicy(AdminApi.PolicyName, policy =>
                 {
                     policy.AddAuthenticationSchemes(
                         IdentityServerConstants.DefaultCookieAuthenticationScheme,

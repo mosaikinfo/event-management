@@ -16,7 +16,7 @@ namespace EventManagement.WebApp.Controllers
     /// </summary>
     [ApiController]
     [Route("clients")]
-    [Authorize(Constants.EventManagementApiPolicy)]
+    [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class ClientsController : ControllerBase
     {
         private readonly EventsDbContext _context;
