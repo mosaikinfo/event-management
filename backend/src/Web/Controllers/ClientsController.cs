@@ -15,7 +15,7 @@ namespace EventManagement.WebApp.Controllers
     /// Controller to manage api clients for an event.
     /// </summary>
     [ApiController]
-    [Route("clients")]
+    [Route("api/clients")]
     [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class ClientsController : ControllerBase
     {
