@@ -62,19 +62,19 @@ namespace EventManagement.WebApp.Controllers
 
         private Task SignInAsync(MasterQrCode masterQrCode)
         {
+            string authenticationScheme = EventManagementConstants.MasterQrCode.AuthenticationScheme;
             var claims = new List<Claim>
             {
                 new Claim(JwtClaimTypes.Subject, masterQrCode.OwnerId.ToString()),
-                new Claim(CustomClaimTypes.EventId, masterQrCode.EventId.ToString())
+                new Claim(EventManagementClaimTypes.EventId, masterQrCode.EventId.ToString())
             };
-            var claimsIdentity = new ClaimsIdentity(
-                claims, Constants.MasterQrCodeAuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(claims, authenticationScheme);
             var authProperties = new AuthenticationProperties
             {
                 IsPersistent = true
             };
             return HttpContext.SignInAsync(
-                Constants.MasterQrCodeAuthenticationScheme,
+                authenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
         }

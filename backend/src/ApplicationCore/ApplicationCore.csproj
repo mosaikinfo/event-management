@@ -10,4 +10,8 @@
     <PackageReference Include="IdentityModel" Version="3.10.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Identity\Identity.csproj" />
+  </ItemGroup>
+
 </Project>

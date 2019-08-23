@@ -1,7 +1,6 @@
 ﻿using EventManagement.Infrastructure.Data;
 using EventManagement.TicketGeneration;
 using EventManagement.WebApp.Shared.Mvc;
-using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +15,7 @@ namespace EventManagement.WebApp.Controllers
     /// Controller to download tickets with an internet browser.
     /// </summary>
     [SecurityHeaders]
-    [Authorize(AuthenticationSchemes = IdentityServerConstants.DefaultCookieAuthenticationScheme)]
+    [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class TicketDownloadController : Controller
     {
         private readonly EventsDbContext _context;
@@ -26,6 +25,11 @@ namespace EventManagement.WebApp.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Download a ticket as pdf.
+        /// </summary>
+        /// <param name="id">Id of the ticket.</param>
+        /// <returns>pdf file</returns>
         [HttpGet("tickets/{id}/pdf")]
         public IActionResult DownloadAsPdf(Guid id)
         {

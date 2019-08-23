@@ -4,18 +4,18 @@ using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static IdentityServer4.IdentityServerConstants;
 
 namespace EventManagement.WebApp.Controllers
 {
     [ApiController]
     [Route("api")]
-    [Authorize(AuthenticationSchemes = LocalApi.AuthenticationScheme)]
+    [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class TicketsController : ControllerBase
     {
         private readonly EventsDbContext _context;
@@ -58,6 +58,11 @@ namespace EventManagement.WebApp.Controllers
             return query.Select(_mapper.Map<Ticket>).ToList();
         }
 
+        /// <summary>
+        /// Get a single ticket by its id.
+        /// </summary>
+        /// <param name="id">Id of the ticket.</param>
+        /// <returns>ticket details</returns>
         [HttpGet("tickets/{id}")]
         public ActionResult<Ticket> GetById(Guid id)
         {
@@ -65,9 +70,13 @@ namespace EventManagement.WebApp.Controllers
             return _mapper.Map<Ticket>(entity);
         }
 
+        /// <summary>
+        /// Create a new ticket.
+        /// </summary>
+        /// <param name="model">ticket details</param>
+        /// <returns>details of created ticket.</returns>
         [HttpPost("tickets")]
-        [ApiConventionMethod(typeof(DefaultApiConventions),
-            nameof(DefaultApiConventions.Post))]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public ActionResult<Ticket> CreateTicket(Ticket model)
         {
             if (model.Id != Guid.Empty)
@@ -89,9 +98,14 @@ namespace EventManagement.WebApp.Controllers
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
         }
 
+        /// <summary>
+        /// Update all details of an existing ticket (replace all fields).
+        /// </summary>
+        /// <param name="id">Id of the ticket.</param>
+        /// <param name="model">Ticket details.</param>
+        /// <returns>updated ticket.</returns>
         [HttpPut("tickets/{id}")]
-        [ApiConventionMethod(typeof(DefaultApiConventions),
-            nameof(DefaultApiConventions.Put))]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public ActionResult UpdateTicket(Guid id, [FromBody] Ticket model)
         {
             if (id != model.Id)
@@ -111,9 +125,41 @@ namespace EventManagement.WebApp.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Apply some changes to an existing ticket.
+        /// </summary>
+        /// <param name="id">Id of the ticket.</param>
+        /// <param name="patchDoc">JSON Patch Document which describes the changes.
+        /// See <see href="http://jsonpatch.com"/></param>
+        /// <returns></returns>
+        [HttpPatch("tickets/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public ActionResult UpdateTicketPatch(Guid id, [FromBody] JsonPatchDocument<Ticket> patchDoc)
+        {
+            var entity = _context.Tickets.Find(id);
+            if (entity == null)
+                return NotFound();
+            var model = _mapper.Map<Ticket>(entity);
+            patchDoc.ApplyTo(model);
+            if (model.TicketNumber != entity.TicketNumber)
+                return BadRequest(
+                    new ProblemDetails { Detail = "The TicketNumber can't be changed." });
+            if (model.EventId != entity.EventId)
+                return BadRequest(
+                    new ProblemDetails { Detail = "The ticket is only valid for a single event." });
+            _mapper.Map(model, entity);
+            SetAuthorInfo(entity);
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        /// <summary>
+        /// Delete a specific ticket.
+        /// </summary>
+        /// <param name="id">Id of the ticket.</param>
         [HttpDelete("tickets/{id}")]
-        [ApiConventionMethod(typeof(DefaultApiConventions),
-            nameof(DefaultApiConventions.Delete))]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         public IActionResult DeleteTicket(Guid id)
         {
             var entity = _context.Tickets.Find(id);

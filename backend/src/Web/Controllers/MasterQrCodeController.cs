@@ -3,7 +3,6 @@ using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.Shared.Mvc;
 using EventManagement.WebApp.Shared.Mvc;
-using IdentityServer4;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +14,12 @@ using System.Threading.Tasks;
 namespace EventManagement.WebApp.Controllers
 {
     /// <summary>
-    /// Controller to issue master qr codes that can be used to 
+    /// Controller to issue master qr codes that can be used to
     /// authenticate a qr code scanner app for validating tickets.
     /// </summary>
     [OpenApiIgnore]
     [Route("events/{eventId}/masterqrcodes")]
-    [Authorize(AuthenticationSchemes = IdentityServerConstants.DefaultCookieAuthenticationScheme)]
+    [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class MasterQrCodeIssueController : ControllerBase
     {
         private readonly EventsDbContext _context;

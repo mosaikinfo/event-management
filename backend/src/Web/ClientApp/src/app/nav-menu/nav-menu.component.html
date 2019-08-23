@@ -29,7 +29,13 @@
             <div ngbDropdownMenu aria-labelledby="accountDropDown">
               <h6 class="dropdown-header">Hallo {{ currentUser }}!</h6>
               <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="swagger">
+                <i class="fas fa-code"></i>
+                API Documentation
+              </a>
+              <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="#" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i>
                 Abmelden
               </a>
             </div>

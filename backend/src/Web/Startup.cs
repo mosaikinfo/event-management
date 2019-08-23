@@ -3,6 +3,7 @@ using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Services;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
+using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,7 +15,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
+using NSwag;
+using NSwag.AspNetCore;
+using NSwag.Generation.Processors.Security;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using static EventManagement.EventManagementConstants;
 
 namespace EventManagement.WebApp
 {
@@ -35,15 +42,17 @@ namespace EventManagement.WebApp
                     Configuration.GetConnectionString("EventManagement")));
 
             services.AddTransient<EventsDbContextSeed>();
+            services.AddTransient<EventManagementLocalClientStore>();
 
-            services.TryAddTransient<IUserStore, UserStore>();
+            services.TryAddTransient<IUserStore, DatabaseUserStore>();
+            services.TryAddTransient<IEventManagementClientStore, DatabaseClientStore>();
             services.TryAddTransient<ITicketNumberService, TicketNumberService>();
 
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential(persistKey: true)
                 .AddInMemoryApiResources(IdentityServerConfig.GetApis())
                 .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
-                .AddClientStore<EventManagementLocalClientStore>()
+                .AddClientStore<EventManagementClientStore>()
                 .AddProfileService<UserProfileService>();
 
             services.Configure<RouteOptions>(options =>
@@ -73,13 +82,25 @@ namespace EventManagement.WebApp
                 .AddAuthentication()
                 .AddLocalApi(options =>
                 {
-                    options.ExpectedScope = "eventmanagement.admin";
+                    options.ExpectedScope = AdminApi.ScopeName;
                 })
-                .AddCookie(Constants.MasterQrCodeAuthenticationScheme, options =>
+                .AddCookie(MasterQrCode.AuthenticationScheme, options =>
                 {
                     options.Cookie.HttpOnly = true;
                     options.Cookie.Expiration = TimeSpan.FromDays(1);
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(AdminApi.PolicyName, policy =>
+                {
+                    policy.AddAuthenticationSchemes(
+                        IdentityServerConstants.DefaultCookieAuthenticationScheme,
+                        IdentityServerConstants.LocalApi.AuthenticationScheme);
+
+                    policy.RequireAuthenticatedUser();
+                });
+            });
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -87,12 +108,44 @@ namespace EventManagement.WebApp
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddOpenApiDocument(options =>
+            services.AddOpenApiDocument(document =>
             {
-                options.PostProcess = doc =>
+                document.PostProcess = doc =>
                 {
                     doc.Info.Title = "Event Management API";
                 };
+
+                document.DocumentProcessors.Add(
+                    new SecurityDefinitionAppender(
+                        "bearer", Enumerable.Empty<string>(),
+                        new OpenApiSecurityScheme
+                        {
+                            Type = OpenApiSecuritySchemeType.OAuth2,
+                            Flow = OpenApiOAuth2Flow.Implicit,
+                            Flows = new OpenApiOAuthFlows
+                            {
+                                Implicit = new OpenApiOAuthFlow
+                                {
+                                    Scopes = new Dictionary<string, string>
+                                    {
+                                        { AdminApi.ScopeName, AdminApi.DisplayName },
+                                    },
+                                    AuthorizationUrl = "/connect/authorize",
+                                    TokenUrl = "/connect/token"
+                                },
+                                ClientCredentials = new OpenApiOAuthFlow
+                                {
+                                    Scopes = new Dictionary<string, string>
+                                    {
+                                        { AdminApi.ScopeName, AdminApi.DisplayName },
+                                    },
+                                    TokenUrl = "/connect/token"
+                                }
+                            },
+                        }));
+
+                document.OperationProcessors.Add(
+                    new AspNetCoreOperationSecurityScopeProcessor("bearer"));
             });
             services.AddAutoMapper(GetType());
         }
@@ -104,7 +157,7 @@ namespace EventManagement.WebApp
             {
                 app.UseDeveloperExceptionPage();
 
-                // show personal identifiable information from access tokens 
+                // show personal identifiable information from access tokens
                 // in the logs during development.
                 IdentityModelEventSource.ShowPII = true;
             }
@@ -118,7 +171,15 @@ namespace EventManagement.WebApp
             app.UseSpaStaticFiles();
 
             app.UseOpenApi();
-            app.UseSwaggerUi3();
+            app.UseSwaggerUi3(settings =>
+            {
+                settings.OAuth2Client = new OAuth2ClientSettings
+                {
+                    ClientId = "swaggerui",
+                    AppName = "Swagger UI",
+                    Realm = "Event Management IdP"
+                };
+            });
 
             app.UseIdentityServer();
 

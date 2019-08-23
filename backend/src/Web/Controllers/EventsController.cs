@@ -7,13 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static IdentityServer4.IdentityServerConstants;
 
 namespace EventManagement.WebApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = LocalApi.AuthenticationScheme)]
+    [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class EventsController : ControllerBase
     {
         private readonly EventsDbContext _context;
@@ -25,6 +24,9 @@ namespace EventManagement.WebApp.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// List events.
+        /// </summary>
         [HttpGet]
         public IEnumerable<Event> GetAll()
         {
@@ -34,6 +36,11 @@ namespace EventManagement.WebApp.Controllers
                 .Select(_mapper.Map<Event>);
         }
 
+        /// <summary>
+        /// Get an event by its id.
+        /// </summary>
+        /// <param name="id">Id of the event.</param>
+        /// <returns>the event.</returns>
         [HttpGet("{id}")]
         public ActionResult<Event> GetEvent(Guid id)
         {
@@ -44,9 +51,11 @@ namespace EventManagement.WebApp.Controllers
                 .FirstOrDefault();
         }
 
+        /// <summary>
+        /// Create a new event.
+        /// </summary>
         [HttpPost]
-        [ApiConventionMethod(typeof(DefaultApiConventions),
-            nameof(DefaultApiConventions.Post))]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public ActionResult<Event> CreateEvent([FromBody] Event model)
         {
             if (model.Id != Guid.Empty)
@@ -59,9 +68,12 @@ namespace EventManagement.WebApp.Controllers
             return CreatedAtAction(nameof(GetEvent), new { id = model.Id }, model);
         }
 
+        /// <summary>
+        /// Update an event.
+        /// </summary>
+        /// <param name="id">Id of the event.</param>
         [HttpPut("{id}")]
-        [ApiConventionMethod(typeof(DefaultApiConventions),
-            nameof(DefaultApiConventions.Put))]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public ActionResult UpdateEvent(Guid id, [FromBody] Event model)
         {
             if (id != model.Id)
