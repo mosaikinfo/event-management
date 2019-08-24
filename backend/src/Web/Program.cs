@@ -45,7 +45,7 @@ namespace EventManagement.WebApp
             {
                 logger.LogError(ex, "An error occurred migrating the database schema.");
             }
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsStaging())
             {
                 try
                 {
