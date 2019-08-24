@@ -45,10 +45,13 @@
                     <dt>Unterkunft</dt>
                     <dd>@Model.RoomNumber</dd>
                 }
-                @if (Model.Age != null)
+                @if (Model.BirthDate != null)
                 {
+                    TimeSpan diff = DateTime.Today - Model.BirthDate.Value;
+                    int age = new DateTime(diff.Ticks).Year - 1;
+
                     <dt>Alter</dt>
-                    <dd>@Model.Age</dd>
+                    <dd>@age</dd>
                 }
                 <dt>Einverständniserklärung</dt>
                 <dd>

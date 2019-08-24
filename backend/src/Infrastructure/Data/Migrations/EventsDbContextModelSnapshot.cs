@@ -99,7 +99,7 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.Property<string>("Address")
                         .HasMaxLength(1000);
 
-                    b.Property<int?>("Age");
+                    b.Property<DateTime?>("BirthDate");
 
                     b.Property<DateTime>("CreatedAt");
 
