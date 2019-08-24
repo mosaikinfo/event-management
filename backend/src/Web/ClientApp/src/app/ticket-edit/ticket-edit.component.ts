@@ -13,6 +13,7 @@ export class TicketEditComponent implements OnInit {
   model : Ticket = new Ticket();
   ticketTypes: TicketType[] = [];
   PaymentStatus = PaymentStatus;
+  birthDateMax = new Date();
 
   constructor(
     private session: SessionService,

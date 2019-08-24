@@ -107,9 +107,13 @@
            [(ngModel)]="model.firstName" maxlength="300">
   </div>
   <div class="form-group">
-    <label for="age">Alter</label>
-    <input name="age" type="number" class="form-control"
-            [(ngModel)]="model.age">
+    <label for="birthDate">Geburtsdatum</label>
+    <div class="input-group">
+      <p-calendar name="birthDate" [(ngModel)]="model.birthDate"
+                  dateFormat="dd.mm.yy" placeholder="dd.mm.yyyy"
+                  [showOnFocus]="false" [maxDate]="birthDateMax">
+      </p-calendar>
+    </div>
   </div>
   <div class="form-group">
     <label for="address">Adresse</label>
