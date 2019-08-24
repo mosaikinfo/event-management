@@ -25,7 +25,12 @@ namespace EventManagement.WebApp
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .ConfigureLogging(logging =>
+                {
+                    // Enables the "Log stream" feature of Azure App Service.
+                    logging.AddAzureWebAppDiagnostics();
+                });
 
         private static void SetupDatabase(IServiceProvider services)
         {
