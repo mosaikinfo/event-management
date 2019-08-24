@@ -133,8 +133,7 @@ namespace EventManagement.WebApp.Controllers
         /// See <see href="http://jsonpatch.com"/></param>
         /// <returns></returns>
         [HttpPatch("tickets/{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Update))]
         public ActionResult UpdateTicketPatch(Guid id, [FromBody] JsonPatchDocument<Ticket> patchDoc)
         {
             var entity = _context.Tickets.Find(id);
@@ -151,7 +150,7 @@ namespace EventManagement.WebApp.Controllers
             _mapper.Map(model, entity);
             SetAuthorInfo(entity);
             _context.SaveChanges();
-            return Ok();
+            return NoContent();
         }
 
         /// <summary>
@@ -173,15 +172,23 @@ namespace EventManagement.WebApp.Controllers
 
         private void SetAuthorInfo(ApplicationCore.Models.Ticket entity)
         {
-            var timestamp = DateTime.UtcNow;
-            Guid currentUserId = User.GetUserId();
-            entity.EditedAt = timestamp;
-            entity.EditorId = currentUserId;
-            if (entity.Id == Guid.Empty)
+            if (User.IsPerson())
             {
-                entity.CreatorId = currentUserId;
-                entity.CreatedAt = timestamp;
+                Guid currentUserId = User.GetUserId();
+                entity.EditorId = currentUserId;
+                if (entity.Id == Guid.Empty)
+                    entity.CreatorId = currentUserId;
             }
+            else
+            {
+                // It is only an API Client (S2S) without user.
+                // TODO: Save client id as author information.
+                entity.EditorId = null;
+            }
+            var timestamp = DateTime.UtcNow;
+            entity.EditedAt = timestamp;
+            if (entity.Id == Guid.Empty)
+                entity.CreatedAt = timestamp;
         }
     }
 }
