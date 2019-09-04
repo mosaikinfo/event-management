@@ -3,15 +3,19 @@
 <div class="mt-4">
   <h2 class="h4">Manuelle Eingabe der Ticketnummer</h2>
   <div class="my-3">
-    Wenn der QR-Code nicht lesbar ist, können Sie hiermit ein
-    Ticket entwerten, indem Sie die Ticket-Nr. eingeben.
+    Wenn der QR-Code nicht lesbar ist, kannst du hier ein
+    Ticket manuell entwerten, indem du die Ticket-Nr. eingibst,
+    die auf dem Ticket aufgedruckt ist.
   </div>
   <form (ngSubmit)="validateTicket()" #form="ngForm">
     <div class="form-group">
-      <label for="ticketNumber">Ticket-Nr. eingeben</label>
+      <label for="ticketNumber">Ticket-Nummer</label>
       <input name="ticketNumber" type="text" class="form-control"
-            [(ngModel)]="ticketNumber" required>
+             [(ngModel)]="ticketNumber" #textBox required>
     </div>
     <input type="submit" class="btn btn-primary" [disabled]="!form.form.valid" value="Prüfen">
+    <div class="mt-2">
+      Das Ergebnis wird in einem neuen Tab angezeigt.
+    </div>
   </form>
 </div>
