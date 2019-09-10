@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LazyLoadEvent } from 'primeng/components/common/api';
 import { Event, Ticket, EventManagementApiClient, TicketType } from '../services/event-management-api.client';
 import { SessionService } from '../services/session.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-ticket-list',
@@ -10,9 +12,11 @@ import { SessionService } from '../services/session.service';
 })
 export class TicketListComponent implements OnInit {
   event: Event;
+  ticketTypes: TicketType[];
   tickets: Ticket[];
   selectedTicket: Ticket;
-  ticketTypes: TicketType[];
+  loading: Boolean;
+  totalRecords: number;
 
   constructor(
     private router: Router,
@@ -22,16 +26,26 @@ export class TicketListComponent implements OnInit {
 
   async ngOnInit() {
     this.event = <Event>await this.session.getCurrentEvent();
-    this.loadTickets(this.event.id);
+    await Promise.all([
+      this.loadTicketTypes(),
+      this.loadTickets(null)
+    ]);
   }
 
-  async loadTickets(eventId: string): Promise<void> {
-    await Promise.all([
-      this.apiClient.ticketTypes_GetTicketTypes(eventId)
-        .subscribe((items: TicketType[]) => this.ticketTypes = items),
-      this.apiClient.tickets_GetTickets(eventId, '', '')
-        .subscribe((tickets: Ticket[]) => this.tickets = tickets)
-    ]);
+  loadTicketTypes(): Subscription {
+    return this.apiClient.ticketTypes_GetTicketTypes(this.event.id)
+        .subscribe((items: TicketType[]) => this.ticketTypes = items);
+  }
+
+  async loadTickets(event: LazyLoadEvent): Promise<void> {
+    const eventId = this.event.id;
+    this.loading = true;
+    this.tickets = <Ticket[]>await
+      this.apiClient
+        .tickets_GetTickets(eventId, '', '')
+        .toPromise();
+    this.totalRecords = this.tickets.length;
+    this.loading = false;
   }
 
   edit() {

@@ -1,8 +1,4 @@
 <h1>Tickets</h1>
-
-<p *ngIf="!tickets || tickets.length === 0" class="mt-4">
-    Es sind noch keine Tickets vorhanden.
-</p>
 <p>
     <a class="btn btn-primary mr-2" [routerLink]='["/tickets/new"]'>Neu</a>
     <button type="button" class="btn btn-light mr-2"
@@ -10,7 +6,10 @@
         <i class="fas fa-redo"></i>
     </button>
 </p>
-<p-table [value]="tickets" *ngIf="tickets && tickets.length > 0"
+<p-table [value]="tickets"
+         [paginator]="true" [rows]="10"
+         [lazy]="true" (onLazyLoad)="loadTickets($event)"
+         [totalRecords]="totalRecords" [loading]="loading"
          selectionMode="single" [(selection)]="selectedTicket">
     <ng-template pTemplate="header">
         <tr>
@@ -29,5 +28,10 @@
             </td>
             <td>{{ ticket.createdAt | date:'short' }}</td>
         </tr>
+    </ng-template>
+    <ng-template pTemplate="paginatorleft" let-state>
+        <span class="paginator-addition">
+            Anzahl: {{state.totalRecords}}
+        </span>
     </ng-template>
 </p-table>
