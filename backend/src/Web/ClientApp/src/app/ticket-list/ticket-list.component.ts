@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LazyLoadEvent } from 'primeng/components/common/api';
-import { Event, Ticket, EventManagementApiClient, TicketType } from '../services/event-management-api.client';
+import { Event, Ticket, EventManagementApiClient, TicketType, PaginationResultOfTicket } from '../services/event-management-api.client';
 import { SessionService } from '../services/session.service';
 import { Subscription } from 'rxjs';
 
@@ -16,6 +16,7 @@ export class TicketListComponent implements OnInit {
   tickets: Ticket[];
   selectedTicket: Ticket;
   loading: Boolean;
+  pageSize: number = 10;
   totalRecords: number;
 
   constructor(
@@ -40,11 +41,13 @@ export class TicketListComponent implements OnInit {
   async loadTickets(event: LazyLoadEvent): Promise<void> {
     const eventId = this.event.id;
     this.loading = true;
-    this.tickets = <Ticket[]>await
+    let page = (event && event.first || 0) / this.pageSize + 1;
+    let result = <PaginationResultOfTicket>await
       this.apiClient
-        .tickets_GetTickets(eventId, '', '')
+        .tickets_GetTickets(eventId, '', '', page, this.pageSize)
         .toPromise();
-    this.totalRecords = this.tickets.length;
+    this.tickets = result.data;
+    this.totalRecords = result.totalCount;
     this.loading = false;
   }
 

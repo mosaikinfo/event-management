@@ -28,6 +28,7 @@
     <PackageReference Include="codeessentials.WebOptimizer.Dotless" Version="1.0.10" />
     <PackageReference Include="LigerShark.WebOptimizer.Core" Version="1.0.236" />
     <PackageReference Include="QRCoder" Version="1.3.6" />
+    <PackageReference Include="LightQuery" Version="1.6.1" />
   </ItemGroup>
 
   <ItemGroup>

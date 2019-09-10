@@ -7,9 +7,8 @@
     </button>
 </p>
 <p-table [value]="tickets"
-         [paginator]="true" [rows]="10"
-         [lazy]="true" (onLazyLoad)="loadTickets($event)"
-         [totalRecords]="totalRecords" [loading]="loading"
+         [paginator]="true" [rows]="pageSize" [totalRecords]="totalRecords"
+         [lazy]="true" (onLazyLoad)="loadTickets($event)" [loading]="loading"
          selectionMode="single" [(selection)]="selectedTicket">
     <ng-template pTemplate="header">
         <tr>
