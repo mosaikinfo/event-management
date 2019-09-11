@@ -2,9 +2,9 @@
 using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
+using EventManagement.WebApp.Extensions;
 using EventManagement.WebApp.Models;
-using LightQuery;
-using LightQuery.Client;
+using Fop;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -36,33 +36,16 @@ namespace EventManagement.WebApp.Controllers
         /// Lists all tickets for a given event.
         /// </summary>
         [HttpGet("events/{eventId}/tickets")]
-        [LightQuery(forcePagination: true, defaultPageSize: 10)]
-        [ProducesResponseType(typeof(PaginationResult<Ticket>), 200)]
-        public IActionResult GetTickets(Guid eventId,
-            string filter, string filterValue,
-            [FromQuery] PaginationOptions options)
+        public ActionResult<PaginationResult<Ticket>> GetTickets(Guid eventId, [FromQuery] FopQuery query)
         {
-            IQueryable<ApplicationCore.Models.Ticket> query =
-                _context.Tickets
-                    .AsNoTracking()
-                    .Where(e => e.EventId == eventId)
-                    .OrderByDescending(x => x.CreatedAt);
+            var tickets = _context.Tickets
+                .AsNoTracking()
+                .Where(e => e.EventId == eventId)
+                .OrderByDescending(x => x.CreatedAt);
 
-            if (filter != null)
-            {
-                filter = filter.ToLowerInvariant();
-                if (filter == "ticketnumber")
-                {
-                    query = query.Where(e => e.TicketNumber == filterValue);
-                }
-                else
-                {
-                    return BadRequest(
-                        new ProblemDetails { Detail = "Invalid value for parameter 'filter'." });
-                }
-            }
-
-            return Ok(_mapper.ProjectTo<Ticket>(query));
+            return _mapper
+                .ProjectTo<Ticket>(tickets)
+                .ApplyQuery(query);
         }
 
         /// <summary>
