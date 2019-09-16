@@ -18,7 +18,7 @@ export class TicketListComponent implements OnInit {
   
   loading: Boolean;
   firstRow: number = 0;
-  pageSize: number = 20;
+  pageSize: number = 30;
   totalRecords: number;
 
   searchText: string;
@@ -60,6 +60,7 @@ export class TicketListComponent implements OnInit {
 
   onLazyLoad(event: LazyLoadEvent) {
     this.firstRow = event.first;
+    this.pageSize = event.rows;
     if (this.event) {
       this.loadTickets();
     }
