@@ -5,17 +5,20 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarModule } from 'primeng/calendar';
-import { AppRoutingModule } from './app-routing.module';
 import { TableModule } from 'primeng/table';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
+import { ProgressBarModule } from 'primeng/progressbar';
 
+import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
 import { EventGuardService } from './services/event-guard.service';
 import { SessionService } from './services/session.service';
 import { PageAlertService } from './page-alert/page-alert.service';
+import { ProgressBarService } from './services/progressbar.service';
 import { EventManagementApiClient, API_BASE_URL } from './services/event-management-api.client';
+import { HttpLoaderInterceptor } from './services/http-loader.interceptor';
 import { HttpErrorInterceptor } from './services/http-error.interceptor';
 
 import { AppComponent } from './app.component';
@@ -68,10 +71,12 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     AppRoutingModule,
     TableModule,
     InputSwitchModule,
-    TriStateCheckboxModule
+    TriStateCheckboxModule,
+    ProgressBarModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-DE' },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpLoaderInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
     { provide: API_BASE_URL, useExisting: 'BASE_URL'},
     AuthService,
@@ -79,7 +84,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     EventGuardService,
     EventManagementApiClient,
     SessionService,
-    PageAlertService
+    PageAlertService,
+    ProgressBarService
   ],
   bootstrap: [AppComponent]
 })
