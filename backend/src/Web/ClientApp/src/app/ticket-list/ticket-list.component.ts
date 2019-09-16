@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LazyLoadEvent } from 'primeng/components/common/api';
-import { Event, Ticket, EventManagementApiClient, TicketType, PaginationResultOfTicket } from '../services/event-management-api.client';
+import { Event, Ticket, EventManagementApiClient, TicketType } from '../services/event-management-api.client';
 import { SessionService } from '../services/session.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-ticket-list',
@@ -11,13 +10,19 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./ticket-list.component.css']
 })
 export class TicketListComponent implements OnInit {
+
   event: Event;
   ticketTypes: TicketType[];
   tickets: Ticket[];
   selectedTicket: Ticket;
+  
   loading: Boolean;
-  pageSize: number = 10;
+  firstRow: number = 0;
+  pageSize: number = 20;
   totalRecords: number;
+
+  searchText: string;
+  filter: string;
 
   constructor(
     private router: Router,
@@ -26,29 +31,55 @@ export class TicketListComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.event = <Event>await this.session.getCurrentEvent();
-    await Promise.all([
-      this.loadTicketTypes(),
-      this.loadTickets(null)
-    ]);
+    this.event = await this.session.getCurrentEvent();
+    await this.loadTicketTypes();
+    await this.loadTickets();
   }
 
-  loadTicketTypes(): Subscription {
-    return this.apiClient.ticketTypes_GetTicketTypes(this.event.id)
-        .subscribe((items: TicketType[]) => this.ticketTypes = items);
+  async loadTicketTypes(): Promise<void> {
+    this.ticketTypes = await this.apiClient
+      .ticketTypes_GetTicketTypes(this.event.id)
+      .toPromise();
   }
 
-  async loadTickets(event: LazyLoadEvent): Promise<void> {
+  async loadTickets(): Promise<void> {
     const eventId = this.event.id;
     this.loading = true;
-    let page = (event && event.first || 0) / this.pageSize + 1;
-    let result = <PaginationResultOfTicket>await
-      this.apiClient
-        .tickets_GetTickets(eventId, '', '', page, this.pageSize)
+    let page = this.firstRow / this.pageSize + 1;
+    let result = await this.apiClient.tickets_GetTickets(
+          eventId,
+          this.filter || '',
+          '',
+          page,
+          this.pageSize)
         .toPromise();
     this.tickets = result.data;
     this.totalRecords = result.totalCount;
     this.loading = false;
+  }
+
+  onLazyLoad(event: LazyLoadEvent) {
+    this.firstRow = event.first;
+    if (this.event) {
+      this.loadTickets();
+    }
+  }
+
+  search(): Boolean {
+    if (this.searchText) {
+      const v = this.searchText;
+      this.filter = 
+        `ticketNumber~=${v};or$` +
+        `firstName~=${v};or$` +
+        `lastName~=${v};or$` +
+        `roomNumber~=${v}`;
+    }
+    else {
+      this.filter = null;
+    }
+    this.firstRow = 0;
+    this.loadTickets();
+    return false;
   }
 
   edit() {

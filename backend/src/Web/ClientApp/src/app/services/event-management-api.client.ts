@@ -612,23 +612,23 @@ export class EventManagementApiClient extends ServiceBase {
     /**
      * Lists all tickets for a given event.
      * @param filter (optional) 
-     * @param filterValue (optional) 
-     * @param page (optional) Number of the page.
-     * @param pageSize (optional) Maximum number of items to display at a single page.
+     * @param order (optional) 
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
      */
-    tickets_GetTickets(eventId: string, filter: string | null | undefined, filterValue: string | null | undefined, page: number | undefined, pageSize: number | undefined): Observable<PaginationResultOfTicket> {
+    tickets_GetTickets(eventId: string, filter: string | null | undefined, order: string | null | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginationResultOfTicket> {
         let url_ = this.baseUrl + "/api/events/{eventId}/tickets?";
         if (eventId === undefined || eventId === null)
             throw new Error("The parameter 'eventId' must be defined.");
         url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
         if (filter !== undefined)
-            url_ += "filter=" + encodeURIComponent("" + filter) + "&"; 
-        if (filterValue !== undefined)
-            url_ += "filterValue=" + encodeURIComponent("" + filterValue) + "&"; 
-        if (page === null)
-            throw new Error("The parameter 'page' cannot be null.");
-        else if (page !== undefined)
-            url_ += "Page=" + encodeURIComponent("" + page) + "&"; 
+            url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
+        if (order !== undefined)
+            url_ += "Order=" + encodeURIComponent("" + order) + "&"; 
+        if (pageNumber === null)
+            throw new Error("The parameter 'pageNumber' cannot be null.");
+        else if (pageNumber !== undefined)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&"; 
         if (pageSize === null)
             throw new Error("The parameter 'pageSize' cannot be null.");
         else if (pageSize !== undefined)
@@ -1325,7 +1325,7 @@ export interface IEvent {
 }
 
 export class PaginationResultOfTicket implements IPaginationResultOfTicket {
-    page?: number;
+    pageNumber?: number;
     pageSize?: number;
     totalCount?: number;
     data?: Ticket[] | undefined;
@@ -1341,7 +1341,7 @@ export class PaginationResultOfTicket implements IPaginationResultOfTicket {
 
     init(data?: any) {
         if (data) {
-            this.page = data["page"];
+            this.pageNumber = data["pageNumber"];
             this.pageSize = data["pageSize"];
             this.totalCount = data["totalCount"];
             if (Array.isArray(data["data"])) {
@@ -1361,7 +1361,7 @@ export class PaginationResultOfTicket implements IPaginationResultOfTicket {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["page"] = this.page;
+        data["pageNumber"] = this.pageNumber;
         data["pageSize"] = this.pageSize;
         data["totalCount"] = this.totalCount;
         if (Array.isArray(this.data)) {
@@ -1374,7 +1374,7 @@ export class PaginationResultOfTicket implements IPaginationResultOfTicket {
 }
 
 export interface IPaginationResultOfTicket {
-    page?: number;
+    pageNumber?: number;
     pageSize?: number;
     totalCount?: number;
     data?: Ticket[] | undefined;

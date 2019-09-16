@@ -1,19 +1,28 @@
 <h1>Tickets</h1>
-<p>
+<div class="my-2 clearfix">
     <a class="btn btn-primary mr-2" [routerLink]='["/tickets/new"]'>Neu</a>
     <button type="button" class="btn btn-light mr-2"
-            (click)="loadTickets(event.id)">
+            (click)="loadTickets()">
         <i class="fas fa-redo"></i>
     </button>
-</p>
+    <form class="searchbox" #searchBox="ngForm" (submit)="search()">
+        <input name="search" class="form-control searchbox" type="text"
+               placeholder="Suche..." aria-label="Suche..."
+               [(ngModel)]="searchText">
+    </form>
+</div>
 <p-table [value]="tickets"
-         [paginator]="true" [rows]="pageSize" [totalRecords]="totalRecords"
-         [lazy]="true" (onLazyLoad)="loadTickets($event)" [loading]="loading"
+         [paginator]="true" pageLinks="10"
+         [first]="firstRow" [rows]="pageSize" [totalRecords]="totalRecords"
+         [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [loading]="loading"
          selectionMode="single" [(selection)]="selectedTicket">
     <ng-template pTemplate="header">
         <tr>
             <th>Ticket-Nr.</th>
+            <th>Nachname</th>
+            <th>Vorname</th>
             <th>Ticket-Typ</th>
+            <th>Zimmernr.</th>
             <th>Check-In</th>
             <th>Erstellt am</th>
         </tr>
@@ -21,7 +30,10 @@
     <ng-template pTemplate="body" let-ticket>
         <tr [pSelectableRow]="ticket" (click)="edit()">
             <td>{{ ticket.ticketNumber }}</td>
+            <td>{{ ticket.lastName }}</td>
+            <td>{{ ticket.firstName }}</td>
             <td>{{ getTicketType(ticket.ticketTypeId)?.name }}</td>
+            <td>{{ ticket.roomNumber }}</td>
             <td>
                 <input type="checkbox" [checked]="ticket.validated" (click)="false">
             </td>
@@ -30,7 +42,8 @@
     </ng-template>
     <ng-template pTemplate="paginatorleft" let-state>
         <span class="paginator-addition">
-            Anzahl: {{state.totalRecords}}
+            {{ (state.first + pageSize) > state.totalRecords ? state.totalRecords : state.first + pageSize }}
+            von {{state.totalRecords}}
         </span>
     </ng-template>
 </p-table>
