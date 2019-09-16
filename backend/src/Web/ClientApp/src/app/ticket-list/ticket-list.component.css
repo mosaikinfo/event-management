@@ -1,0 +1,10 @@
+.paginator-addition {
+    line-height: 32px;
+    margin-left: 10px;
+}
+.searchbox {
+    float: right;
+}
+.searchbox input {
+    width: 300px;
+}

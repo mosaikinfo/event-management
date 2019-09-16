@@ -1,4 +1,8 @@
 <body>
+  <p-progressBar mode="indeterminate"
+                 [ngClass]="{ 'invisible': !progressBarService.progressBarVisible }"
+                 [style]="{'height': '3px'}">
+  </p-progressBar>
   <app-nav-menu></app-nav-menu>
   <div class="container">
     <app-page-alert></app-page-alert>

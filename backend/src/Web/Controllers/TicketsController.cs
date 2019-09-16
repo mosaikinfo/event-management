@@ -2,13 +2,14 @@
 using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
+using EventManagement.WebApp.Extensions;
 using EventManagement.WebApp.Models;
+using Fop;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace EventManagement.WebApp.Controllers
@@ -35,27 +36,16 @@ namespace EventManagement.WebApp.Controllers
         /// Lists all tickets for a given event.
         /// </summary>
         [HttpGet("events/{eventId}/tickets")]
-        public ActionResult<IList<Ticket>> GetTickets(Guid eventId, string filter, string filterValue)
+        public ActionResult<PaginationResult<Ticket>> GetTickets(Guid eventId, [FromQuery] FopQuery query)
         {
-            IQueryable<ApplicationCore.Models.Ticket> query =
-                _context.Tickets
-                    .AsNoTracking()
-                    .Where(e => e.EventId == eventId)
-                    .OrderByDescending(x => x.CreatedAt);
-            if (filter != null)
-            {
-                filter = filter.ToLowerInvariant();
-                if (filter == "ticketnumber")
-                {
-                    query = query.Where(e => e.TicketNumber == filterValue);
-                }
-                else
-                {
-                    return BadRequest(
-                        new ProblemDetails { Detail = "Invalid value for parameter 'filter'." });
-                }
-            }
-            return query.Select(_mapper.Map<Ticket>).ToList();
+            var tickets = _context.Tickets
+                .AsNoTracking()
+                .Where(e => e.EventId == eventId)
+                .OrderByDescending(x => x.CreatedAt);
+
+            return _mapper
+                .ProjectTo<Ticket>(tickets)
+                .ApplyQuery(query);
         }
 
         /// <summary>

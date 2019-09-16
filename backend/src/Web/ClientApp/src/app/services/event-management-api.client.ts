@@ -271,12 +271,9 @@ export class EventManagementApiClient extends ServiceBase {
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 400) {
+        if (status === 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result400 = ProblemDetails.fromJS(resultData400);
-            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -285,9 +282,12 @@ export class EventManagementApiClient extends ServiceBase {
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
-        } else if (status === 204) {
+        } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
         } else {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -525,12 +525,9 @@ export class EventManagementApiClient extends ServiceBase {
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 400) {
+        if (status === 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result400 = ProblemDetails.fromJS(resultData400);
-            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -539,9 +536,12 @@ export class EventManagementApiClient extends ServiceBase {
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
-        } else if (status === 204) {
+        } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
         } else {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -612,17 +612,27 @@ export class EventManagementApiClient extends ServiceBase {
     /**
      * Lists all tickets for a given event.
      * @param filter (optional) 
-     * @param filterValue (optional) 
+     * @param order (optional) 
+     * @param pageNumber (optional) 
+     * @param pageSize (optional) 
      */
-    tickets_GetTickets(eventId: string, filter: string | null | undefined, filterValue: string | null | undefined): Observable<Ticket[]> {
+    tickets_GetTickets(eventId: string, filter: string | null | undefined, order: string | null | undefined, pageNumber: number | undefined, pageSize: number | undefined): Observable<PaginationResultOfTicket> {
         let url_ = this.baseUrl + "/api/events/{eventId}/tickets?";
         if (eventId === undefined || eventId === null)
             throw new Error("The parameter 'eventId' must be defined.");
         url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
         if (filter !== undefined)
-            url_ += "filter=" + encodeURIComponent("" + filter) + "&"; 
-        if (filterValue !== undefined)
-            url_ += "filterValue=" + encodeURIComponent("" + filterValue) + "&"; 
+            url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
+        if (order !== undefined)
+            url_ += "Order=" + encodeURIComponent("" + order) + "&"; 
+        if (pageNumber === null)
+            throw new Error("The parameter 'pageNumber' cannot be null.");
+        else if (pageNumber !== undefined)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&"; 
+        if (pageSize === null)
+            throw new Error("The parameter 'pageSize' cannot be null.");
+        else if (pageSize !== undefined)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -642,14 +652,14 @@ export class EventManagementApiClient extends ServiceBase {
                 try {
                     return this.processTickets_GetTickets(<any>response_);
                 } catch (e) {
-                    return <Observable<Ticket[]>><any>_observableThrow(e);
+                    return <Observable<PaginationResultOfTicket>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<Ticket[]>><any>_observableThrow(response_);
+                return <Observable<PaginationResultOfTicket>><any>_observableThrow(response_);
         }));
     }
 
-    protected processTickets_GetTickets(response: HttpResponseBase): Observable<Ticket[]> {
+    protected processTickets_GetTickets(response: HttpResponseBase): Observable<PaginationResultOfTicket> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -660,11 +670,7 @@ export class EventManagementApiClient extends ServiceBase {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(Ticket.fromJS(item));
-            }
+            result200 = PaginationResultOfTicket.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -672,7 +678,7 @@ export class EventManagementApiClient extends ServiceBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<Ticket[]>(<any>null);
+        return _observableOf<PaginationResultOfTicket>(<any>null);
     }
 
     /**
@@ -780,12 +786,9 @@ export class EventManagementApiClient extends ServiceBase {
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 400) {
+        if (status === 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result400 = ProblemDetails.fromJS(resultData400);
-            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -794,9 +797,12 @@ export class EventManagementApiClient extends ServiceBase {
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
-        } else if (status === 204) {
+        } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
         } else {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -924,19 +930,19 @@ export class EventManagementApiClient extends ServiceBase {
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 404) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result404 = ProblemDetails.fromJS(resultData404);
-            return throwException("A server error occurred.", status, _responseText, _headers, result404);
-            }));
-        } else if (status === 400) {
+        if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result400: any = null;
             let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result400 = ProblemDetails.fromJS(resultData400);
             return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
         } else if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -1316,6 +1322,62 @@ export interface IEvent {
     entranceTime?: Date | undefined;
     location?: string | undefined;
     homepageUrl: string;
+}
+
+export class PaginationResultOfTicket implements IPaginationResultOfTicket {
+    pageNumber?: number;
+    pageSize?: number;
+    totalCount?: number;
+    data?: Ticket[] | undefined;
+
+    constructor(data?: IPaginationResultOfTicket) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.pageNumber = data["pageNumber"];
+            this.pageSize = data["pageSize"];
+            this.totalCount = data["totalCount"];
+            if (Array.isArray(data["data"])) {
+                this.data = [] as any;
+                for (let item of data["data"])
+                    this.data!.push(Ticket.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PaginationResultOfTicket {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginationResultOfTicket();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pageNumber"] = this.pageNumber;
+        data["pageSize"] = this.pageSize;
+        data["totalCount"] = this.totalCount;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPaginationResultOfTicket {
+    pageNumber?: number;
+    pageSize?: number;
+    totalCount?: number;
+    data?: Ticket[] | undefined;
 }
 
 export class Ticket implements ITicket {
