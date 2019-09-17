@@ -7,26 +7,32 @@
         class="table">
     <thead>
       <tr>
-        <th scope="col" style="width: 120px">Preis</th>
         <th scope="col">Bezeichnung</th>
+        <th scope="col" style="width: 100px">Kontingent</th>
+        <th scope="col" style="width: 120px">Preis</th>
         <th scope="col"></th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let ticketType of ticketTypes; index as i">
         <td>
-          <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text">€</span>
-              </div>
-              <input type="number" [name]="'price'+i" [(ngModel)]="ticketType.price" class="form-control" required>
-          </div>
-        </td>
-        <td>
           <input type="text" [name]="'name'+i"
                  [(ngModel)]="ticketType.name"
                  class="form-control"
                  placeholder="Stehplatz (Ermäßigt)" required>
+        </td>
+        <td>
+          <input type="number" [name]="'quota'+i"
+            [(ngModel)]="ticketType.quota" class="form-control">
+        </td>
+        <td>
+          <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">€</span>
+              </div>
+              <input type="number" [name]="'price'+i"
+                [(ngModel)]="ticketType.price" class="form-control" required>
+          </div>
         </td>
         <td>
           <button class="btn btn-sm btn-danger d-flex align-items-center"
