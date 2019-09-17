@@ -8,6 +8,7 @@ namespace EventManagement.ApplicationCore.Models
         public Guid EventId { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
+        public int? Quota { get; set; }
 
         public Event Event { get; set; }
         public List<Ticket> Tickets { get; set; }

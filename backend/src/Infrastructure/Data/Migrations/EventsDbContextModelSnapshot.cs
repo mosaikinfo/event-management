@@ -176,6 +176,8 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(5, 2)");
 
+                    b.Property<int?>("Quota");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");

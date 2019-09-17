@@ -1571,6 +1571,7 @@ export class TicketType implements ITicketType {
     id?: string;
     name?: string | undefined;
     price?: number;
+    quota?: number | undefined;
 
     constructor(data?: ITicketType) {
         if (data) {
@@ -1586,6 +1587,7 @@ export class TicketType implements ITicketType {
             this.id = data["id"];
             this.name = data["name"];
             this.price = data["price"];
+            this.quota = data["quota"];
         }
     }
 
@@ -1601,6 +1603,7 @@ export class TicketType implements ITicketType {
         data["id"] = this.id;
         data["name"] = this.name;
         data["price"] = this.price;
+        data["quota"] = this.quota;
         return data; 
     }
 }
@@ -1609,6 +1612,7 @@ export interface ITicketType {
     id?: string;
     name?: string | undefined;
     price?: number;
+    quota?: number | undefined;
 }
 
 export interface FileResponse {
