@@ -30,7 +30,7 @@ namespace EventManagement.WebApp.Controllers
         /// <param name="eventId">Id of the event.</param>
         /// <returns>List of ticket types.</returns>
         [HttpGet("events/{eventId}/tickettypes")]
-        public ActionResult<IList<TicketType>> GetTicketTypes(Guid eventId)
+        public IList<TicketType> GetTicketTypes(Guid eventId)
         {
             return _context.TicketTypes
                 .AsNoTracking()
