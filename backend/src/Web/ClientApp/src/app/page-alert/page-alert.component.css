@@ -1,9 +1,0 @@
-ngb-alert {
-    position: fixed;
-    top: 10px;
-    left: 10%;
-    right: 10%;
-    width: 80%;
-    text-align: center;
-    z-index: 999;
-}

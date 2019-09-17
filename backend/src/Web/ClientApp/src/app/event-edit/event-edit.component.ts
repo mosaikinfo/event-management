@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EventManagementApiClient, Event } from '../services/event-management-api.client';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PageAlertService } from '../page-alert/page-alert.service';
+import { PageAlertService } from '../services/page-alert.service';
 
 @Component({
   selector: 'app-event-edit',

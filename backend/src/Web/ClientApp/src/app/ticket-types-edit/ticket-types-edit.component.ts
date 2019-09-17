@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PageAlertService } from '../page-alert/page-alert.service';
 import { TicketType, EventManagementApiClient } from '../services/event-management-api.client';
+import { PageAlertService } from '../services/page-alert.service';
 
 @Component({
   selector: 'app-ticket-types-edit',

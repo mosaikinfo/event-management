@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
-import { PageAlertService } from "../page-alert/page-alert.service";
+import { PageAlertService } from "./page-alert.service";
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
