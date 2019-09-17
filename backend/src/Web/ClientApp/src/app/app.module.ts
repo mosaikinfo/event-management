@@ -9,13 +9,14 @@ import { TableModule } from 'primeng/table';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { ToastModule } from 'primeng/toast';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
 import { EventGuardService } from './services/event-guard.service';
 import { SessionService } from './services/session.service';
-import { PageAlertService } from './page-alert/page-alert.service';
+import { PageAlertService } from './services/page-alert.service';
 import { ProgressBarService } from './services/progressbar.service';
 import { EventManagementApiClient, API_BASE_URL } from './services/event-management-api.client';
 import { HttpLoaderInterceptor } from './services/http-loader.interceptor';
@@ -23,7 +24,6 @@ import { HttpErrorInterceptor } from './services/http-error.interceptor';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { PageAlertComponent } from './page-alert/page-alert.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 import { EventListComponent } from './event-list/event-list.component';
@@ -40,6 +40,7 @@ import { EntranceControlAppComponent } from './entrance-control-app/entrance-con
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import localeDeExtra from '@angular/common/locales/extra/de';
+import { MessageService } from 'primeng/components/common/api';
 
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
@@ -51,7 +52,6 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     AuthCallbackComponent,
     EventListComponent,
     EventEditComponent,
-    PageAlertComponent,
     EventSettingsComponent,
     ButtonBackComponent,
     TicketTypesEditComponent,
@@ -72,7 +72,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     TableModule,
     InputSwitchModule,
     TriStateCheckboxModule,
-    ProgressBarModule
+    ProgressBarModule,
+    ToastModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-DE' },
@@ -85,7 +86,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     EventManagementApiClient,
     SessionService,
     PageAlertService,
-    ProgressBarService
+    ProgressBarService,
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

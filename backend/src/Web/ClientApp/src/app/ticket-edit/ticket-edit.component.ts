@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PageAlertService } from '../page-alert/page-alert.service';
 import { Ticket, Event, PaymentStatus, EventManagementApiClient, TicketType } from '../services/event-management-api.client';
 import { SessionService } from '../services/session.service';
+import { PageAlertService } from '../services/page-alert.service';
 
 @Component({
   selector: 'app-ticket-edit',
