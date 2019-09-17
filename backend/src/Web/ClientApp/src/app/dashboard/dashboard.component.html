@@ -1,1 +1,22 @@
 <h1>Dashboard</h1>
+
+<div class="table-responsive mt-4">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Tickettyp</th>
+                <th scope="col">Anzahl</th>
+                <th scope="col">Max. Kontingent</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let quota of quotas">
+                <td>{{ quota.name }}</td>
+                <td [ngClass]="{'text-danger': quota.count > quota.quota}">
+                    {{ quota.count }}
+                </td>
+                <td>{{ quota.quota }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

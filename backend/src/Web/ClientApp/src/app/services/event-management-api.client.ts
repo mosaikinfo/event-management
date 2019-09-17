@@ -610,6 +610,67 @@ export class EventManagementApiClient extends ServiceBase {
     }
 
     /**
+     * Report the sold tickets and quotas for each ticket type.
+     * @param eventId Id of the event.
+     */
+    ticketQuotaReport_GetReport(eventId: string): Observable<TicketQuotaReportRow[]> {
+        let url_ = this.baseUrl + "/api/events/{eventId}/reports/quotas";
+        if (eventId === undefined || eventId === null)
+            throw new Error("The parameter 'eventId' must be defined.");
+        url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processTicketQuotaReport_GetReport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTicketQuotaReport_GetReport(<any>response_);
+                } catch (e) {
+                    return <Observable<TicketQuotaReportRow[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<TicketQuotaReportRow[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processTicketQuotaReport_GetReport(response: HttpResponseBase): Observable<TicketQuotaReportRow[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TicketQuotaReportRow.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<TicketQuotaReportRow[]>(<any>null);
+    }
+
+    /**
      * Lists all tickets for a given event.
      * @param filter (optional) 
      * @param order (optional) 
@@ -1322,6 +1383,56 @@ export interface IEvent {
     entranceTime?: Date | undefined;
     location?: string | undefined;
     homepageUrl: string;
+}
+
+export class TicketQuotaReportRow implements ITicketQuotaReportRow {
+    name?: string | undefined;
+    price?: number;
+    quota?: number | undefined;
+    /** Number of existing tickets of this ticket type. */
+    count?: number;
+
+    constructor(data?: ITicketQuotaReportRow) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.price = data["price"];
+            this.quota = data["quota"];
+            this.count = data["count"];
+        }
+    }
+
+    static fromJS(data: any): TicketQuotaReportRow {
+        data = typeof data === 'object' ? data : {};
+        let result = new TicketQuotaReportRow();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["price"] = this.price;
+        data["quota"] = this.quota;
+        data["count"] = this.count;
+        return data; 
+    }
+}
+
+export interface ITicketQuotaReportRow {
+    name?: string | undefined;
+    price?: number;
+    quota?: number | undefined;
+    /** Number of existing tickets of this ticket type. */
+    count?: number;
 }
 
 export class PaginationResultOfTicket implements IPaginationResultOfTicket {
