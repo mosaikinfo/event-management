@@ -12,7 +12,7 @@
         <tbody>
             <tr *ngFor="let quota of quotas">
                 <td>{{ quota.name }}</td>
-                <td [ngClass]="{'text-danger': quota.count > quota.quota}">
+                <td [ngClass]="{'text-danger': quota.quota > 0 && quota.count > quota.quota}">
                     {{ quota.count }}
                 </td>
                 <td>{{ quota.quota }}</td>
