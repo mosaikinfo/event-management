@@ -48,14 +48,28 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
                     b.Property<DateTime>("EndTime");
 
                     b.Property<DateTime?>("EntranceTime");
 
                     b.Property<string>("HomepageUrl")
+                        .IsRequired()
                         .HasMaxLength(2083);
 
+                    b.Property<string>("Host")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
                     b.Property<string>("Location")
+                        .IsRequired()
                         .HasMaxLength(300);
 
                     b.Property<string>("Name")
@@ -63,6 +77,10 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .HasMaxLength(300);
 
                     b.Property<DateTime>("StartTime");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasMaxLength(300);
 
                     b.HasKey("Id");
 

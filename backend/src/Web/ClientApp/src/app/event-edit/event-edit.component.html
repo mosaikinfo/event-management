@@ -49,13 +49,39 @@
   </div>
 
   <div class="form-group">
-    <label for="homepageUrl">Homepage</label>
+    <label for="host">Name des Veranstalters</label>
+    <input type="text" class="form-control" name="host"
+            maxlength="300" placeholder="ONE Network"
+            [(ngModel)]="model.host" required>
+  </div>
+
+  <div class="form-group">
+    <label for="address">Addresse für Wegbeschreibung (mehrzeilig)</label>
+    <textarea name="address" class="form-control"
+    [(ngModel)]="model.address" required></textarea>
+  </div>
+
+  <div class="form-row">
+      <div class="form-group col">
+        <label for="zipcode">Postleitzahl</label>
+        <input type="text" class="form-control" name="zipcode"
+                maxlength="300" [(ngModel)]="model.zipCode" required>
+      </div>
+      <div class="form-group col">
+        <label for="city">Stadt</label>
+        <input type="text" class="form-control" name="city"
+                maxlength="300" [(ngModel)]="model.city" required>
+      </div>
+  </div>
+
+  <div class="form-group">
+    <label for="homepageUrl">Website des Events</label>
     <input type="url" class="form-control" name="homepageUrl" id="homepageUrl"
-           maxlength="2083" placeholder="http://yourevent.com"
-           [(ngModel)]="model.homepageUrl" required>
-     <small class="form-text text-muted">
-       Wenn Besucher den QR-Code auf ihrem Ticket selbst scannen,
-       werden Sie zur Homepage der Veranstaltung weitergeleitet.
+            maxlength="2083" placeholder="http://yourevent.com"
+            [(ngModel)]="model.homepageUrl" required>
+      <small class="form-text text-muted">
+        Wenn Besucher den QR-Code auf ihrem Ticket selbst scannen,
+        werden Sie zur Homepage der Veranstaltung weitergeleitet.
       </small>
   </div>
 

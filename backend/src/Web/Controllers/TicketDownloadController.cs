@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -60,17 +61,14 @@ namespace EventManagement.WebApp.Controllers
                 EventName = ticket.Event.Name,
                 TicketId = ticket.TicketNumber,
                 QrValue = GetTicketValidationUrl(ticket),
-                EventLogo = "https://one-movement.de/wp-content/uploads/2018/10/One_Events_2019.png",
-                Host = "ONE Network",
+                EventLogo = $"{BaseUrl}/One_Events_2019.png",
+                Host = ticket.Event.Host,
                 EventDate = ticket.Event.StartTime.ToString("dddd, dd.MM.yyyy"),
                 EventLocation = ticket.Event.Location,
                 TicketType = ticket.TicketType.Name,
                 Price = $"{ticket.TicketType.Price} € (inkl. Vorverkaufsgebühr)",
                 BeginTime = ticket.Event.StartTime.ToString("hh:mm") + " Uhr",
-                Address =
-                    ticket.Event.Location
-                        .Split(',').Select(s => s.Trim())
-                        .Where(s => s.Length > 0).ToList(),
+                Address = GetAddressRows(ticket).ToList(),
                 BookingDate = ticket.CreatedAt.ToString("dd.MM.yyyy"),
                 BookingNumber = ticket.TicketNumber
             };
@@ -86,11 +84,34 @@ namespace EventManagement.WebApp.Controllers
             return values;
         }
 
+        private static IEnumerable<string> GetAddressRows(ApplicationCore.Models.Ticket ticket)
+        {
+            foreach (string row in ticket.Event.Address.Split("\n"))
+            {
+                string s = row.Trim();
+                if (s.Length > 0)
+                    yield return s;
+            }
+
+            yield return $"{ticket.Event.ZipCode} {ticket.Event.City}";
+        }
+
         private string GetTicketValidationUrl(ApplicationCore.Models.Ticket ticket)
         {
             return Url.ActionAbsoluteUrl<TicketValidationController>(
                 nameof(TicketValidationController.ValidateTicketByQrCodeValueAsync),
                 new { secret = ticket.TicketSecret });
+        }
+
+        private string BaseUrl
+        {
+            get
+            {
+                var request = Request;
+                var host = request.Host.ToUriComponent();
+                var pathBase = request.PathBase.ToUriComponent();
+                return $"{request.Scheme}://{host}{pathBase}";
+            }
         }
     }
 }

@@ -19,7 +19,20 @@ namespace EventManagement.WebApp.Models
 
         public DateTime? EntranceTime { get; set; }
 
+        [Required]
         public string Location { get; set; }
+
+        [Required]
+        public string Host { get; set; }
+
+        [Required]
+        public string Address { get; set; }
+
+        [Required]
+        public string ZipCode { get; set; }
+
+        [Required]
+        public string City { get; set; }
 
         [Required]
         public string HomepageUrl { get; set; }

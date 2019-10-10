@@ -1331,7 +1331,11 @@ export class Event implements IEvent {
     startTime!: Date;
     endTime!: Date;
     entranceTime?: Date | undefined;
-    location?: string | undefined;
+    location!: string;
+    host!: string;
+    address!: string;
+    zipCode!: string;
+    city!: string;
     homepageUrl!: string;
 
     constructor(data?: IEvent) {
@@ -1351,6 +1355,10 @@ export class Event implements IEvent {
             this.endTime = data["endTime"] ? new Date(data["endTime"].toString()) : <any>undefined;
             this.entranceTime = data["entranceTime"] ? new Date(data["entranceTime"].toString()) : <any>undefined;
             this.location = data["location"];
+            this.host = data["host"];
+            this.address = data["address"];
+            this.zipCode = data["zipCode"];
+            this.city = data["city"];
             this.homepageUrl = data["homepageUrl"];
         }
     }
@@ -1370,6 +1378,10 @@ export class Event implements IEvent {
         data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
         data["entranceTime"] = this.entranceTime ? this.entranceTime.toISOString() : <any>undefined;
         data["location"] = this.location;
+        data["host"] = this.host;
+        data["address"] = this.address;
+        data["zipCode"] = this.zipCode;
+        data["city"] = this.city;
         data["homepageUrl"] = this.homepageUrl;
         return data; 
     }
@@ -1381,7 +1393,11 @@ export interface IEvent {
     startTime: Date;
     endTime: Date;
     entranceTime?: Date | undefined;
-    location?: string | undefined;
+    location: string;
+    host: string;
+    address: string;
+    zipCode: string;
+    city: string;
     homepageUrl: string;
 }
 

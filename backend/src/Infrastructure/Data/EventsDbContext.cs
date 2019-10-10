@@ -38,8 +38,12 @@ namespace EventManagement.Infrastructure.Data
             modelBuilder.Entity<Event>(entity =>
             {
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
-                entity.Property(e => e.Location).HasMaxLength(300);
-                entity.Property(e => e.HomepageUrl).HasMaxLength(2083);
+                entity.Property(e => e.Location).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.HomepageUrl).IsRequired().HasMaxLength(2083);
+                entity.Property(e => e.Host).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.Address).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.ZipCode).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.City).IsRequired().HasMaxLength(300);
             });
 
             modelBuilder.Entity<TicketType>(entity =>
