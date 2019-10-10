@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using PaymentStatus = EventManagement.ApplicationCore.Models.PaymentStatus;
 
 namespace EventManagement.WebApp.Mappers
 {
@@ -13,7 +14,9 @@ namespace EventManagement.WebApp.Mappers
                 .ForMember(e => e.Id, opt => opt.Ignore())
                 .ForMember(e => e.TicketSecret, opt => opt.Ignore())
                 .ForMember(e => e.Creator, opt => opt.Ignore())
-                .ForMember(e => e.Editor, opt => opt.Ignore());
+                .ForMember(e => e.Editor, opt => opt.Ignore())
+                .ForMember(e => e.AmountPaid, opt => opt.MapFrom(
+                    e => e.PaymentStatus == PaymentStatus.PaidPartial ? e.AmountPaid : null));
         }
     }
 }

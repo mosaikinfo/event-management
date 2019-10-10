@@ -1500,6 +1500,7 @@ export class Ticket implements ITicket {
     mail?: string | undefined;
     phone?: string | undefined;
     paymentStatus?: PaymentStatus;
+    amountPaid?: number | undefined;
     termsAccepted?: boolean | undefined;
     lastName?: string | undefined;
     firstName?: string | undefined;
@@ -1530,6 +1531,7 @@ export class Ticket implements ITicket {
             this.mail = data["mail"];
             this.phone = data["phone"];
             this.paymentStatus = data["paymentStatus"];
+            this.amountPaid = data["amountPaid"];
             this.termsAccepted = data["termsAccepted"];
             this.lastName = data["lastName"];
             this.firstName = data["firstName"];
@@ -1560,6 +1562,7 @@ export class Ticket implements ITicket {
         data["mail"] = this.mail;
         data["phone"] = this.phone;
         data["paymentStatus"] = this.paymentStatus;
+        data["amountPaid"] = this.amountPaid;
         data["termsAccepted"] = this.termsAccepted;
         data["lastName"] = this.lastName;
         data["firstName"] = this.firstName;
@@ -1583,6 +1586,7 @@ export interface ITicket {
     mail?: string | undefined;
     phone?: string | undefined;
     paymentStatus?: PaymentStatus;
+    amountPaid?: number | undefined;
     termsAccepted?: boolean | undefined;
     lastName?: string | undefined;
     firstName?: string | undefined;
@@ -1598,7 +1602,8 @@ export interface ITicket {
 export enum PaymentStatus {
     Open = 0,
     Paid = 1,
-    Presold = 2,
+    PaidPartial = 2,
+    Presold = 3,
 }
 
 export class OperationBase implements IOperationBase {

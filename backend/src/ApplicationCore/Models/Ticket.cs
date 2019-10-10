@@ -12,6 +12,7 @@ namespace EventManagement.ApplicationCore.Models
         public string Mail { get; set; }
         public string Phone { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
+        public decimal? AmountPaid { get; set; }
         public bool? TermsAccepted { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }

@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Migrations\20191010195654_PartialPayment.cs" />
+    <Compile Remove="Data\Migrations\20191010195654_PartialPayment.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" />
     <!-- installs "dotnet ef" tools. -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.6" />

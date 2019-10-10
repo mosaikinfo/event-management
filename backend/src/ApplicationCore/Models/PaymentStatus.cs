@@ -4,6 +4,7 @@
     {
         Open,
         Paid,
+        PaidPartial,
         Presold
     }
 }
