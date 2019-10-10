@@ -2,9 +2,9 @@
 @{
     Layout = "_TicketStatusLayout";
 }
-<div class="ticket-status bg-warning text-white text-center">
+<div class="ticket-status bg-danger text-white text-center">
     <h1 class="mt-5">Das Ticket wurde bereits verwendet!</h1>
-    <i class="icon mt-5 fas fa-exclamation-triangle"></i>
+    <i class="icon mt-5 far fa-times-circle"></i>
     <h2 class="mt-5">@Model.Event.Name</h2>
     <h3 class="mt-5">Ticket-Nr. @Model.TicketNumber</h3>
 </div>
