@@ -72,6 +72,8 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(300);
 
+                    b.Property<Guid?>("MailSettingsId");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(300);
@@ -84,7 +86,35 @@ namespace EventManagement.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MailSettingsId");
+
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.MailSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Body");
+
+                    b.Property<string>("SenderAddress")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<string>("SmtpHost")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<int>("SmtpPort");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MailSettings");
                 });
 
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.MasterQrCode", b =>
@@ -239,6 +269,13 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.Event", b =>
+                {
+                    b.HasOne("EventManagement.ApplicationCore.Models.MailSettings", "MailSettings")
+                        .WithMany()
+                        .HasForeignKey("MailSettingsId");
                 });
 
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.MasterQrCode", b =>

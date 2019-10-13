@@ -118,6 +118,15 @@ namespace EventManagement.Infrastructure.Data
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(1000);
                 entity.Property(e => e.Secret).IsRequired().HasMaxLength(1000);
             });
+
+            modelBuilder.Entity<MailSettings>(entity =>
+            {
+                entity.ToTable("MailSettings");
+
+                entity.Property(e => e.SmtpHost).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.SenderAddress).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.Subject).IsRequired().HasMaxLength(300);
+            });
         }
     }
 }
