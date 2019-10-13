@@ -147,7 +147,8 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.Property<string>("Address")
                         .HasMaxLength(1000);
 
-                    b.Property<decimal?>("AmountPaid");
+                    b.Property<decimal?>("AmountPaid")
+                        .HasColumnType("decimal(5, 2)");
 
                     b.Property<DateTime?>("BirthDate");
 

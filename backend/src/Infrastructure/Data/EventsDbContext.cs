@@ -71,6 +71,7 @@ namespace EventManagement.Infrastructure.Data
                 entity.Property(e => e.FirstName).HasMaxLength(300);
                 entity.Property(e => e.Address).HasMaxLength(1000);
                 entity.Property(e => e.RoomNumber).HasMaxLength(300);
+                entity.Property(e => e.AmountPaid).HasColumnType("decimal(5, 2)");
 
                 entity.Property(e => e.PaymentStatus)
                     .IsRequired()
