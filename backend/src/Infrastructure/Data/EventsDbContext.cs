@@ -16,6 +16,7 @@ namespace EventManagement.Infrastructure.Data
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketType> TicketTypes { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<MailSettings> MailSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -127,6 +128,10 @@ namespace EventManagement.Infrastructure.Data
                 entity.Property(e => e.SmtpHost).IsRequired().HasMaxLength(300);
                 entity.Property(e => e.SenderAddress).IsRequired().HasMaxLength(300);
                 entity.Property(e => e.Subject).IsRequired().HasMaxLength(300);
+
+                entity.HasOne(e => e.Event)
+                    .WithOne(e => e.MailSettings)
+                    .HasForeignKey<Event>(e => e.MailSettingsId);
             });
         }
     }
