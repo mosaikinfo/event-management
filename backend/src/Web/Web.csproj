@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Fop" Version="1.0.1.3" />
+    <PackageReference Include="MailKit" Version="2.3.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.1" />

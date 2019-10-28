@@ -67,8 +67,21 @@ export class TicketEditComponent implements OnInit {
     this.goBack();
   }
 
+  async sendMail() {
+    let yes = confirm("Bist du sicher, dass du das Ticket per E-Mail versenden willst?");
+    if (yes) {
+      await this.apiClient
+        .ticketMail_SendMail(this.model.id)
+        .toPromise();
+      this.alertService.showAlert({
+        message: `Ticket ${this.model.ticketNumber} wurde per E-Mail versendet.`,
+        type: "success"
+      });
+    }
+  }
+
   async delete() {
-    let yes = confirm(`Sind Sie sicher, dass Sie Ticket ${this.model.ticketNumber} löschen wollen?`);
+    let yes = confirm(`Bist du sicher, dass du das Ticket ${this.model.ticketNumber} löschen willst?`);
     if (yes) {
       await this.apiClient
         .tickets_DeleteTicket(this.model.id)
