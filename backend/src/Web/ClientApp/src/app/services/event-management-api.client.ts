@@ -554,6 +554,138 @@ export class EventManagementApiClient extends ServiceBase {
     }
 
     /**
+     * Get mail settings for an event.
+     * @param eventId Id of the event.
+     * @return Mail settings
+     */
+    mailSettings_GetMailSettings(eventId: string): Observable<MailSettings> {
+        let url_ = this.baseUrl + "/api/events/{eventId}/mailsettings";
+        if (eventId === undefined || eventId === null)
+            throw new Error("The parameter 'eventId' must be defined.");
+        url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processMailSettings_GetMailSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMailSettings_GetMailSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<MailSettings>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MailSettings>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMailSettings_GetMailSettings(response: HttpResponseBase): Observable<MailSettings> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MailSettings.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MailSettings>(<any>null);
+    }
+
+    /**
+     * Update mail settings for an event.
+     * @param eventId Id of the event.
+     * @param values mail settings
+     */
+    mailSettings_UpdateMailSettings(eventId: string, values: MailSettings): Observable<void> {
+        let url_ = this.baseUrl + "/api/events/{eventId}/mailsettings";
+        if (eventId === undefined || eventId === null)
+            throw new Error("The parameter 'eventId' must be defined.");
+        url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(values);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("post", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processMailSettings_UpdateMailSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMailSettings_UpdateMailSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMailSettings_UpdateMailSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("A server error occurred.", status, _responseText, _headers, resultdefault);
+            }));
+        }
+    }
+
+    /**
      * Download a ticket as pdf.
      * @param id Id of the ticket.
      * @return pdf file
@@ -1399,6 +1531,58 @@ export interface IEvent {
     zipCode: string;
     city: string;
     homepageUrl: string;
+}
+
+export class MailSettings implements IMailSettings {
+    smtpHost!: string;
+    smtpPort?: number;
+    senderAddress!: string;
+    subject!: string;
+    body!: string;
+
+    constructor(data?: IMailSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.smtpHost = data["smtpHost"];
+            this.smtpPort = data["smtpPort"];
+            this.senderAddress = data["senderAddress"];
+            this.subject = data["subject"];
+            this.body = data["body"];
+        }
+    }
+
+    static fromJS(data: any): MailSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new MailSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["smtpHost"] = this.smtpHost;
+        data["smtpPort"] = this.smtpPort;
+        data["senderAddress"] = this.senderAddress;
+        data["subject"] = this.subject;
+        data["body"] = this.body;
+        return data; 
+    }
+}
+
+export interface IMailSettings {
+    smtpHost: string;
+    smtpPort?: number;
+    senderAddress: string;
+    subject: string;
+    body: string;
 }
 
 export class TicketQuotaReportRow implements ITicketQuotaReportRow {

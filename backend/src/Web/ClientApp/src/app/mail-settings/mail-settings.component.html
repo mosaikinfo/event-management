@@ -1,0 +1,31 @@
+<form class="mt-4" (ngSubmit)="submit()" #form="ngForm">
+
+  <div class="form-group">
+    <label for="smtpHost">SMTP Host</label>
+    <input type="text" class="form-control" name="smtpHost" id="smtpHost" maxlength="300" [(ngModel)]="model.smtpHost" required>
+  </div>
+
+  <div class="form-group">
+    <label for="smtpPort">SMTP Port</label>
+    <input type="number" min="0" class="form-control" name="smtpPort" id="smtpPort"[(ngModel)]="model.smtpPort" required>
+  </div>
+
+  <div class="form-group">
+    <label for="senderAddress">Absender E-Mail-Adresse</label>
+    <input type="email" class="form-control" name="senderAddress" id="senderAddress" maxlength="300" [(ngModel)]="model.senderAddress" required>
+  </div>
+
+  <div class="form-group">
+    <label for="subject">Betreff</label>
+    <input type="text" class="form-control" name="subject" id="subject" maxlength="300" [(ngModel)]="model.subject" required>
+  </div>
+
+  <div class="form-group">
+    <label for="body">Text</label>
+    <textarea class="form-control" name="body" id="body" rows="15" [(ngModel)]="model.body" required></textarea>
+  </div>
+
+  <div>
+    <button type="submit" class="btn btn-primary" [disabled]="!form.form.valid">Speichern</button>
+  </div>
+</form>

@@ -13,4 +13,10 @@
             <app-ticket-types-edit></app-ticket-types-edit>
         </ng-template>
     </ngb-tab>
+    <ngb-tab *ngIf="eventId">
+        <ng-template ngbTabTitle>E-Mail-Einstellungen</ng-template>
+        <ng-template ngbTabContent>
+            <app-mail-settings></app-mail-settings>
+        </ng-template>
+    </ngb-tab>
 </ngb-tabset>

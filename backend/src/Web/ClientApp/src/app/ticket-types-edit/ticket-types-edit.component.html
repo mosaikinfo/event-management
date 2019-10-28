@@ -2,7 +2,7 @@
   Noch keine Ticket-Typen vorhanden.
 </p>
 
-<form (ngSubmit)="saveChanges()" #ticketTypesForm="ngForm">
+<form (ngSubmit)="saveChanges()" #ticketTypesForm="ngForm" class="mt-4">
   <table *ngIf="ticketTypes && ticketTypes.length > 0"
         class="table">
     <thead>
