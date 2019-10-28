@@ -1536,6 +1536,7 @@ export interface IEvent {
 export class MailSettings implements IMailSettings {
     smtpHost!: string;
     smtpPort?: number;
+    useStartTls?: boolean;
     senderAddress!: string;
     subject!: string;
     body!: string;
@@ -1553,6 +1554,7 @@ export class MailSettings implements IMailSettings {
         if (data) {
             this.smtpHost = data["smtpHost"];
             this.smtpPort = data["smtpPort"];
+            this.useStartTls = data["useStartTls"];
             this.senderAddress = data["senderAddress"];
             this.subject = data["subject"];
             this.body = data["body"];
@@ -1570,6 +1572,7 @@ export class MailSettings implements IMailSettings {
         data = typeof data === 'object' ? data : {};
         data["smtpHost"] = this.smtpHost;
         data["smtpPort"] = this.smtpPort;
+        data["useStartTls"] = this.useStartTls;
         data["senderAddress"] = this.senderAddress;
         data["subject"] = this.subject;
         data["body"] = this.body;
@@ -1580,6 +1583,7 @@ export class MailSettings implements IMailSettings {
 export interface IMailSettings {
     smtpHost: string;
     smtpPort?: number;
+    useStartTls?: boolean;
     senderAddress: string;
     subject: string;
     body: string;

@@ -25,3 +25,12 @@ p-calendar.ng-invalid.ng-untouched input
 p-calendar.ng-invalid.ng-touched input {
     border-color: #e74c3c;
 }
+
+.form-group.input-switch {
+    display: table;
+}
+.form-group.input-switch > * {
+    display: table-cell;
+    vertical-align: top;
+    padding-right: 20px;
+}

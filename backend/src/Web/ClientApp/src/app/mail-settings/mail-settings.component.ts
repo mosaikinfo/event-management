@@ -29,4 +29,10 @@ export class MailSettingsComponent implements OnInit {
     this.apiClient.mailSettings_UpdateMailSettings(this.eventId, this.model)
         .subscribe(() => this.alertService.showSaveSuccessAlert());
   }
+
+  useStartTlsChanged(e) {
+    const defaultSmtpPort = 25;
+    const defaultTlsPort = 587;
+    this.model.smtpPort = e.checked ? defaultTlsPort : defaultSmtpPort;
+  }
 }
