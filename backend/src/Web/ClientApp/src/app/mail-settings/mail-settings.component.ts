@@ -12,6 +12,7 @@ export class MailSettingsComponent implements OnInit {
 
   eventId: string;
   model : MailSettings = new MailSettings();
+  needsAuthentication: Boolean;
 
   constructor(
     private apiClient : EventManagementApiClient,
@@ -22,7 +23,10 @@ export class MailSettingsComponent implements OnInit {
   ngOnInit() {
     this.eventId = this.route.snapshot.paramMap.get('id');
     this.apiClient.mailSettings_GetMailSettings(this.eventId)
-        .subscribe((item: MailSettings) => this.model = item);
+        .subscribe((item: MailSettings) => {
+          this.model = item;
+          this.needsAuthentication = Boolean(this.model.smtpUsername);
+        });
   }
 
   submit() {
@@ -34,5 +38,12 @@ export class MailSettingsComponent implements OnInit {
     const defaultSmtpPort = 25;
     const defaultTlsPort = 587;
     this.model.smtpPort = e.checked ? defaultTlsPort : defaultSmtpPort;
+  }
+
+  needsAuthenticationChanged(e) {
+    if (!e.checked) {
+      this.model.smtpUsername = null;
+      this.model.smtpPassword = null;
+    }
   }
 }

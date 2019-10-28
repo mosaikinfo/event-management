@@ -126,6 +126,8 @@ namespace EventManagement.Infrastructure.Data
                 entity.ToTable("MailSettings");
 
                 entity.Property(e => e.SmtpHost).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.SmtpUsername).HasMaxLength(300);
+                entity.Property(e => e.SmtpPassword).HasMaxLength(300);
                 entity.Property(e => e.SenderAddress).IsRequired().HasMaxLength(300);
                 entity.Property(e => e.Subject).IsRequired().HasMaxLength(300);
 

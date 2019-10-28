@@ -5,6 +5,11 @@
     <input type="text" class="form-control" name="smtpHost" id="smtpHost" maxlength="300" [(ngModel)]="model.smtpHost" required>
   </div>
 
+  <div class="form-group">
+    <label for="smtpPort">SMTP Port</label>
+    <input type="number" min="0" class="form-control" name="smtpPort" id="smtpPort"[(ngModel)]="model.smtpPort" required>
+  </div>
+
   <div class="form-group input-switch">
     <label for="useStartTls">Verschlüsselte Übertragung (STARTTLS)</label>
     <p-inputSwitch name="useStartTls"
@@ -12,9 +17,21 @@
       (onChange)="useStartTlsChanged($event)"></p-inputSwitch>
   </div>
 
-  <div class="form-group">
-    <label for="smtpPort">SMTP Port</label>
-    <input type="number" min="0" class="form-control" name="smtpPort" id="smtpPort"[(ngModel)]="model.smtpPort" required>
+  <div class="form-group input-switch">
+    <label for="needsAuthentication">Authentifizierung erforderlich?</label>
+    <p-inputSwitch name="needsAuthentication"
+      [(ngModel)]="needsAuthentication"
+      (onChange)="needsAuthenticationChanged($event)"></p-inputSwitch>
+  </div>
+
+  <div class="form-group" *ngIf="needsAuthentication">
+    <label for="smtpUsername">Benutzername</label>
+    <input type="text" class="form-control" name="smtpUsername" id="smtpUsername" maxlength="300" [(ngModel)]="model.smtpUsername" required>
+  </div>
+
+  <div class="form-group" *ngIf="needsAuthentication">
+    <label for="smtpPassword">Passwort</label>
+    <input type="password" class="form-control" name="smtpPassword" id="smtpPassword" maxlength="300" [(ngModel)]="model.smtpPassword" required>
   </div>
 
   <div class="form-group">

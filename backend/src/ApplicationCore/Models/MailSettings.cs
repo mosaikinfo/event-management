@@ -6,6 +6,10 @@
 
         public int SmtpPort { get; set; } = 25;
 
+        public string SmtpUsername { get; set; }
+
+        public string SmtpPassword { get; set; }
+
         public bool UseStartTls { get; set; }
 
         public string SenderAddress { get; set; }

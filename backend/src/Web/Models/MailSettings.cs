@@ -10,6 +10,10 @@ namespace EventManagement.WebApp.Models
         [Range(1, 65535)]
         public int SmtpPort { get; set; }
 
+        public string SmtpUsername { get; set; }
+
+        public string SmtpPassword { get; set; }
+
         public bool UseStartTls { get; set; }
 
         [Required]
