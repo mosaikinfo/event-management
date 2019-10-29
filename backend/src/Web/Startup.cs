@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -199,9 +200,22 @@ namespace EventManagement.WebApp
 
                 if (env.IsDevelopment())
                 {
-                    // spa.UseAngularCliServer(npmScript: "start");
+                    // Set an uri (eg: http://localhost:4200) to the environment
+                    // variable SPA__Proxy__DevServerBaseUri to forward all incoming
+                    // requests to your local SPA development server.
+                    // If not set the SPA development server will be started internally 
+                    // within the ASP.NET Core application.
+                    var devServerBaseUri =
+                        Configuration["SPA:Proxy:DevServerBaseUri"];
 
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                    if (string.IsNullOrEmpty(devServerBaseUri))
+                    {
+                        spa.UseAngularCliServer(npmScript: "start");
+                    }
+                    else
+                    {
+                        spa.UseProxyToSpaDevelopmentServer(devServerBaseUri);
+                    }
                 }
             });
         }
