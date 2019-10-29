@@ -11,7 +11,16 @@ namespace EventManagement.ApplicationCore.Interfaces
     public interface ITicketDeliveryService
     {
         /// <summary>
-        /// Delivery a ticket to the buyer.
+        /// Validate whether the ticket can be delivered to the buyer.
+        /// </summary>
+        /// <param name="ticketId">Id of the ticket.</param>
+        /// <param name="deliveryType">Delivery type (e-mail, SMS, letter post, etc.).</param>
+        /// <exception cref="NotSupportedException">when the delivery type is not yet supported.</exception>
+        /// <exception cref="TicketNotFoundException">when the requested ticket doesn't exist.</exception>
+        Task ValidateAsync(Guid ticketId, TicketDeliveryType deliveryType);
+
+        /// <summary>
+        /// Deliver a ticket to the buyer.
         /// </summary>
         /// <param name="ticketId">Id of the ticket.</param>
         /// <param name="deliveryType">Delivery type (e-mail, SMS, letter post, etc.).</param>

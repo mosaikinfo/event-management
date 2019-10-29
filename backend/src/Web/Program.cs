@@ -30,6 +30,9 @@ namespace EventManagement.WebApp
                 {
                     // Enables the "Log stream" feature of Azure App Service.
                     logging.AddAzureWebAppDiagnostics();
+
+                    // Enables logging to the Hangfire Dashboard Console.
+                    logging.AddHangfireConsole();
                 });
 
         private static void SetupDatabase(IServiceProvider services)

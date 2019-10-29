@@ -3,6 +3,7 @@ using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Models;
 using EventManagement.ApplicationCore.Validation;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace EventManagement.ApplicationCore.Services
@@ -19,19 +20,21 @@ namespace EventManagement.ApplicationCore.Services
             _emailService = emailService;
         }
 
-        public async Task SendTicketAsync(Guid ticketId, TicketDeliveryType deliveryType)
+        public async Task ValidateAsync(Guid ticketId, TicketDeliveryType deliveryType)
         {
             if (deliveryType != TicketDeliveryType.Email)
-            {
                 throw new NotSupportedException(
                             $"The delivery type {deliveryType} is not yet supported!");
-            }
 
-            var ticketData = await _ticketDataRepo.GetAsync(ticketId);
-
-            if (ticketData == null)
+            if (!await _ticketDataRepo.Exists(ticketId))
                 throw new TicketNotFoundException();
+        }
 
+        [DisplayName("Send {1}")]
+        public async Task SendTicketAsync(Guid ticketId, TicketDeliveryType deliveryType)
+        {
+            await ValidateAsync(ticketId, deliveryType);
+            TicketDeliveryData ticketData = await _ticketDataRepo.GetAsync(ticketId);
             await SendTicketByMailAsync(ticketData);
         }
 

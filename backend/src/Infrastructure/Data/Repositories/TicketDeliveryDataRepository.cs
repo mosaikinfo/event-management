@@ -15,6 +15,11 @@ namespace EventManagement.Infrastructure.Data.Repositories
             _context = context;
         }
 
+        public Task<bool> Exists(Guid ticketId)
+        {
+            return _context.Tickets.AnyAsync(t => t.Id == ticketId);
+        }
+
         public async Task<TicketDeliveryData> GetAsync(Guid ticketId)
         {
             var ticket = await _context.Tickets

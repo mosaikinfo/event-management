@@ -5,6 +5,10 @@ using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.Infrastructure.Data.Repositories;
 using EventManagement.Infrastructure.Messaging;
+using EventManagement.WebApp.Shared.Hangfire;
+using Hangfire;
+using Hangfire.Console;
+using Hangfire.SqlServer;
 using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
@@ -62,6 +66,28 @@ namespace EventManagement.WebApp
                 .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
                 .AddClientStore<EventManagementClientStore>()
                 .AddProfileService<UserProfileService>();
+
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(Configuration.GetConnectionString("EventManagement"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    UsePageLocksOnDequeue = true,
+                    DisableGlobalLocks = true
+                })
+                .UseConsole()
+                .UseFilter(new JobContext()));
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
+
+            // Custom authorization filter for the Hangfire Dashboard.
+            services.AddTransient<BackgroundJobsDashboardAuthorizationFilter>();
 
             services.Configure<RouteOptions>(options =>
             {
@@ -159,7 +185,8 @@ namespace EventManagement.WebApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+                              BackgroundJobsDashboardAuthorizationFilter authorizationFilter)
         {
             if (env.IsDevelopment())
             {
@@ -190,6 +217,11 @@ namespace EventManagement.WebApp
             });
 
             app.UseIdentityServer();
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { authorizationFilter }
+            });
 
             app.UseMvc(routes =>
             {

@@ -6,6 +6,8 @@ namespace EventManagement.ApplicationCore.Interfaces
 {
     public interface ITicketDeliveryDataRepository
     {
+        Task<bool> Exists(Guid ticketId);
+
         Task<TicketDeliveryData> GetAsync(Guid ticketId);
     }
 }

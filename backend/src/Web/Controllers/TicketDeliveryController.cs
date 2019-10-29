@@ -1,6 +1,7 @@
 ﻿using EventManagement.ApplicationCore.Exceptions;
 using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Models;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,10 +17,13 @@ namespace EventManagement.WebApp.Controllers
     public class TicketDeliveryController : ControllerBase
     {
         private readonly ITicketDeliveryService _ticketDeliveryService;
+        private readonly IBackgroundJobClient _backgroundJobs;
 
-        public TicketDeliveryController(ITicketDeliveryService ticketDeliveryService)
+        public TicketDeliveryController(ITicketDeliveryService ticketDeliveryService,
+                                        IBackgroundJobClient backgroundJobs)
         {
             _ticketDeliveryService = ticketDeliveryService;
+            _backgroundJobs = backgroundJobs;
         }
 
         /// <summary>
@@ -30,15 +34,20 @@ namespace EventManagement.WebApp.Controllers
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public async Task<IActionResult> SendMailAsync(Guid ticketId)
         {
+            var deliveryType = TicketDeliveryType.Email;
             try
             {
-                await _ticketDeliveryService.SendTicketAsync(ticketId, TicketDeliveryType.Email);
+                await _ticketDeliveryService.ValidateAsync(ticketId, deliveryType);
             }
             catch (TicketNotFoundException)
             {
                 return NotFound(new ProblemDetails 
                     { Detail = "Ticket with id not found." });
             }
+
+            _backgroundJobs.Enqueue(
+                () => _ticketDeliveryService.SendTicketAsync(ticketId, deliveryType));
+
             return Ok();
         }
     }
