@@ -3,6 +3,8 @@ using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Services;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
+using EventManagement.Infrastructure.Data.Repositories;
+using EventManagement.Infrastructure.Messaging;
 using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
@@ -47,7 +49,12 @@ namespace EventManagement.WebApp
 
             services.TryAddTransient<IUserStore, DatabaseUserStore>();
             services.TryAddTransient<IEventManagementClientStore, DatabaseClientStore>();
+
+            services.TryAddTransient<ITicketDeliveryDataRepository, TicketDeliveryDataRepository>();
+            services.TryAddTransient<IEmailService, EmailService>();
+
             services.TryAddTransient<ITicketNumberService, TicketNumberService>();
+            services.TryAddTransient<ITicketDeliveryService, TicketDeliveryService>();
 
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential(persistKey: true)
