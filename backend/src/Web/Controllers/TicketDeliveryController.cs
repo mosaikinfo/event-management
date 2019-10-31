@@ -1,6 +1,7 @@
 ﻿using EventManagement.ApplicationCore.Exceptions;
-using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Models;
+using EventManagement.ApplicationCore.TicketDelivery;
+using EventManagement.WebApp.Shared.Mvc;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace EventManagement.WebApp.Controllers
     /// </summary>
     [Route("api")]
     [Authorize(EventManagementConstants.AdminApi.PolicyName)]
-    public class TicketDeliveryController : ControllerBase
+    public class TicketDeliveryController : EventManagementController
     {
         private readonly ITicketDeliveryService _ticketDeliveryService;
         private readonly IBackgroundJobClient _backgroundJobs;
@@ -41,12 +42,14 @@ namespace EventManagement.WebApp.Controllers
             }
             catch (TicketNotFoundException)
             {
-                return NotFound(new ProblemDetails 
-                    { Detail = "Ticket with id not found." });
+                return NotFound(new ProblemDetails
+                { Detail = "Ticket with id not found." });
             }
 
-            _backgroundJobs.Enqueue(
-                () => _ticketDeliveryService.SendTicketAsync(ticketId, deliveryType));
+            string validationUrl = GetTicketValidationUriFormatString();
+
+            _backgroundJobs.Enqueue(() => _ticketDeliveryService
+                .SendTicketAsync(ticketId, deliveryType, validationUrl));
 
             return Ok();
         }

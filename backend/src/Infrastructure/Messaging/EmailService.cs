@@ -1,5 +1,5 @@
-﻿using EventManagement.ApplicationCore.Interfaces;
-using EventManagement.ApplicationCore.Models;
+﻿using EventManagement.ApplicationCore.Models;
+using EventManagement.ApplicationCore.TicketDelivery;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
@@ -20,11 +20,7 @@ namespace EventManagement.Infrastructure.Messaging
 
         public async Task SendMailAsync(MailSettings mailSettings, EmailMessage mail)
         {
-            var message = new MimeMessage();
-            message.From.AddRange(mail.From.Select(a => new MailboxAddress(a)));
-            message.To.AddRange(mail.To.Select(a => new MailboxAddress(a)));
-            message.Subject = mail.Subject;
-            message.Body = new TextPart("plain") { Text = mail.Body };
+            MimeMessage message = CreateMimeMessage(mail);
 
             using (var client = new SmtpClient())
             {
@@ -41,7 +37,7 @@ namespace EventManagement.Infrastructure.Messaging
                         "Authenticate with user {user}", mailSettings.SmtpUsername);
 
                     await client.AuthenticateAsync(
-                        mailSettings.SmtpUsername, 
+                        mailSettings.SmtpUsername,
                         mailSettings.SmtpPassword);
                 }
 
@@ -50,6 +46,26 @@ namespace EventManagement.Infrastructure.Messaging
                 _logger.LogInformation("Disconnecting from server.");
                 await client.DisconnectAsync(true);
             }
+        }
+
+        private static MimeMessage CreateMimeMessage(EmailMessage mail)
+        {
+            var message = new MimeMessage();
+            message.From.AddRange(mail.From.Select(a => new MailboxAddress(a)));
+            message.To.AddRange(mail.To.Select(a => new MailboxAddress(a)));
+            message.Subject = mail.Subject;
+            var builder = new BodyBuilder { TextBody = mail.Body };
+            foreach (var attachment in mail.Attachments)
+            {
+                builder.Attachments.Add(new MimePart(attachment.ContentType)
+                {
+                    IsAttachment = true,
+                    FileName = attachment.FileName,
+                    Content = new MimeContent(attachment.Stream)
+                });
+            }
+            message.Body = builder.ToMessageBody();
+            return message;
         }
     }
 }

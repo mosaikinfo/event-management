@@ -1,7 +1,7 @@
 ﻿using EventManagement.ApplicationCore.Models;
 using System.Threading.Tasks;
 
-namespace EventManagement.ApplicationCore.Interfaces
+namespace EventManagement.ApplicationCore.TicketDelivery
 {
     /// <summary>
     /// The service to send e-mail messages via SMTP.

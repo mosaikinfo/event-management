@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace EventManagement.ApplicationCore.Models
+namespace EventManagement.ApplicationCore.TicketDelivery
 {
     public class EmailMessage : IValidatableObject
     {
@@ -12,6 +12,8 @@ namespace EventManagement.ApplicationCore.Models
         public string Subject { get; set; }
 
         public string Body { get; set; }
+
+        public IList<EmailAttachment> Attachments { get; set; } = new List<EmailAttachment>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

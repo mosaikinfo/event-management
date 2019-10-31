@@ -28,5 +28,10 @@
             /// </summary>
             public const string AuthenticationScheme = "masterqr";
         }
+
+        public static class TicketGeneration
+        {
+            public static string SecretUrlPlaceholder = "--secret--";
+        }
     }
 }

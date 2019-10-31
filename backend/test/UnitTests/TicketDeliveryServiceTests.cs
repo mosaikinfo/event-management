@@ -1,6 +1,7 @@
-﻿using EventManagement.ApplicationCore.Interfaces;
-using EventManagement.ApplicationCore.Models;
-using EventManagement.ApplicationCore.Services;
+﻿using EventManagement.ApplicationCore.Models;
+using EventManagement.ApplicationCore.TicketDelivery;
+using EventManagement.ApplicationCore.TicketGeneration;
+using EventManagement.ApplicationCore.Tickets;
 using FluentAssertions;
 using Moq;
 using System;
@@ -16,9 +17,14 @@ namespace EventManagement.UnitTests
         {
             var ticketId = Guid.NewGuid();
             var deliveryType = TicketDeliveryType.Email;
+            const string validationUri = "http://myevent/";
 
-            var repo = new Mock<ITicketDeliveryDataRepository>();
-            repo.Setup(c => c.GetAsync(It.IsAny<Guid>()))
+            var tickets = new Mock<ITicketsRepository>();
+            tickets.Setup(c => c.ExistsAsync(It.IsAny<Guid>()))
+                .Returns(Task.FromResult(true));
+
+            var ticketsDeliveryData = new Mock<ITicketDeliveryDataRepository>();
+            ticketsDeliveryData.Setup(c => c.GetAsync(It.IsAny<Guid>()))
                 .Returns(Task.FromResult(
                     new TicketDeliveryData
                     {
@@ -29,12 +35,15 @@ namespace EventManagement.UnitTests
             var emailService = new Mock<IEmailService>();
             emailService.Setup(c => c.SendMailAsync(It.IsAny<MailSettings>(), It.IsAny<EmailMessage>()));
 
+            var pdfTicketService = new Mock<IPdfTicketService>();
+
             var service = new TicketDeliveryService(
-                repo.Object, emailService.Object);
+                tickets.Object, ticketsDeliveryData.Object,
+                emailService.Object, pdfTicketService.Object);
 
-            await service.SendTicketAsync(ticketId, deliveryType);
+            await service.SendTicketAsync(ticketId, deliveryType, validationUri);
 
-            Mock.VerifyAll(repo, emailService);
+            Mock.VerifyAll(tickets, ticketsDeliveryData, emailService, pdfTicketService);
         }
 
         [Fact]
@@ -42,11 +51,18 @@ namespace EventManagement.UnitTests
         {
             var ticketId = Guid.NewGuid();
             var deliveryType = TicketDeliveryType.LetterPost;
-            var repo = new Mock<ITicketDeliveryDataRepository>();
-            var emailService = new Mock<IEmailService>();
-            var service = new TicketDeliveryService(repo.Object, emailService.Object);
+            const string validationUri = "http://myevent/";
 
-            Func<Task> f = async () => await service.SendTicketAsync(ticketId, deliveryType);
+            var tickets = new Mock<ITicketsRepository>();
+            var ticketsDeliveryData = new Mock<ITicketDeliveryDataRepository>();
+            var emailService = new Mock<IEmailService>();
+            var pdfTicketService = new Mock<IPdfTicketService>();
+            var service = new TicketDeliveryService(
+                tickets.Object, ticketsDeliveryData.Object,
+                emailService.Object, pdfTicketService.Object);
+
+            Func<Task> f = async () => await service
+                .SendTicketAsync(ticketId, deliveryType, validationUri);
 
             f.Should().Throw<NotSupportedException>();
         }

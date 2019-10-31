@@ -3,7 +3,7 @@ using EventManagement.ApplicationCore.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace EventManagement.ApplicationCore.Interfaces
+namespace EventManagement.ApplicationCore.TicketDelivery
 {
     /// <summary>
     /// Service for the delivery of tickets to the buyer by various ways (e-mail, SMS, letter post, etc.).
@@ -26,6 +26,6 @@ namespace EventManagement.ApplicationCore.Interfaces
         /// <param name="deliveryType">Delivery type (e-mail, SMS, letter post, etc.).</param>
         /// <exception cref="NotSupportedException">when the delivery type is not yet supported.</exception>
         /// <exception cref="TicketNotFoundException">when the requested ticket doesn't exist.</exception>
-        Task SendTicketAsync(Guid ticketId, TicketDeliveryType deliveryType);
+        Task SendTicketAsync(Guid ticketId, TicketDeliveryType deliveryType, string ticketValidationUriFormat);
     }
 }

@@ -1,6 +1,9 @@
 using AutoMapper;
 using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Services;
+using EventManagement.ApplicationCore.TicketDelivery;
+using EventManagement.ApplicationCore.TicketGeneration;
+using EventManagement.ApplicationCore.Tickets;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.Infrastructure.Data.Repositories;
@@ -50,15 +53,14 @@ namespace EventManagement.WebApp
 
             services.AddTransient<EventsDbContextSeed>();
             services.AddTransient<EventManagementLocalClientStore>();
-
             services.TryAddTransient<IUserStore, DatabaseUserStore>();
             services.TryAddTransient<IEventManagementClientStore, DatabaseClientStore>();
-
+            services.TryAddTransient<ITicketsRepository, TicketsRepository>();
             services.TryAddTransient<ITicketDeliveryDataRepository, TicketDeliveryDataRepository>();
             services.TryAddTransient<IEmailService, EmailService>();
-
             services.TryAddTransient<ITicketNumberService, TicketNumberService>();
             services.TryAddTransient<ITicketDeliveryService, TicketDeliveryService>();
+            services.TryAddTransient<IPdfTicketService, PdfTicketService>();
 
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential(persistKey: true)
@@ -242,7 +244,7 @@ namespace EventManagement.WebApp
                     // Set an uri (eg: http://localhost:4200) to the environment
                     // variable SPA__Proxy__DevServerBaseUri to forward all incoming
                     // requests to your local SPA development server.
-                    // If not set the SPA development server will be started internally 
+                    // If not set the SPA development server will be started internally
                     // within the ASP.NET Core application.
                     var devServerBaseUri =
                         Configuration["SPA:Proxy:DevServerBaseUri"];
