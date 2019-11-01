@@ -42,6 +42,8 @@ import { EntranceControlComponent } from './entrance-control/entrance-control.co
 import { EntranceControlManualComponent } from './entrance-control-manual/entrance-control-manual.component';
 import { EntranceControlAppComponent } from './entrance-control-app/entrance-control-app.component';
 import { MailSettingsComponent } from './mail-settings/mail-settings.component';
+import { TicketDetailComponent } from './ticket-detail/ticket-detail.component';
+import { TicketAuditLogComponent } from './ticket-audit-log/ticket-audit-log.component';
 
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
@@ -61,7 +63,9 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     EntranceControlComponent,
     EntranceControlManualComponent,
     EntranceControlAppComponent,
-    MailSettingsComponent
+    MailSettingsComponent,
+    TicketDetailComponent,
+    TicketAuditLogComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

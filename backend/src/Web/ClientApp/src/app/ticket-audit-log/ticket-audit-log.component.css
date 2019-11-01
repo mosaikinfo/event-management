@@ -1,0 +1,28 @@
+.icon {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #2e2e2e;
+}
+.icon.icon-primary {
+    background-color: #007bff;
+}
+.icon.icon-danger {
+    background-color: #dc3545;
+}
+.icon.icon-success {
+    background-color: #28a745;
+}
+.icon > * {
+    font-size: 30px;
+}
+
+.col-sm {
+    display: flex;
+    align-items: center;
+}

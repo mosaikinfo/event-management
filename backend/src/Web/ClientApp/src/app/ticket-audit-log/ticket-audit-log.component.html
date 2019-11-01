@@ -1,0 +1,28 @@
+<div *ngFor="let entry of entries" class="row mt-4">
+  <div [ngSwitch]="entry.action" class="col-sm mb-2" style="max-width: 80px">
+    <span *ngSwitchCase="'email_sent'" [ngClass]="{
+        'icon': true,
+        'icon-primary': entry.succeeded,
+        'icon-danger': !entry.succeeded 
+      }">
+      <i class="material-icons">
+        {{ entry.succeeded ? 'email' : 'cancel_schedule_send' }}
+      </i>
+    </span>
+    <span *ngSwitchDefault class="icon icon-primary">
+      <i class="material-icons">done</i>
+    </span>
+  </div>
+  <div class="col-sm">
+    <p>{{ entry.detail }}</p>
+  </div>
+  <div class="col-sm">
+    <p class="text-muted" style="font-size: 0.8rem">
+      {{ entry.time | date:'long' }}
+    </p>
+  </div>
+</div>
+
+<div *ngIf="!entries || entries.length == 0" class="my-4">
+  Noch keine Einträge vorhanden.
+</div>
