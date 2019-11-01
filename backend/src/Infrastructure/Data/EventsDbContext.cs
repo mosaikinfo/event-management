@@ -17,6 +17,7 @@ namespace EventManagement.Infrastructure.Data
         public DbSet<TicketType> TicketTypes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<MailSettings> MailSettings { get; set; }
+        public DbSet<AuditEvent> AuditEventLog { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -81,6 +82,12 @@ namespace EventManagement.Infrastructure.Data
                         value => value.GetStringValue(),
                         value => (PaymentStatus)Enum.Parse(typeof(PaymentStatus), value, true));
 
+                entity.Property(e => e.DeliveryType)
+                    .HasMaxLength(100)
+                    .HasConversion(
+                        value => value.Value.GetStringValue(),
+                        value => (TicketDeliveryType)Enum.Parse(typeof(TicketDeliveryType), value, true));
+
                 entity.HasOne(e => e.Event)
                     .WithMany(e => e.Tickets)
                     .HasForeignKey(e => e.EventId)
@@ -134,6 +141,17 @@ namespace EventManagement.Infrastructure.Data
                 entity.HasOne(e => e.Event)
                     .WithOne(e => e.MailSettings)
                     .HasForeignKey<Event>(e => e.MailSettingsId);
+            });
+
+            modelBuilder.Entity<AuditEvent>(entity =>
+            {
+                entity.ToTable("AuditEventLog");
+                entity.Property(e => e.Action).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Detail).HasMaxLength(1000);
+
+                entity.HasOne(e => e.Ticket)
+                      .WithMany()
+                      .HasForeignKey(e => e.TicketId);
             });
         }
     }

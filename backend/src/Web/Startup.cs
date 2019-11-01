@@ -1,4 +1,5 @@
 using AutoMapper;
+using EventManagement.ApplicationCore.Auditing;
 using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Services;
 using EventManagement.ApplicationCore.TicketDelivery;
@@ -57,6 +58,7 @@ namespace EventManagement.WebApp
             services.TryAddTransient<IEventManagementClientStore, DatabaseClientStore>();
             services.TryAddTransient<ITicketsRepository, TicketsRepository>();
             services.TryAddTransient<ITicketDeliveryDataRepository, TicketDeliveryDataRepository>();
+            services.TryAddTransient<IAuditEventLog, AuditEventLog>();
             services.TryAddTransient<IEmailService, EmailService>();
             services.TryAddTransient<ITicketNumberService, TicketNumberService>();
             services.TryAddTransient<ITicketDeliveryService, TicketDeliveryService>();

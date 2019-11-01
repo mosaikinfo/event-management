@@ -74,7 +74,7 @@ export class TicketEditComponent implements OnInit {
         .ticketDelivery_SendMail(this.model.id)
         .toPromise();
       this.alertService.showAlert({
-        message: `Ticket ${this.model.ticketNumber} wurde per E-Mail versendet.`,
+        message: `Die E-Mail wurde zur Warteschlange hinzugefügt.`,
         type: "success"
       });
     }

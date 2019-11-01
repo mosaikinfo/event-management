@@ -33,5 +33,13 @@
         {
             public static string SecretUrlPlaceholder = "--secret--";
         }
+
+        public static class Auditing
+        {
+            public static class Actions
+            {
+                public const string EmailSent = "email_sent";
+            }
+        }
     }
 }

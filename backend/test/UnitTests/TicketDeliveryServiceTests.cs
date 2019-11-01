@@ -1,4 +1,5 @@
-﻿using EventManagement.ApplicationCore.Models;
+﻿using EventManagement.ApplicationCore.Auditing;
+using EventManagement.ApplicationCore.Models;
 using EventManagement.ApplicationCore.TicketDelivery;
 using EventManagement.ApplicationCore.TicketGeneration;
 using EventManagement.ApplicationCore.Tickets;
@@ -29,7 +30,10 @@ namespace EventManagement.UnitTests
                     new TicketDeliveryData
                     {
                         MailSettings = new MailSettings(),
-                        Ticket = new Ticket()
+                        Ticket = new Ticket
+                        {
+                            Mail = "john.doe@itsnotabug.de"
+                        }
                     }));
 
             var emailService = new Mock<IEmailService>();
@@ -37,13 +41,17 @@ namespace EventManagement.UnitTests
 
             var pdfTicketService = new Mock<IPdfTicketService>();
 
+            var auditEventLog = new Mock<IAuditEventLog>();
+            auditEventLog.Setup(x => x.AddAsync(It.IsAny<AuditEvent>()));
+
             var service = new TicketDeliveryService(
                 tickets.Object, ticketsDeliveryData.Object,
-                emailService.Object, pdfTicketService.Object);
+                emailService.Object, pdfTicketService.Object,
+                auditEventLog.Object);
 
             await service.SendTicketAsync(ticketId, deliveryType, validationUri);
 
-            Mock.VerifyAll(tickets, ticketsDeliveryData, emailService, pdfTicketService);
+            Mock.VerifyAll(tickets, ticketsDeliveryData, emailService, pdfTicketService, auditEventLog);
         }
 
         [Fact]
@@ -57,9 +65,11 @@ namespace EventManagement.UnitTests
             var ticketsDeliveryData = new Mock<ITicketDeliveryDataRepository>();
             var emailService = new Mock<IEmailService>();
             var pdfTicketService = new Mock<IPdfTicketService>();
+            var auditEventLog = new Mock<IAuditEventLog>();
             var service = new TicketDeliveryService(
                 tickets.Object, ticketsDeliveryData.Object,
-                emailService.Object, pdfTicketService.Object);
+                emailService.Object, pdfTicketService.Object,
+                auditEventLog.Object);
 
             Func<Task> f = async () => await service
                 .SendTicketAsync(ticketId, deliveryType, validationUri);

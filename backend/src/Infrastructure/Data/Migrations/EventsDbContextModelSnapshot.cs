@@ -19,6 +19,31 @@ namespace EventManagement.Infrastructure.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.AuditEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Detail")
+                        .HasMaxLength(1000);
+
+                    b.Property<bool>("Succeeded");
+
+                    b.Property<Guid>("TicketId");
+
+                    b.Property<DateTime>("Time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("AuditEventLog");
+                });
+
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.Client", b =>
                 {
                     b.Property<Guid>("Id")
@@ -166,6 +191,11 @@ namespace EventManagement.Infrastructure.Data.Migrations
 
                     b.Property<Guid?>("CreatorId");
 
+                    b.Property<DateTime?>("DeliveryDate");
+
+                    b.Property<string>("DeliveryType")
+                        .HasMaxLength(100);
+
                     b.Property<DateTime?>("EditedAt");
 
                     b.Property<Guid?>("EditorId");
@@ -176,6 +206,8 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .HasMaxLength(300);
 
                     b.Property<bool>("IsDeleted");
+
+                    b.Property<bool>("IsDelivered");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(300);
@@ -280,6 +312,14 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.AuditEvent", b =>
+                {
+                    b.HasOne("EventManagement.ApplicationCore.Models.Ticket", "Ticket")
+                        .WithMany()
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.Event", b =>

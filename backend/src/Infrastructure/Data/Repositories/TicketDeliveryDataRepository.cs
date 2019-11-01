@@ -18,7 +18,6 @@ namespace EventManagement.Infrastructure.Data.Repositories
         public async Task<TicketDeliveryData> GetAsync(Guid ticketId)
         {
             var ticket = await _context.Tickets
-                .AsNoTracking()
                 .Include(e => e.Event)
                 .ThenInclude(e => e.MailSettings)
                 .FirstOrDefaultAsync(t => t.Id == ticketId);
@@ -31,6 +30,19 @@ namespace EventManagement.Infrastructure.Data.Repositories
                 Ticket = ticket,
                 MailSettings = ticket.Event.MailSettings
             };
+        }
+
+        public async Task UpdateDeliveryStatusAsync(Guid ticketId, bool isDelivered, DateTime deliveryDate, TicketDeliveryType deliveryType)
+        {
+            var ticket = await _context.Tickets.FindAsync(ticketId);
+
+            if (ticket == null)
+                throw new DbQueryException("Ticket not found");
+
+            ticket.IsDelivered = isDelivered;
+            ticket.DeliveryDate = deliveryDate;
+            ticket.DeliveryType = deliveryType;
+            await _context.SaveChangesAsync();
         }
     }
 }

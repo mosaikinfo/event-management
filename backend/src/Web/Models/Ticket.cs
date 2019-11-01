@@ -28,6 +28,10 @@ namespace EventManagement.WebApp.Models
         public string Creator { get; set; }
         public string Editor { get; set; }
 
+        public bool IsDelivered { get; set; }
+        public DateTime? DeliveryDate { get; set; }
+        public TicketDeliveryType? DeliveryType { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (EventId == Guid.Empty)

@@ -45,6 +45,68 @@ export class EventManagementApiClient extends ServiceBase {
     }
 
     /**
+     * List audit event log entries for a specific ticket.
+     * @param ticketId Id of the ticket.
+     * @return List of audit events. Recent entries at first.
+     */
+    auditEvents_List(ticketId: string): Observable<AuditEvent[]> {
+        let url_ = this.baseUrl + "/api/tickets/{ticketId}/auditevents";
+        if (ticketId === undefined || ticketId === null)
+            throw new Error("The parameter 'ticketId' must be defined.");
+        url_ = url_.replace("{ticketId}", encodeURIComponent("" + ticketId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processAuditEvents_List(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAuditEvents_List(<any>response_);
+                } catch (e) {
+                    return <Observable<AuditEvent[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AuditEvent[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAuditEvents_List(response: HttpResponseBase): Observable<AuditEvent[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(AuditEvent.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AuditEvent[]>(<any>null);
+    }
+
+    /**
      * Lists all api clients.
      */
     clients_GetClientsOfEvent(): Observable<Client[]> {
@@ -1404,6 +1466,54 @@ export class EventManagementApiClient extends ServiceBase {
     }
 }
 
+export class AuditEvent implements IAuditEvent {
+    time?: Date;
+    action?: string | undefined;
+    detail?: string | undefined;
+    succeeded?: boolean;
+
+    constructor(data?: IAuditEvent) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.time = data["time"] ? new Date(data["time"].toString()) : <any>undefined;
+            this.action = data["action"];
+            this.detail = data["detail"];
+            this.succeeded = data["succeeded"];
+        }
+    }
+
+    static fromJS(data: any): AuditEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuditEvent();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["time"] = this.time ? this.time.toISOString() : <any>undefined;
+        data["action"] = this.action;
+        data["detail"] = this.detail;
+        data["succeeded"] = this.succeeded;
+        return data; 
+    }
+}
+
+export interface IAuditEvent {
+    time?: Date;
+    action?: string | undefined;
+    detail?: string | undefined;
+    succeeded?: boolean;
+}
+
 export class Client implements IClient {
     id?: string;
     name!: string;
@@ -1778,6 +1888,9 @@ export class Ticket implements ITicket {
     editedAt?: Date | undefined;
     creator?: string | undefined;
     editor?: string | undefined;
+    isDelivered?: boolean;
+    deliveryDate?: Date | undefined;
+    deliveryType?: TicketDeliveryType | undefined;
 
     constructor(data?: ITicket) {
         if (data) {
@@ -1809,6 +1922,9 @@ export class Ticket implements ITicket {
             this.editedAt = data["editedAt"] ? new Date(data["editedAt"].toString()) : <any>undefined;
             this.creator = data["creator"];
             this.editor = data["editor"];
+            this.isDelivered = data["isDelivered"];
+            this.deliveryDate = data["deliveryDate"] ? new Date(data["deliveryDate"].toString()) : <any>undefined;
+            this.deliveryType = data["deliveryType"];
         }
     }
 
@@ -1840,6 +1956,9 @@ export class Ticket implements ITicket {
         data["editedAt"] = this.editedAt ? this.editedAt.toISOString() : <any>undefined;
         data["creator"] = this.creator;
         data["editor"] = this.editor;
+        data["isDelivered"] = this.isDelivered;
+        data["deliveryDate"] = this.deliveryDate ? this.deliveryDate.toISOString() : <any>undefined;
+        data["deliveryType"] = this.deliveryType;
         return data; 
     }
 }
@@ -1864,6 +1983,9 @@ export interface ITicket {
     editedAt?: Date | undefined;
     creator?: string | undefined;
     editor?: string | undefined;
+    isDelivered?: boolean;
+    deliveryDate?: Date | undefined;
+    deliveryType?: TicketDeliveryType | undefined;
 }
 
 export enum PaymentStatus {
@@ -1871,6 +1993,13 @@ export enum PaymentStatus {
     Paid = 1,
     PaidPartial = 2,
     Presold = 3,
+}
+
+export enum TicketDeliveryType {
+    Email = 0,
+    Sms = 1,
+    WhatsApp = 2,
+    LetterPost = 3,
 }
 
 export class OperationBase implements IOperationBase {
