@@ -68,6 +68,24 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.DemoEmailRecipient", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<Guid>("MailSettingsId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MailSettingsId");
+
+                    b.ToTable("DemoEmailRecipients");
+                });
+
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.Event", b =>
                 {
                     b.Property<Guid>("Id")
@@ -124,6 +142,8 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Body");
+
+                    b.Property<bool>("EnableDemoMode");
 
                     b.Property<string>("SenderAddress")
                         .IsRequired()
@@ -319,6 +339,14 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.HasOne("EventManagement.ApplicationCore.Models.Ticket", "Ticket")
                         .WithMany()
                         .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.DemoEmailRecipient", b =>
+                {
+                    b.HasOne("EventManagement.ApplicationCore.Models.MailSettings")
+                        .WithMany("DemoEmailRecipients")
+                        .HasForeignKey("MailSettingsId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

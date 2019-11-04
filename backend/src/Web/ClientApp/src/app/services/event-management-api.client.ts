@@ -1707,6 +1707,8 @@ export class MailSettings implements IMailSettings {
     senderAddress!: string;
     subject!: string;
     body!: string;
+    enableDemoMode?: boolean;
+    demoEmailRecipients!: string[];
 
     constructor(data?: IMailSettings) {
         if (data) {
@@ -1714,6 +1716,9 @@ export class MailSettings implements IMailSettings {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
+        }
+        if (!data) {
+            this.demoEmailRecipients = [];
         }
     }
 
@@ -1727,6 +1732,12 @@ export class MailSettings implements IMailSettings {
             this.senderAddress = data["senderAddress"];
             this.subject = data["subject"];
             this.body = data["body"];
+            this.enableDemoMode = data["enableDemoMode"];
+            if (Array.isArray(data["demoEmailRecipients"])) {
+                this.demoEmailRecipients = [] as any;
+                for (let item of data["demoEmailRecipients"])
+                    this.demoEmailRecipients!.push(item);
+            }
         }
     }
 
@@ -1747,6 +1758,12 @@ export class MailSettings implements IMailSettings {
         data["senderAddress"] = this.senderAddress;
         data["subject"] = this.subject;
         data["body"] = this.body;
+        data["enableDemoMode"] = this.enableDemoMode;
+        if (Array.isArray(this.demoEmailRecipients)) {
+            data["demoEmailRecipients"] = [];
+            for (let item of this.demoEmailRecipients)
+                data["demoEmailRecipients"].push(item);
+        }
         return data; 
     }
 }
@@ -1760,6 +1777,8 @@ export interface IMailSettings {
     senderAddress: string;
     subject: string;
     body: string;
+    enableDemoMode?: boolean;
+    demoEmailRecipients: string[];
 }
 
 export class TicketQuotaReportRow implements ITicketQuotaReportRow {

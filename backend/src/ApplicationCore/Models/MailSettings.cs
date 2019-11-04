@@ -1,4 +1,6 @@
-﻿namespace EventManagement.ApplicationCore.Models
+﻿using System.Collections.Generic;
+
+namespace EventManagement.ApplicationCore.Models
 {
     public class MailSettings : BaseEntity
     {
@@ -26,6 +28,9 @@ We're looking forward to seeing you!
 {{ EventHomepageUrl }}
 ";
 
+        public bool EnableDemoMode { get; set; }
+
         public Event Event { get; set; }
+        public IList<DemoEmailRecipient> DemoEmailRecipients { get; set; }
     }
 }

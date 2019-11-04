@@ -141,6 +141,16 @@ namespace EventManagement.Infrastructure.Data
                 entity.HasOne(e => e.Event)
                     .WithOne(e => e.MailSettings)
                     .HasForeignKey<Event>(e => e.MailSettingsId);
+
+                entity.HasMany(e => e.DemoEmailRecipients)
+                      .WithOne()
+                      .HasForeignKey(e => e.MailSettingsId);
+            });
+
+            modelBuilder.Entity<DemoEmailRecipient>(entity =>
+            {
+                entity.ToTable("DemoEmailRecipients");
+                entity.Property(e => e.EmailAddress).IsRequired().HasMaxLength(300);
             });
 
             modelBuilder.Entity<AuditEvent>(entity =>

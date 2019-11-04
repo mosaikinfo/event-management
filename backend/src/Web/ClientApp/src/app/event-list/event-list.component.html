@@ -9,11 +9,13 @@
 <div *ngIf="events && events.length > 0" class="row mt-3">
   <div class="col-md">
     <div class="list-group">
-      <a *ngFor="let event of events" [routerLink]='["/"]' (click)="select(event)"
+      <a *ngFor="let event of events" [routerLink]='["/"]' (click)="select(event, true)"
          class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1">{{ event.name }}</h5>
-          <a class="btn btn-outline-primary" [routerLink]='["/events", event.id]'>
+          <a class="btn btn-outline-primary"
+            (click)="select(event)"
+            [routerLink]='["/events", event.id]'>
             Einstellungen
           </a>
         </div>

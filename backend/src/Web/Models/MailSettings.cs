@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace EventManagement.WebApp.Models
 {
-    public class MailSettings
+    public class MailSettings : IValidatableObject
     {
         [Required]
         public string SmtpHost { get; set; }
@@ -24,5 +26,19 @@ namespace EventManagement.WebApp.Models
 
         [Required]
         public string Body { get; set; }
+
+        public bool EnableDemoMode { get; set; }
+
+        public IList<string> DemoEmailRecipients { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (DemoEmailRecipients?.Any() == true &&
+                DemoEmailRecipients.Any(e => string.IsNullOrEmpty(e?.Trim())))
+            {
+                yield return new ValidationResult(
+                        "The email address may not be empty.", new[] { nameof(DemoEmailRecipients) });
+            }
+        }
     }
 }

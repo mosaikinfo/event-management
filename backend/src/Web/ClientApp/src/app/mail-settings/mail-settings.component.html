@@ -1,5 +1,39 @@
 <form class="mt-4" (ngSubmit)="submit()" #form="ngForm">
 
+  <div class="form-group input-switch">
+    <label for="enableDemoMode" ngbTooltip="Wenn der Demo-Modus aktiv ist, werden alle E-Mails im System an einen
+    vordefinierten Empfängerkreis gesendet. Somit kann der E-Mail-Versand
+    getestet werden.">
+      Demo-Modus einschalten
+      <i class="fas fa-info-circle"></i>
+    </label>
+    <p-inputSwitch name="enableDemoMode" [(ngModel)]="model.enableDemoMode"></p-inputSwitch>
+  </div>
+
+  <div *ngIf="model.enableDemoMode" class="mb-4">
+    <label>E-Mail-Empfänger für Test-Mails</label>
+    <ol style="margin-top: 0" *ngIf="model.demoEmailRecipients && model.demoEmailRecipients.length > 0">
+      <li *ngFor="let email of model.demoEmailRecipients; let i = index">
+        {{ email }}
+        <button type="button" class="btn btn-link"
+                (click)="removeDemoMailRecipient(i)">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </li>
+    </ol>
+    <div class="form-inline">
+      <div class="form-group mr-2">
+        <input type="email" name="demoEmailRecipient" id="demoEmailRecipient"
+              class="form-control form-control-sm"
+              maxlength="300" placeholder="john.doe@example.com"
+              [(ngModel)]="demoEmailRecipient" email>
+      </div>
+      <button type="button" class="btn btn-sm btn-primary"
+      (click)="addDemoEmailRecipient()"
+      [disabled]="!form.form.valid">Hinzufügen</button>
+    </div>
+  </div>
+
   <div class="form-group">
     <label for="smtpHost">SMTP Host</label>
     <input type="text" class="form-control" name="smtpHost" id="smtpHost" maxlength="300" [(ngModel)]="model.smtpHost" required>

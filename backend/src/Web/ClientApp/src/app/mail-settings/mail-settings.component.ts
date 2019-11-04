@@ -13,6 +13,7 @@ export class MailSettingsComponent implements OnInit {
   eventId: string;
   model : MailSettings = new MailSettings();
   needsAuthentication: Boolean;
+  demoEmailRecipient: string;
 
   constructor(
     private apiClient : EventManagementApiClient,
@@ -49,5 +50,16 @@ export class MailSettingsComponent implements OnInit {
 
   curlyBraces(value: string) {
     return '{{' + value + '}}';
+  }
+
+  addDemoEmailRecipient() {
+    if (this.demoEmailRecipient) {
+      this.model.demoEmailRecipients.push(this.demoEmailRecipient);
+      this.demoEmailRecipient = null;
+    }
+  }
+
+  removeDemoMailRecipient(index: number) {
+    this.model.demoEmailRecipients.splice(index, 1);
   }
 }
