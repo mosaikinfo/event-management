@@ -4,8 +4,11 @@ using EventManagement.ApplicationCore.Models;
 using EventManagement.ApplicationCore.TicketGeneration;
 using EventManagement.ApplicationCore.Tickets;
 using EventManagement.ApplicationCore.Validation;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EventManagement.ApplicationCore.TicketDelivery
@@ -17,18 +20,21 @@ namespace EventManagement.ApplicationCore.TicketDelivery
         private readonly IEmailService _emailService;
         private readonly IPdfTicketService _pdfTicketService;
         private readonly IAuditEventLog _auditEventLog;
+        private readonly ILogger _logger;
 
         public TicketDeliveryService(ITicketsRepository ticketsRepo,
                                      ITicketDeliveryDataRepository ticketDataRepo,
                                      IEmailService emailService,
                                      IPdfTicketService pdfTicketService,
-                                     IAuditEventLog auditEventLog)
+                                     IAuditEventLog auditEventLog,
+                                     ILogger<TicketDeliveryService> logger)
         {
             _ticketsRepo = ticketsRepo;
             _ticketDataRepo = ticketDataRepo;
             _emailService = emailService;
             _pdfTicketService = pdfTicketService;
             _auditEventLog = auditEventLog;
+            _logger = logger;
         }
 
         public async Task ValidateAsync(Guid ticketId, TicketDeliveryType deliveryType)
@@ -68,11 +74,28 @@ namespace EventManagement.ApplicationCore.TicketDelivery
             System.IO.Stream stream = await _pdfTicketService
                 .GeneratePdfAsync(args.Ticket.Id, ticketValidationUriFormat);
 
+            IList<string> recipients = new[] { args.Ticket.Mail };
+
+            if (args.MailSettings.EnableDemoMode)
+            {
+                if (args.MailSettings.DemoEmailRecipients.Any())
+                {
+                    _logger.LogWarning("Demo Mode is enabled. The e-mails will be sent to a predefined list of recipients only.");
+                    recipients = args.MailSettings.DemoEmailRecipients
+                        .Select(r => r.EmailAddress)
+                        .ToList();
+                }
+                else
+                {
+                    _logger.LogWarning("Demo Mode is enabled, but no test recipients are defined.");
+                }
+            }
+
             var mail = await EmailTemplateService.RenderTicketMailAsync(
                 new EmailMessage
                 {
                     From = { args.MailSettings.SenderAddress },
-                    To = { args.Ticket.Mail },
+                    To = recipients,
                     Subject = args.MailSettings.Subject,
                     Body = args.MailSettings.Body,
                     Attachments =

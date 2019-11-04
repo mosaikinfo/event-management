@@ -21,6 +21,7 @@ namespace EventManagement.Infrastructure.Data.Repositories
                 .Include(e => e.TicketType)
                 .Include(e => e.Event)
                 .ThenInclude(e => e.MailSettings)
+                .ThenInclude(e => e.DemoEmailRecipients)
                 .FirstOrDefaultAsync(t => t.Id == ticketId);
 
             if (ticket == null)
