@@ -46,4 +46,8 @@ export class MailSettingsComponent implements OnInit {
       this.model.smtpPassword = null;
     }
   }
+
+  curlyBraces(value: string) {
+    return '{{' + value + '}}';
+  }
 }

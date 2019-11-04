@@ -68,13 +68,14 @@ namespace EventManagement.ApplicationCore.TicketDelivery
             System.IO.Stream stream = await _pdfTicketService
                 .GeneratePdfAsync(args.Ticket.Id, ticketValidationUriFormat);
 
-            var mail = new EmailMessage
-            {
-                From = { args.MailSettings.SenderAddress },
-                To = { args.Ticket.Mail },
-                Subject = args.MailSettings.Subject,
-                Body = args.MailSettings.Body,
-                Attachments =
+            var mail = await EmailTemplateService.RenderTicketMailAsync(
+                new EmailMessage
+                {
+                    From = { args.MailSettings.SenderAddress },
+                    To = { args.Ticket.Mail },
+                    Subject = args.MailSettings.Subject,
+                    Body = args.MailSettings.Body,
+                    Attachments =
                 {
                     new EmailAttachment
                     {
@@ -83,7 +84,7 @@ namespace EventManagement.ApplicationCore.TicketDelivery
                         Stream = stream
                     }
                 }
-            };
+                }, args.Ticket);
 
             try
             {

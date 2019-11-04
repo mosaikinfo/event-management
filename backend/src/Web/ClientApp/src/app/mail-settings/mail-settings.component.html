@@ -46,6 +46,24 @@
 
   <div class="form-group">
     <label for="body">Text</label>
+    <ng-template #popTitle>Variablen</ng-template>
+    <ng-template #popContent>
+      <ul>
+        <li>{{ curlyBraces("FirstName") }}</li>
+        <li>{{ curlyBraces("LastName") }}</li>
+        <li>{{ curlyBraces("TicketTypeName") }}</li>
+        <li>{{ curlyBraces("TicketPrice") }}</li>
+        <li>{{ curlyBraces("EventName") }}</li>
+        <li>{{ curlyBraces("EventLocation") }}</li>
+        <li>{{ curlyBraces("EventHomepageUrl") }}</li>
+        <li>{{ curlyBraces("EventHost") }}</li>
+      </ul>
+    </ng-template>
+    <button type="button" class="btn btn-outline-primary btn-sm float-right mb-1"
+            [ngbPopover]="popContent" [popoverTitle]="popTitle" placement="left">
+      <i class="fas fa-info-circle"></i>
+      Variablen
+    </button>
     <textarea class="form-control" name="body" id="body" rows="15" [(ngModel)]="model.body" required></textarea>
   </div>
 

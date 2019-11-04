@@ -14,9 +14,17 @@
 
         public string SenderAddress { get; set; }
 
-        public string Subject { get; set; }
+        public string Subject { get; set; } = "Your ticket | {{ EventName }}";
 
-        public string Body { get; set; }
+        public string Body { get; set; } = @"{{#if FirstName}}Hi {{FirstName}}{{else}}Hey Dude{{/if}},
+
+with this e-mail you're receiving your personal ticket for the {{ EventName }}.
+
+We're looking forward to seeing you!
+{{ EventHost }} Team
+
+{{ EventHomepageUrl }}
+";
 
         public Event Event { get; set; }
     }

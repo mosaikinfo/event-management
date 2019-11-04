@@ -18,6 +18,7 @@ namespace EventManagement.Infrastructure.Data.Repositories
         public async Task<TicketDeliveryData> GetAsync(Guid ticketId)
         {
             var ticket = await _context.Tickets
+                .Include(e => e.TicketType)
                 .Include(e => e.Event)
                 .ThenInclude(e => e.MailSettings)
                 .FirstOrDefaultAsync(t => t.Id == ticketId);
