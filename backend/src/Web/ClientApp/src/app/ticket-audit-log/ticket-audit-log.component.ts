@@ -16,11 +16,11 @@ export class TicketAuditLogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.loadLogEntries(id);
+    this.loadLogEntries();
   }
 
-  async loadLogEntries(ticketId: string): Promise<void> {
+  async loadLogEntries(): Promise<void> {
+    const ticketId = this.route.snapshot.paramMap.get('id');
     this.entries = <AuditEvent[]>await this.apiClient
       .auditEvents_List(ticketId).toPromise();
   }

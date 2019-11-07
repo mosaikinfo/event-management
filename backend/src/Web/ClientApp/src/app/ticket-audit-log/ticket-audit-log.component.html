@@ -1,3 +1,10 @@
+<nav class="navbar navbar-light mt-3 mb-3 p-0">
+  <div class="form-inline">
+      <button type="button" class="btn btn-light"
+      (click)="loadLogEntries()"><i class="fas fa-redo"></i></button>
+  </div>
+</nav>
+
 <div *ngFor="let entry of entries" class="row mt-4">
   <div [ngSwitch]="entry.action" class="col-sm mb-2" style="max-width: 80px">
     <span *ngSwitchCase="'email_sent'" [ngClass]="{
