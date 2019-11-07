@@ -9,6 +9,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { EventSettingsComponent } from './event-settings/event-settings.component';
 import { TicketListComponent } from './ticket-list/ticket-list.component';
 import { TicketEditComponent } from './ticket-edit/ticket-edit.component';
+import { TicketDetailComponent } from './ticket-detail/ticket-detail.component';
 import { EntranceControlComponent } from './entrance-control/entrance-control.component';
 import { EntranceControlManualComponent } from './entrance-control-manual/entrance-control-manual.component';
 import { EntranceControlAppComponent } from './entrance-control-app/entrance-control-app.component';
@@ -51,7 +52,7 @@ const routes: Routes = [
     },
     { 
         path: 'tickets/:id', 
-        component: TicketEditComponent, 
+        component: TicketDetailComponent, 
         canActivate: [AuthGuardService, EventGuardService] 
     },
     { 

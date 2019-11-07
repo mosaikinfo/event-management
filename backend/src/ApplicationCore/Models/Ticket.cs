@@ -23,6 +23,9 @@ namespace EventManagement.ApplicationCore.Models
         public DateTime? EditedAt { get; set; }
         public Guid? CreatorId { get; set; }
         public Guid? EditorId { get; set; }
+        public bool IsDelivered { get; set; }
+        public DateTime? DeliveryDate { get; set; }
+        public TicketDeliveryType? DeliveryType { get; set; }
         public bool IsDeleted { get; set; }
 
         public Event Event { get; set; }

@@ -45,6 +45,68 @@ export class EventManagementApiClient extends ServiceBase {
     }
 
     /**
+     * List audit event log entries for a specific ticket.
+     * @param ticketId Id of the ticket.
+     * @return List of audit events. Recent entries at first.
+     */
+    auditEvents_List(ticketId: string): Observable<AuditEvent[]> {
+        let url_ = this.baseUrl + "/api/tickets/{ticketId}/auditevents";
+        if (ticketId === undefined || ticketId === null)
+            throw new Error("The parameter 'ticketId' must be defined.");
+        url_ = url_.replace("{ticketId}", encodeURIComponent("" + ticketId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processAuditEvents_List(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAuditEvents_List(<any>response_);
+                } catch (e) {
+                    return <Observable<AuditEvent[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AuditEvent[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAuditEvents_List(response: HttpResponseBase): Observable<AuditEvent[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(AuditEvent.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AuditEvent[]>(<any>null);
+    }
+
+    /**
      * Lists all api clients.
      */
     clients_GetClientsOfEvent(): Observable<Client[]> {
@@ -271,9 +333,12 @@ export class EventManagementApiClient extends ServiceBase {
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 204) {
+        if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -282,12 +347,9 @@ export class EventManagementApiClient extends ServiceBase {
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
-        } else if (status === 400) {
+        } else if (status === 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result400 = ProblemDetails.fromJS(resultData400);
-            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            return _observableOf<void>(<any>null);
             }));
         } else {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -525,11 +587,76 @@ export class EventManagementApiClient extends ServiceBase {
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 204) {
+        if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status === 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return _observableOf<void>(<any>null);
             }));
-        } else if (status === 404) {
+        } else {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("A server error occurred.", status, _responseText, _headers, resultdefault);
+            }));
+        }
+    }
+
+    /**
+     * Delete an event.
+     * @param id Id of the event.
+     */
+    events_DeleteEvent(id: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/events/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("delete", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processEvents_DeleteEvent(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processEvents_DeleteEvent(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processEvents_DeleteEvent(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result404: any = null;
             let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
@@ -543,6 +670,10 @@ export class EventManagementApiClient extends ServiceBase {
             result400 = ProblemDetails.fromJS(resultData400);
             return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
         } else {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let resultdefault: any = null;
@@ -551,6 +682,193 @@ export class EventManagementApiClient extends ServiceBase {
             return throwException("A server error occurred.", status, _responseText, _headers, resultdefault);
             }));
         }
+    }
+
+    /**
+     * Get mail settings for an event.
+     * @param eventId Id of the event.
+     * @return Mail settings
+     */
+    mailSettings_GetMailSettings(eventId: string): Observable<MailSettings> {
+        let url_ = this.baseUrl + "/api/events/{eventId}/mailsettings";
+        if (eventId === undefined || eventId === null)
+            throw new Error("The parameter 'eventId' must be defined.");
+        url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processMailSettings_GetMailSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMailSettings_GetMailSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<MailSettings>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MailSettings>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMailSettings_GetMailSettings(response: HttpResponseBase): Observable<MailSettings> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MailSettings.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MailSettings>(<any>null);
+    }
+
+    /**
+     * Update mail settings for an event.
+     * @param eventId Id of the event.
+     * @param values mail settings
+     */
+    mailSettings_UpdateMailSettings(eventId: string, values: MailSettings): Observable<void> {
+        let url_ = this.baseUrl + "/api/events/{eventId}/mailsettings";
+        if (eventId === undefined || eventId === null)
+            throw new Error("The parameter 'eventId' must be defined.");
+        url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(values);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("post", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processMailSettings_UpdateMailSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMailSettings_UpdateMailSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMailSettings_UpdateMailSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status === 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("A server error occurred.", status, _responseText, _headers, resultdefault);
+            }));
+        }
+    }
+
+    /**
+     * Send a ticket via e-mail.
+     * @param ticketId Id of the ticket.
+     */
+    ticketDelivery_SendMail(ticketId: string): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/tickets/{ticketId}/mail";
+        if (ticketId === undefined || ticketId === null)
+            throw new Error("The parameter 'ticketId' must be defined.");
+        url_ = url_.replace("{ticketId}", encodeURIComponent("" + ticketId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("post", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processTicketDelivery_SendMail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTicketDelivery_SendMail(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processTicketDelivery_SendMail(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse>(<any>null);
     }
 
     /**
@@ -847,9 +1165,12 @@ export class EventManagementApiClient extends ServiceBase {
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 204) {
+        if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -858,12 +1179,9 @@ export class EventManagementApiClient extends ServiceBase {
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
-        } else if (status === 400) {
+        } else if (status === 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result400 = ProblemDetails.fromJS(resultData400);
-            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            return _observableOf<void>(<any>null);
             }));
         } else {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -991,19 +1309,19 @@ export class EventManagementApiClient extends ServiceBase {
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 400) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result400 = ProblemDetails.fromJS(resultData400);
-            return throwException("A server error occurred.", status, _responseText, _headers, result400);
-            }));
-        } else if (status === 404) {
+        if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result404: any = null;
             let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result404 = ProblemDetails.fromJS(resultData404);
             return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
         } else if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -1217,6 +1535,54 @@ export class EventManagementApiClient extends ServiceBase {
     }
 }
 
+export class AuditEvent implements IAuditEvent {
+    time?: Date;
+    action?: string | undefined;
+    detail?: string | undefined;
+    succeeded?: boolean;
+
+    constructor(data?: IAuditEvent) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.time = data["time"] ? new Date(data["time"].toString()) : <any>undefined;
+            this.action = data["action"];
+            this.detail = data["detail"];
+            this.succeeded = data["succeeded"];
+        }
+    }
+
+    static fromJS(data: any): AuditEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuditEvent();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["time"] = this.time ? this.time.toISOString() : <any>undefined;
+        data["action"] = this.action;
+        data["detail"] = this.detail;
+        data["succeeded"] = this.succeeded;
+        return data; 
+    }
+}
+
+export interface IAuditEvent {
+    time?: Date;
+    action?: string | undefined;
+    detail?: string | undefined;
+    succeeded?: boolean;
+}
+
 export class Client implements IClient {
     id?: string;
     name!: string;
@@ -1401,6 +1767,86 @@ export interface IEvent {
     homepageUrl: string;
 }
 
+export class MailSettings implements IMailSettings {
+    smtpHost!: string;
+    smtpPort?: number;
+    smtpUsername?: string | undefined;
+    smtpPassword?: string | undefined;
+    useStartTls?: boolean;
+    senderAddress!: string;
+    subject!: string;
+    body!: string;
+    enableDemoMode?: boolean;
+    demoEmailRecipients?: string[] | undefined;
+
+    constructor(data?: IMailSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.smtpHost = data["smtpHost"];
+            this.smtpPort = data["smtpPort"];
+            this.smtpUsername = data["smtpUsername"];
+            this.smtpPassword = data["smtpPassword"];
+            this.useStartTls = data["useStartTls"];
+            this.senderAddress = data["senderAddress"];
+            this.subject = data["subject"];
+            this.body = data["body"];
+            this.enableDemoMode = data["enableDemoMode"];
+            if (Array.isArray(data["demoEmailRecipients"])) {
+                this.demoEmailRecipients = [] as any;
+                for (let item of data["demoEmailRecipients"])
+                    this.demoEmailRecipients!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): MailSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new MailSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["smtpHost"] = this.smtpHost;
+        data["smtpPort"] = this.smtpPort;
+        data["smtpUsername"] = this.smtpUsername;
+        data["smtpPassword"] = this.smtpPassword;
+        data["useStartTls"] = this.useStartTls;
+        data["senderAddress"] = this.senderAddress;
+        data["subject"] = this.subject;
+        data["body"] = this.body;
+        data["enableDemoMode"] = this.enableDemoMode;
+        if (Array.isArray(this.demoEmailRecipients)) {
+            data["demoEmailRecipients"] = [];
+            for (let item of this.demoEmailRecipients)
+                data["demoEmailRecipients"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IMailSettings {
+    smtpHost: string;
+    smtpPort?: number;
+    smtpUsername?: string | undefined;
+    smtpPassword?: string | undefined;
+    useStartTls?: boolean;
+    senderAddress: string;
+    subject: string;
+    body: string;
+    enableDemoMode?: boolean;
+    demoEmailRecipients?: string[] | undefined;
+}
+
 export class TicketQuotaReportRow implements ITicketQuotaReportRow {
     name?: string | undefined;
     price?: number;
@@ -1527,6 +1973,9 @@ export class Ticket implements ITicket {
     editedAt?: Date | undefined;
     creator?: string | undefined;
     editor?: string | undefined;
+    isDelivered?: boolean;
+    deliveryDate?: Date | undefined;
+    deliveryType?: TicketDeliveryType | undefined;
 
     constructor(data?: ITicket) {
         if (data) {
@@ -1558,6 +2007,9 @@ export class Ticket implements ITicket {
             this.editedAt = data["editedAt"] ? new Date(data["editedAt"].toString()) : <any>undefined;
             this.creator = data["creator"];
             this.editor = data["editor"];
+            this.isDelivered = data["isDelivered"];
+            this.deliveryDate = data["deliveryDate"] ? new Date(data["deliveryDate"].toString()) : <any>undefined;
+            this.deliveryType = data["deliveryType"];
         }
     }
 
@@ -1589,6 +2041,9 @@ export class Ticket implements ITicket {
         data["editedAt"] = this.editedAt ? this.editedAt.toISOString() : <any>undefined;
         data["creator"] = this.creator;
         data["editor"] = this.editor;
+        data["isDelivered"] = this.isDelivered;
+        data["deliveryDate"] = this.deliveryDate ? this.deliveryDate.toISOString() : <any>undefined;
+        data["deliveryType"] = this.deliveryType;
         return data; 
     }
 }
@@ -1613,6 +2068,9 @@ export interface ITicket {
     editedAt?: Date | undefined;
     creator?: string | undefined;
     editor?: string | undefined;
+    isDelivered?: boolean;
+    deliveryDate?: Date | undefined;
+    deliveryType?: TicketDeliveryType | undefined;
 }
 
 export enum PaymentStatus {
@@ -1620,6 +2078,13 @@ export enum PaymentStatus {
     Paid = 1,
     PaidPartial = 2,
     Presold = 3,
+}
+
+export enum TicketDeliveryType {
+    Email = 0,
+    Sms = 1,
+    WhatsApp = 2,
+    LetterPost = 3,
 }
 
 export class OperationBase implements IOperationBase {

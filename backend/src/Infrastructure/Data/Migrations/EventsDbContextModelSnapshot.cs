@@ -19,6 +19,31 @@ namespace EventManagement.Infrastructure.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.AuditEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Detail")
+                        .HasMaxLength(1000);
+
+                    b.Property<bool>("Succeeded");
+
+                    b.Property<Guid>("TicketId");
+
+                    b.Property<DateTime>("Time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("AuditEventLog");
+                });
+
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.Client", b =>
                 {
                     b.Property<Guid>("Id")
@@ -41,6 +66,24 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.DemoEmailRecipient", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<Guid>("MailSettingsId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MailSettingsId");
+
+                    b.ToTable("DemoEmailRecipients");
                 });
 
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.Event", b =>
@@ -68,9 +111,13 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(300);
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasMaxLength(300);
+
+                    b.Property<Guid?>("MailSettingsId");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -84,7 +131,47 @@ namespace EventManagement.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MailSettingsId")
+                        .IsUnique()
+                        .HasFilter("[MailSettingsId] IS NOT NULL");
+
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.MailSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Body");
+
+                    b.Property<bool>("EnableDemoMode");
+
+                    b.Property<string>("SenderAddress")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<string>("SmtpHost")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<string>("SmtpPassword")
+                        .HasMaxLength(300);
+
+                    b.Property<int>("SmtpPort");
+
+                    b.Property<string>("SmtpUsername")
+                        .HasMaxLength(300);
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(300);
+
+                    b.Property<bool>("UseStartTls");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MailSettings");
                 });
 
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.MasterQrCode", b =>
@@ -117,13 +204,19 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.Property<string>("Address")
                         .HasMaxLength(1000);
 
-                    b.Property<decimal?>("AmountPaid");
+                    b.Property<decimal?>("AmountPaid")
+                        .HasColumnType("decimal(5, 2)");
 
                     b.Property<DateTime?>("BirthDate");
 
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<Guid?>("CreatorId");
+
+                    b.Property<DateTime?>("DeliveryDate");
+
+                    b.Property<string>("DeliveryType")
+                        .HasMaxLength(100);
 
                     b.Property<DateTime?>("EditedAt");
 
@@ -135,6 +228,8 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .HasMaxLength(300);
 
                     b.Property<bool>("IsDeleted");
+
+                    b.Property<bool>("IsDelivered");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(300);
@@ -239,6 +334,29 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.AuditEvent", b =>
+                {
+                    b.HasOne("EventManagement.ApplicationCore.Models.Ticket", "Ticket")
+                        .WithMany()
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.DemoEmailRecipient", b =>
+                {
+                    b.HasOne("EventManagement.ApplicationCore.Models.MailSettings")
+                        .WithMany("DemoEmailRecipients")
+                        .HasForeignKey("MailSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.Event", b =>
+                {
+                    b.HasOne("EventManagement.ApplicationCore.Models.MailSettings", "MailSettings")
+                        .WithOne("Event")
+                        .HasForeignKey("EventManagement.ApplicationCore.Models.Event", "MailSettingsId");
                 });
 
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.MasterQrCode", b =>

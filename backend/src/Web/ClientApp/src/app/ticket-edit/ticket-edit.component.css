@@ -1,12 +1,11 @@
-.form-group.input-switch {
-    display: table;
-}
-.form-group.input-switch > * {
-    display: table-cell;
-    vertical-align: top;
-    padding-right: 20px;
-}
 .ticket-header {
     padding: 10px 20px;
     max-width: 600px;
+}
+
+@media (max-width: 577px) {
+    nav .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }

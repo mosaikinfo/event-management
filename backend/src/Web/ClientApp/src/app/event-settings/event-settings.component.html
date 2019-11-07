@@ -1,7 +1,28 @@
-<app-button-back></app-button-back>
-<app-event-edit></app-event-edit>
-<div *ngIf="eventId">
-    <hr class="my-4">
-    <h2 class="h4">Ticket-Typen</h2>
-    <app-ticket-types-edit></app-ticket-types-edit>
-</div>
+<app-button-back style="display: block" class="mb-4" text="Anderes Event wählen"></app-button-back>
+
+<ngb-tabset>
+    <ngb-tab>
+        <ng-template ngbTabTitle>Event</ng-template>
+        <ng-template ngbTabContent>
+            <app-event-edit></app-event-edit>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab *ngIf="eventId">
+        <ng-template ngbTabTitle>Ticket-Typen</ng-template>
+        <ng-template ngbTabContent>
+            <app-ticket-types-edit></app-ticket-types-edit>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab *ngIf="eventId">
+        <ng-template ngbTabTitle>E-Mail-Einstellungen</ng-template>
+        <ng-template ngbTabContent>
+            <app-mail-settings></app-mail-settings>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab *ngIf="eventId">
+        <ng-template ngbTabTitle>Danger Zone</ng-template>
+        <ng-template ngbTabContent>
+            <app-event-danger-zone></app-event-danger-zone>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>

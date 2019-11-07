@@ -22,6 +22,11 @@ import { EventManagementApiClient, API_BASE_URL } from './services/event-managem
 import { HttpLoaderInterceptor } from './services/http-loader.interceptor';
 import { HttpErrorInterceptor } from './services/http-error.interceptor';
 
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
+import localeDeExtra from '@angular/common/locales/extra/de';
+import { MessageService } from 'primeng/components/common/api';
+
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -36,11 +41,10 @@ import { TicketEditComponent } from './ticket-edit/ticket-edit.component';
 import { EntranceControlComponent } from './entrance-control/entrance-control.component';
 import { EntranceControlManualComponent } from './entrance-control-manual/entrance-control-manual.component';
 import { EntranceControlAppComponent } from './entrance-control-app/entrance-control-app.component';
-
-import { registerLocaleData } from '@angular/common';
-import localeDe from '@angular/common/locales/de';
-import localeDeExtra from '@angular/common/locales/extra/de';
-import { MessageService } from 'primeng/components/common/api';
+import { MailSettingsComponent } from './mail-settings/mail-settings.component';
+import { TicketDetailComponent } from './ticket-detail/ticket-detail.component';
+import { TicketAuditLogComponent } from './ticket-audit-log/ticket-audit-log.component';
+import { EventDangerZoneComponent } from './event-danger-zone/event-danger-zone.component';
 
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
@@ -59,7 +63,11 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     TicketEditComponent,
     EntranceControlComponent,
     EntranceControlManualComponent,
-    EntranceControlAppComponent
+    EntranceControlAppComponent,
+    MailSettingsComponent,
+    TicketDetailComponent,
+    TicketAuditLogComponent,
+    EventDangerZoneComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

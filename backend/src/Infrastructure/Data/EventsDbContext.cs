@@ -16,6 +16,8 @@ namespace EventManagement.Infrastructure.Data
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketType> TicketTypes { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<MailSettings> MailSettings { get; set; }
+        public DbSet<AuditEvent> AuditEventLog { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,6 +39,8 @@ namespace EventManagement.Infrastructure.Data
 
             modelBuilder.Entity<Event>(entity =>
             {
+                entity.HasQueryFilter(e => !e.IsDeleted);
+
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
                 entity.Property(e => e.Location).IsRequired().HasMaxLength(300);
                 entity.Property(e => e.HomepageUrl).IsRequired().HasMaxLength(2083);
@@ -71,6 +75,7 @@ namespace EventManagement.Infrastructure.Data
                 entity.Property(e => e.FirstName).HasMaxLength(300);
                 entity.Property(e => e.Address).HasMaxLength(1000);
                 entity.Property(e => e.RoomNumber).HasMaxLength(300);
+                entity.Property(e => e.AmountPaid).HasColumnType("decimal(5, 2)");
 
                 entity.Property(e => e.PaymentStatus)
                     .IsRequired()
@@ -78,6 +83,12 @@ namespace EventManagement.Infrastructure.Data
                     .HasConversion(
                         value => value.GetStringValue(),
                         value => (PaymentStatus)Enum.Parse(typeof(PaymentStatus), value, true));
+
+                entity.Property(e => e.DeliveryType)
+                    .HasMaxLength(100)
+                    .HasConversion(
+                        value => value.Value.GetStringValue(),
+                        value => (TicketDeliveryType)Enum.Parse(typeof(TicketDeliveryType), value, true));
 
                 entity.HasOne(e => e.Event)
                     .WithMany(e => e.Tickets)
@@ -117,6 +128,42 @@ namespace EventManagement.Infrastructure.Data
             {
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(1000);
                 entity.Property(e => e.Secret).IsRequired().HasMaxLength(1000);
+            });
+
+            modelBuilder.Entity<MailSettings>(entity =>
+            {
+                entity.ToTable("MailSettings");
+
+                entity.Property(e => e.SmtpHost).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.SmtpUsername).HasMaxLength(300);
+                entity.Property(e => e.SmtpPassword).HasMaxLength(300);
+                entity.Property(e => e.SenderAddress).IsRequired().HasMaxLength(300);
+                entity.Property(e => e.Subject).IsRequired().HasMaxLength(300);
+
+                entity.HasOne(e => e.Event)
+                    .WithOne(e => e.MailSettings)
+                    .HasForeignKey<Event>(e => e.MailSettingsId);
+
+                entity.HasMany(e => e.DemoEmailRecipients)
+                      .WithOne()
+                      .HasForeignKey(e => e.MailSettingsId);
+            });
+
+            modelBuilder.Entity<DemoEmailRecipient>(entity =>
+            {
+                entity.ToTable("DemoEmailRecipients");
+                entity.Property(e => e.EmailAddress).IsRequired().HasMaxLength(300);
+            });
+
+            modelBuilder.Entity<AuditEvent>(entity =>
+            {
+                entity.ToTable("AuditEventLog");
+                entity.Property(e => e.Action).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Detail).HasMaxLength(1000);
+
+                entity.HasOne(e => e.Ticket)
+                      .WithMany()
+                      .HasForeignKey(e => e.TicketId);
             });
         }
     }

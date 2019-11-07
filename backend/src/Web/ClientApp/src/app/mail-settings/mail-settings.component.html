@@ -1,0 +1,107 @@
+<form class="mt-4" (ngSubmit)="submit()" #form="ngForm">
+
+  <div class="form-group input-switch">
+    <label for="enableDemoMode" ngbTooltip="Wenn der Demo-Modus aktiv ist, werden alle E-Mails im System an einen
+    vordefinierten Empfängerkreis gesendet. Somit kann der E-Mail-Versand
+    getestet werden.">
+      Demo-Modus einschalten
+      <i class="fas fa-info-circle"></i>
+    </label>
+    <p-inputSwitch name="enableDemoMode" [(ngModel)]="model.enableDemoMode"></p-inputSwitch>
+  </div>
+
+  <div *ngIf="model.enableDemoMode" class="mb-4">
+    <label>E-Mail-Empfänger für Test-Mails</label>
+    <ol style="margin-top: 0" *ngIf="model.demoEmailRecipients && model.demoEmailRecipients.length > 0">
+      <li *ngFor="let email of model.demoEmailRecipients; let i = index">
+        {{ email }}
+        <button type="button" class="btn btn-link"
+                (click)="removeDemoMailRecipient(i)">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </li>
+    </ol>
+    <div class="form-inline">
+      <div class="form-group mr-2">
+        <input type="email" name="demoEmailRecipient" id="demoEmailRecipient"
+              class="form-control form-control-sm"
+              maxlength="300" placeholder="john.doe@example.com"
+              [(ngModel)]="demoEmailRecipient" email>
+      </div>
+      <button type="button" class="btn btn-sm btn-primary"
+      (click)="addDemoEmailRecipient()"
+      [disabled]="!form.form.valid">Hinzufügen</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="smtpHost">SMTP Host</label>
+    <input type="text" class="form-control" name="smtpHost" id="smtpHost" maxlength="300" [(ngModel)]="model.smtpHost" required>
+  </div>
+
+  <div class="form-group">
+    <label for="smtpPort">SMTP Port</label>
+    <input type="number" min="0" class="form-control" name="smtpPort" id="smtpPort"[(ngModel)]="model.smtpPort" required>
+  </div>
+
+  <div class="form-group input-switch">
+    <label for="useStartTls">Verschlüsselte Übertragung (STARTTLS)</label>
+    <p-inputSwitch name="useStartTls"
+      [(ngModel)]="model.useStartTls"
+      (onChange)="useStartTlsChanged($event)"></p-inputSwitch>
+  </div>
+
+  <div class="form-group input-switch">
+    <label for="needsAuthentication">Authentifizierung erforderlich?</label>
+    <p-inputSwitch name="needsAuthentication"
+      [(ngModel)]="needsAuthentication"
+      (onChange)="needsAuthenticationChanged($event)"></p-inputSwitch>
+  </div>
+
+  <div class="form-group" *ngIf="needsAuthentication">
+    <label for="smtpUsername">Benutzername</label>
+    <input type="text" class="form-control" name="smtpUsername" id="smtpUsername" maxlength="300" [(ngModel)]="model.smtpUsername" required>
+  </div>
+
+  <div class="form-group" *ngIf="needsAuthentication">
+    <label for="smtpPassword">Passwort</label>
+    <input type="password" class="form-control" name="smtpPassword" id="smtpPassword" maxlength="300" [(ngModel)]="model.smtpPassword" required>
+  </div>
+
+  <div class="form-group">
+    <label for="senderAddress">Absender E-Mail-Adresse</label>
+    <input type="email" class="form-control" name="senderAddress" id="senderAddress" maxlength="300" [(ngModel)]="model.senderAddress" required>
+  </div>
+
+  <div class="form-group">
+    <label for="subject">Betreff</label>
+    <input type="text" class="form-control" name="subject" id="subject" maxlength="300" [(ngModel)]="model.subject" required>
+  </div>
+
+  <div class="form-group">
+    <label for="body">Text</label>
+    <ng-template #popTitle>Variablen</ng-template>
+    <ng-template #popContent>
+      <ul>
+        <li>{{ curlyBraces("FirstName") }}</li>
+        <li>{{ curlyBraces("LastName") }}</li>
+        <li>{{ curlyBraces("TicketTypeName") }}</li>
+        <li>{{ curlyBraces("TicketPrice") }}</li>
+        <li>{{ curlyBraces("EventName") }}</li>
+        <li>{{ curlyBraces("EventLocation") }}</li>
+        <li>{{ curlyBraces("EventHomepageUrl") }}</li>
+        <li>{{ curlyBraces("EventHost") }}</li>
+      </ul>
+    </ng-template>
+    <button type="button" class="btn btn-outline-primary btn-sm float-right mb-1"
+            [ngbPopover]="popContent" [popoverTitle]="popTitle" placement="left">
+      <i class="fas fa-info-circle"></i>
+      Variablen
+    </button>
+    <textarea class="form-control" name="body" id="body" rows="15" [(ngModel)]="model.body" required></textarea>
+  </div>
+
+  <div>
+    <button type="submit" class="btn btn-primary" [disabled]="!form.form.valid">Speichern</button>
+  </div>
+</form>

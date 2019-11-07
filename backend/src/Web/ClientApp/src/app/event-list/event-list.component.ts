@@ -22,8 +22,10 @@ export class EventListComponent implements OnInit {
       .subscribe(events => this.events = events);
   }
 
-  select(evt: Event) {
+  select(evt: Event, navigate: Boolean) {
     this.session.setCurrentEvent(evt);
-    this.router.navigate(['/']);
+    if (navigate) {
+      this.router.navigate(['/']);
+    }
   }
 }

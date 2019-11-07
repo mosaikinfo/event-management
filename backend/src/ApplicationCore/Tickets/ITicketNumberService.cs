@@ -1,5 +1,8 @@
 ﻿namespace EventManagement.ApplicationCore.Interfaces
 {
+    /// <summary>
+    /// Service to generate random human-readable ticket numbers.
+    /// </summary>
     public interface ITicketNumberService
     {
         /// <summary>

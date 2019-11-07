@@ -15,8 +15,11 @@ namespace EventManagement.ApplicationCore.Models
         public string Address { get; set; }
         public string ZipCode { get; set; }
         public string City { get; set; }
+        public Guid? MailSettingsId { get; set; }
+        public bool IsDeleted { get; set; }
 
         public List<TicketType> TicketTypes { get; set; }
         public List<Ticket> Tickets { get; set; }
+        public MailSettings MailSettings { get; set; }
     }
 }

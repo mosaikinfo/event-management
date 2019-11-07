@@ -1,0 +1,19 @@
+<div class="alert alert-danger mt-4">
+  <strong>Bitte sei behutsam, wenn du Einstellungen in diesem Bereich vornimmst!</strong>
+</div>
+
+<form *ngIf="event" class="mt-4 box-danger" (ngSubmit)="delete()" #thisForm="ngForm">
+    <div class="form-group">
+      <label>Event löschen?</label>
+      <div>
+        <small class="text-mute">
+          Bitte gib zur Bestätigung den Namen "{{ event.name }}" ein, um das Event zu löschen.
+        </small>
+      </div>
+      <input name="eventName" type="text" [(ngModel)]="inputValue" class="form-control" required>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-danger"
+              [disabled]="!thisForm.form.valid || !canDelete()">Löschen</button>
+    </div>
+</form>

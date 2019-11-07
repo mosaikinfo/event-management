@@ -1,14 +1,25 @@
 using AutoMapper;
+using EventManagement.ApplicationCore.Auditing;
 using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Services;
+using EventManagement.ApplicationCore.TicketDelivery;
+using EventManagement.ApplicationCore.TicketGeneration;
+using EventManagement.ApplicationCore.Tickets;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
+using EventManagement.Infrastructure.Data.Repositories;
+using EventManagement.Infrastructure.Messaging;
+using EventManagement.WebApp.Shared.Hangfire;
+using Hangfire;
+using Hangfire.Console;
+using Hangfire.SqlServer;
 using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,10 +54,15 @@ namespace EventManagement.WebApp
 
             services.AddTransient<EventsDbContextSeed>();
             services.AddTransient<EventManagementLocalClientStore>();
-
             services.TryAddTransient<IUserStore, DatabaseUserStore>();
             services.TryAddTransient<IEventManagementClientStore, DatabaseClientStore>();
+            services.TryAddTransient<ITicketsRepository, TicketsRepository>();
+            services.TryAddTransient<ITicketDeliveryDataRepository, TicketDeliveryDataRepository>();
+            services.TryAddTransient<IAuditEventLog, AuditEventLog>();
+            services.TryAddTransient<IEmailService, EmailService>();
             services.TryAddTransient<ITicketNumberService, TicketNumberService>();
+            services.TryAddTransient<ITicketDeliveryService, TicketDeliveryService>();
+            services.TryAddTransient<IPdfTicketService, PdfTicketService>();
 
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential(persistKey: true)
@@ -54,6 +70,28 @@ namespace EventManagement.WebApp
                 .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
                 .AddClientStore<EventManagementClientStore>()
                 .AddProfileService<UserProfileService>();
+
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(Configuration.GetConnectionString("EventManagement"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    UsePageLocksOnDequeue = true,
+                    DisableGlobalLocks = true
+                })
+                .UseConsole()
+                .UseFilter(new JobContext()));
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
+
+            // Custom authorization filter for the Hangfire Dashboard.
+            services.AddTransient<BackgroundJobsDashboardAuthorizationFilter>();
 
             services.Configure<RouteOptions>(options =>
             {
@@ -151,7 +189,8 @@ namespace EventManagement.WebApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+                              BackgroundJobsDashboardAuthorizationFilter authorizationFilter)
         {
             if (env.IsDevelopment())
             {
@@ -183,6 +222,11 @@ namespace EventManagement.WebApp
 
             app.UseIdentityServer();
 
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { authorizationFilter }
+            });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -199,9 +243,22 @@ namespace EventManagement.WebApp
 
                 if (env.IsDevelopment())
                 {
-                    // spa.UseAngularCliServer(npmScript: "start");
+                    // Set an uri (eg: http://localhost:4200) to the environment
+                    // variable SPA__Proxy__DevServerBaseUri to forward all incoming
+                    // requests to your local SPA development server.
+                    // If not set the SPA development server will be started internally
+                    // within the ASP.NET Core application.
+                    var devServerBaseUri =
+                        Configuration["SPA:Proxy:DevServerBaseUri"];
 
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                    if (string.IsNullOrEmpty(devServerBaseUri))
+                    {
+                        spa.UseAngularCliServer(npmScript: "start");
+                    }
+                    else
+                    {
+                        spa.UseProxyToSpaDevelopmentServer(devServerBaseUri);
+                    }
                 }
             });
         }

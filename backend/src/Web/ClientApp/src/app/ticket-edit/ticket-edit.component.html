@@ -2,8 +2,7 @@
   
   <nav class="navbar navbar-light mt-3 mb-3 p-0">
     <div class="form-inline">
-      <app-button-back class="mr-4 mb-2"></app-button-back>
-      <span class="text-nowrap">
+        <app-button-back *ngIf="isNew()" class="mr-4 mb-2"></app-button-back>
         <button type="submit" class="btn btn-primary mr-2" [disabled]="!form.form.valid">Speichern</button>
         <a *ngIf="!isNew()"
            [href]="baseUrl + '/tickets/' + model.id + '/pdf'"
@@ -11,9 +10,9 @@
            target="_blank">
            Herunterladen
         </a>
+        <button type="button" class="btn btn-outline-primary mr-2" *ngIf="!isNew()" (click)="sendMail()">E-Mail versenden</button>
         <button type="button" class="btn btn-outline-danger mr-2" *ngIf="!isNew()" (click)="delete()">Löschen</button>
         <button type="button" class="btn btn-light" *ngIf="!isNew()" (click)="loadTicket(model.id)"><i class="fas fa-redo"></i></button>
-      </span>
     </div>
   </nav>
 

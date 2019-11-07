@@ -8,9 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="IdentityModel" Version="3.10.6" />
+    <PackageReference Include="ServiceStack.Common.Core" Version="5.7.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ticket-generation\src\TicketGeneration\TicketGeneration.csproj" />
     <ProjectReference Include="..\Identity\Identity.csproj" />
   </ItemGroup>
 
