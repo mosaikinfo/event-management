@@ -1,5 +1,5 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { Event } from './event-management-api.client';
+import { Event, EventManagementApiClient } from './event-management-api.client';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,7 @@ export class SessionService {
   private _currentEventKey = "CurrentEvent";
   
   @Output() onCurrentEventChanged = new EventEmitter<any>();
+  @Output() onDemoModeChanged = new EventEmitter<Boolean>();
 
   constructor() {
     this.getCurrentEvent().then((evt: Event) => {

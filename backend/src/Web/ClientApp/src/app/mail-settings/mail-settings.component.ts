@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EventManagementApiClient, MailSettings } from '../services/event-management-api.client';
 import { ActivatedRoute } from '@angular/router';
 import { PageAlertService } from '../services/page-alert.service';
+import { SessionService } from '../services/session.service';
 
 @Component({
   selector: 'app-mail-settings',
@@ -17,6 +18,7 @@ export class MailSettingsComponent implements OnInit {
 
   constructor(
     private apiClient : EventManagementApiClient,
+    private session: SessionService,
     private route: ActivatedRoute,
     private alertService: PageAlertService
   ) {}
@@ -30,9 +32,10 @@ export class MailSettingsComponent implements OnInit {
         });
   }
 
-  submit() {
-    this.apiClient.mailSettings_UpdateMailSettings(this.eventId, this.model)
-        .subscribe(() => this.alertService.showSaveSuccessAlert());
+  async submit() {
+    await this.apiClient.mailSettings_UpdateMailSettings(this.eventId, this.model).toPromise();
+    this.alertService.showSaveSuccessAlert();
+    this.session.onDemoModeChanged.emit(this.model.enableDemoMode);
   }
 
   useStartTlsChanged(e) {

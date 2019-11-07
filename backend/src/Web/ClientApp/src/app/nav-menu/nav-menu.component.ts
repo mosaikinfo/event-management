@@ -26,6 +26,10 @@ export class NavMenuComponent {
         this.currentEvent = evt;
         this.checkDemoMode();
       });
+    this.session.onDemoModeChanged
+      .subscribe((demoModelEnabled: Boolean) => {
+        this.demoModeEnabled = demoModelEnabled;
+      });
   }
 
   logout() {
