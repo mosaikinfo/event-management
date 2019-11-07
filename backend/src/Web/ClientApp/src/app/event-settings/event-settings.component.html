@@ -19,4 +19,10 @@
             <app-mail-settings></app-mail-settings>
         </ng-template>
     </ngb-tab>
+    <ngb-tab *ngIf="eventId">
+        <ng-template ngbTabTitle>Danger Zone</ng-template>
+        <ng-template ngbTabContent>
+            <app-event-danger-zone></app-event-danger-zone>
+        </ng-template>
+    </ngb-tab>
 </ngb-tabset>

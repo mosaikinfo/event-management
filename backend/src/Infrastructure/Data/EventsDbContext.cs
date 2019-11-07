@@ -39,6 +39,8 @@ namespace EventManagement.Infrastructure.Data
 
             modelBuilder.Entity<Event>(entity =>
             {
+                entity.HasQueryFilter(e => !e.IsDeleted);
+
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
                 entity.Property(e => e.Location).IsRequired().HasMaxLength(300);
                 entity.Property(e => e.HomepageUrl).IsRequired().HasMaxLength(2083);

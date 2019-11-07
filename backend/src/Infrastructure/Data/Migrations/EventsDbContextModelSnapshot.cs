@@ -111,6 +111,8 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(300);
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasMaxLength(300);

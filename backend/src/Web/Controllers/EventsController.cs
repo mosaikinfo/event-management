@@ -85,5 +85,21 @@ namespace EventManagement.WebApp.Controllers
             _context.SaveChanges();
             return NoContent();
         }
+
+        /// <summary>
+        /// Delete an event.
+        /// </summary>
+        /// <param name="id">Id of the event.</param>
+        [HttpDelete("{id}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
+        public IActionResult DeleteEvent(Guid id)
+        {
+            var entity = _context.Events.Find(id);
+            if (entity == null)
+                return NotFound();
+            entity.IsDeleted = true;
+            _context.SaveChanges();
+            return Ok();
+        }
     }
 }

@@ -616,6 +616,75 @@ export class EventManagementApiClient extends ServiceBase {
     }
 
     /**
+     * Delete an event.
+     * @param id Id of the event.
+     */
+    events_DeleteEvent(id: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/events/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("delete", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processEvents_DeleteEvent(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processEvents_DeleteEvent(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processEvents_DeleteEvent(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("A server error occurred.", status, _responseText, _headers, resultdefault);
+            }));
+        }
+    }
+
+    /**
      * Get mail settings for an event.
      * @param eventId Id of the event.
      * @return Mail settings
@@ -1708,7 +1777,7 @@ export class MailSettings implements IMailSettings {
     subject!: string;
     body!: string;
     enableDemoMode?: boolean;
-    demoEmailRecipients!: string[];
+    demoEmailRecipients?: string[] | undefined;
 
     constructor(data?: IMailSettings) {
         if (data) {
@@ -1716,9 +1785,6 @@ export class MailSettings implements IMailSettings {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
-        }
-        if (!data) {
-            this.demoEmailRecipients = [];
         }
     }
 
@@ -1778,7 +1844,7 @@ export interface IMailSettings {
     subject: string;
     body: string;
     enableDemoMode?: boolean;
-    demoEmailRecipients: string[];
+    demoEmailRecipients?: string[] | undefined;
 }
 
 export class TicketQuotaReportRow implements ITicketQuotaReportRow {

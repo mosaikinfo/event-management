@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EventManagementApiClient, Event } from '../services/event-management-api.client';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageAlertService } from '../services/page-alert.service';
+import { SessionService } from '../services/session.service';
 
 @Component({
   selector: 'app-event-edit',
@@ -14,6 +15,7 @@ export class EventEditComponent implements OnInit {
 
   constructor(
     private apiClient : EventManagementApiClient,
+    private session: SessionService,
     private route: ActivatedRoute,
     private router: Router,
     private alertService: PageAlertService
@@ -32,7 +34,8 @@ export class EventEditComponent implements OnInit {
     if (isNew) {
       this.apiClient.events_CreateEvent(this.model)
         .subscribe((event: Event) => {
-          this.alertService.showSaveSuccessAlert()
+          this.alertService.showSaveSuccessAlert();
+          this.session.setCurrentEvent(event);
           this.router.navigate(['/events', event.id]);
         });
     } else {

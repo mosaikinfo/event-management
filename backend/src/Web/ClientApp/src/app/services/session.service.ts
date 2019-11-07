@@ -33,4 +33,9 @@ export class SessionService {
     localStorage.setItem(this._currentEventKey, json);
     this.onCurrentEventChanged.emit(evt);
   }
+
+  public unsetCurrentEvent() {
+    localStorage.removeItem(this._currentEventKey);
+    this.onCurrentEventChanged.emit(null);
+  }
 }
