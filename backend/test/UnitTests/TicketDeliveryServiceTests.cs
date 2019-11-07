@@ -4,6 +4,7 @@ using EventManagement.ApplicationCore.TicketDelivery;
 using EventManagement.ApplicationCore.TicketGeneration;
 using EventManagement.ApplicationCore.Tickets;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Threading.Tasks;
@@ -32,7 +33,21 @@ namespace EventManagement.UnitTests
                         MailSettings = new MailSettings(),
                         Ticket = new Ticket
                         {
-                            Mail = "john.doe@itsnotabug.de"
+                            FirstName = "John",
+                            LastName = "Doe",
+                            Mail = "john.doe@itsnotabug.de",
+                            TicketType = new TicketType
+                            {
+                                Name = "VIP",
+                                Price = 15.00m
+                            },
+                            Event = new Event
+                            {
+                                Name = "ONE Planetshakers Ulm",
+                                Location = "Ratiopharm Arena",
+                                HomepageUrl = "https://one-movement.de",
+                                Host = "ONE Team"
+                            }
                         }
                     }));
 
@@ -47,7 +62,7 @@ namespace EventManagement.UnitTests
             var service = new TicketDeliveryService(
                 tickets.Object, ticketsDeliveryData.Object,
                 emailService.Object, pdfTicketService.Object,
-                auditEventLog.Object);
+                auditEventLog.Object, Logger);
 
             await service.SendTicketAsync(ticketId, deliveryType, validationUri);
 
@@ -69,12 +84,15 @@ namespace EventManagement.UnitTests
             var service = new TicketDeliveryService(
                 tickets.Object, ticketsDeliveryData.Object,
                 emailService.Object, pdfTicketService.Object,
-                auditEventLog.Object);
+                auditEventLog.Object, Logger);
 
             Func<Task> f = async () => await service
                 .SendTicketAsync(ticketId, deliveryType, validationUri);
 
             f.Should().Throw<NotSupportedException>();
         }
+
+        private static ILogger<TicketDeliveryService> Logger =>
+            new Mock<ILogger<TicketDeliveryService>>().Object;
     }
 }

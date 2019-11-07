@@ -31,6 +31,6 @@ We're looking forward to seeing you!
         public bool EnableDemoMode { get; set; }
 
         public Event Event { get; set; }
-        public IList<DemoEmailRecipient> DemoEmailRecipients { get; set; }
+        public IList<DemoEmailRecipient> DemoEmailRecipients { get; set; } = new List<DemoEmailRecipient>();
     }
 }
