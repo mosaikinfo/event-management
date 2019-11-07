@@ -13,12 +13,20 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: DotNetCoreInstaller@0
+- task: DotNetCoreInstaller@1
   inputs:
-    version: '2.2.101'
+    version: '2.2.x'
+
+- task: UseNode@1
+
+- script: npm ci
+  workingDirectory: 'backend/src/Web/ClientApp'
+  displayName: 'npm ci'
+
 - script: dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
   displayName: 'dotnet publish $(buildConfiguration)'
   workingDirectory: 'backend/src/Web'
+
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
