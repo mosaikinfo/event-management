@@ -685,6 +685,63 @@ export class EventManagementApiClient extends ServiceBase {
     }
 
     /**
+     * Report the status of the event (sent tickets, checked-in tickets).
+     * @param eventId Id of the event.
+     */
+    eventStatus_GetStatus(eventId: string): Observable<EventStatus> {
+        let url_ = this.baseUrl + "/api/eventstatus/events/{eventId}/status";
+        if (eventId === undefined || eventId === null)
+            throw new Error("The parameter 'eventId' must be defined.");
+        url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processEventStatus_GetStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processEventStatus_GetStatus(<any>response_);
+                } catch (e) {
+                    return <Observable<EventStatus>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EventStatus>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processEventStatus_GetStatus(response: HttpResponseBase): Observable<EventStatus> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = EventStatus.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EventStatus>(<any>null);
+    }
+
+    /**
      * Get mail settings for an event.
      * @param eventId Id of the event.
      * @return Mail settings
@@ -1772,6 +1829,50 @@ export interface IEvent {
     zipCode: string;
     city: string;
     homepageUrl: string;
+}
+
+export class EventStatus implements IEventStatus {
+    ticketsTotal?: number;
+    ticketsDelivered?: number;
+    ticketsCheckedIn?: number;
+
+    constructor(data?: IEventStatus) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.ticketsTotal = data["ticketsTotal"];
+            this.ticketsDelivered = data["ticketsDelivered"];
+            this.ticketsCheckedIn = data["ticketsCheckedIn"];
+        }
+    }
+
+    static fromJS(data: any): EventStatus {
+        data = typeof data === 'object' ? data : {};
+        let result = new EventStatus();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["ticketsTotal"] = this.ticketsTotal;
+        data["ticketsDelivered"] = this.ticketsDelivered;
+        data["ticketsCheckedIn"] = this.ticketsCheckedIn;
+        return data; 
+    }
+}
+
+export interface IEventStatus {
+    ticketsTotal?: number;
+    ticketsDelivered?: number;
+    ticketsCheckedIn?: number;
 }
 
 export class MailSettings implements IMailSettings {

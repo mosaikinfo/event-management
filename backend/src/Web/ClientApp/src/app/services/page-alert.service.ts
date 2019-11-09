@@ -15,28 +15,32 @@ export class PageAlertService {
       this.messageService.add({
         severity: this._severity[alert.type] || alert.type,
         summary: alert.title,
-        detail: alert.message
+        detail: alert.message,
+        sticky: alert.sticky
       });
     }
 
-    showError(error: string) {
+    showError(error: string, sticky: boolean = false) {
       this.showAlert({
         message: error,
-        type: "danger"
+        type: "danger",
+        sticky: sticky
       });
     }
 
     showSaveSuccessAlert() {
       this.showAlert({
         message: "Änderungen gespeichert!",
-        type: "success"
+        type: "success",
+        sticky: false
       });
     }
 
     showNotImplemented() {
       this.showAlert({
         message: "Diese Funktion ist noch nicht umgesetzt.",
-        type: "warning"
+        type: "warning",
+        sticky: false
       });
     }
 }
@@ -50,4 +54,5 @@ export interface Alert {
   type: string;
   title?: string;
   message: string;
+  sticky: boolean;
 }

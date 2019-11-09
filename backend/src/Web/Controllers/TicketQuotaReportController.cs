@@ -33,7 +33,7 @@ namespace EventManagement.WebApp.Controllers
         /// </summary>
         /// <param name="eventId">Id of the event.</param>
         [Route("events/{eventId}/reports/quotas")]
-        public Task<List<TicketQuotaReportRow>> GetReport(Guid eventId)
+        public Task<List<TicketQuotaReportRow>> GetReportAsync(Guid eventId)
         {
             var query = _context.TicketTypes
                 .AsNoTracking()

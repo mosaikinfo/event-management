@@ -14,6 +14,14 @@
     }
 }
 
+.fade {
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+}
+.fade.fade-in {
+    opacity: 1;
+}
+
 .material-icons.md-inherit { font-size: inherit; }
 .material-icons.md-16 { font-size: 16px; }
 .material-icons.md-18 { font-size: 18px; }
