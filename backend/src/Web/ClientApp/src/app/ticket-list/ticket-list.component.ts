@@ -20,12 +20,13 @@ export class TicketListComponent implements OnInit {
   pageSize: number = 30;
   totalRecords: number;
 
-  filterDeliveredOptions: SelectItem[] = [
+  optionalSwitchOptions: SelectItem[] = [
     { label: "Beliebig", value: undefined },
     { label: "Ja", value: true },
     { label: "Nein", value: false }
   ];
   filterDelivered: boolean;
+  filterOnlyValidated: boolean;
 
   searchText: string;
   filter: string;
@@ -61,7 +62,8 @@ export class TicketListComponent implements OnInit {
           undefined,
           page,
           this.pageSize,
-          this.filterDelivered)
+          this.filterDelivered,
+          this.filterOnlyValidated)
         .toPromise();
     this.tickets = result.data;
     this.totalRecords = result.totalCount;

@@ -990,13 +990,15 @@ export class EventManagementApiClient extends ServiceBase {
 
     /**
      * Lists all tickets for a given event.
+     * @param eventId Id of the event.
      * @param filter (optional) 
      * @param order (optional) 
      * @param pageNumber (optional) 
      * @param pageSize (optional) 
-     * @param isDelivered (optional) 
+     * @param isDelivered (optional) if true, only delivered tickets are listed.
+     * @param validated (optional) if true, which have gone through entrance control successfully will be listed.
      */
-    tickets_GetTickets(eventId: string, filter: string | null | undefined, order: string | null | undefined, pageNumber: number | undefined, pageSize: number | undefined, isDelivered: boolean | null | undefined): Observable<PaginationResultOfTicket> {
+    tickets_GetTickets(eventId: string, filter: string | null | undefined, order: string | null | undefined, pageNumber: number | undefined, pageSize: number | undefined, isDelivered: boolean | null | undefined, validated: boolean | null | undefined): Observable<PaginationResultOfTicket> {
         let url_ = this.baseUrl + "/api/events/{eventId}/tickets?";
         if (eventId === undefined || eventId === null)
             throw new Error("The parameter 'eventId' must be defined.");
@@ -1015,6 +1017,8 @@ export class EventManagementApiClient extends ServiceBase {
             url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&"; 
         if (isDelivered !== undefined)
             url_ += "isDelivered=" + encodeURIComponent("" + isDelivered) + "&"; 
+        if (validated !== undefined)
+            url_ += "validated=" + encodeURIComponent("" + validated) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
