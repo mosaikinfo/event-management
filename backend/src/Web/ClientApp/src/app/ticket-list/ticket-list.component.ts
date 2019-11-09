@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LazyLoadEvent } from 'primeng/components/common/api';
+import { LazyLoadEvent, SelectItem } from 'primeng/components/common/api';
 import { Event, Ticket, EventManagementApiClient, TicketType } from '../services/event-management-api.client';
 import { SessionService } from '../services/session.service';
 
@@ -10,7 +10,6 @@ import { SessionService } from '../services/session.service';
   styleUrls: ['./ticket-list.component.css']
 })
 export class TicketListComponent implements OnInit {
-
   event: Event;
   ticketTypes: TicketType[];
   tickets: Ticket[];
@@ -20,6 +19,14 @@ export class TicketListComponent implements OnInit {
   firstRow: number = 0;
   pageSize: number = 30;
   totalRecords: number;
+
+  optionalSwitchOptions: SelectItem[] = [
+    { label: "Beliebig", value: undefined },
+    { label: "Ja", value: true },
+    { label: "Nein", value: false }
+  ];
+  filterDelivered: boolean;
+  filterOnlyValidated: boolean;
 
   searchText: string;
   filter: string;
@@ -43,37 +50,44 @@ export class TicketListComponent implements OnInit {
   }
 
   async loadTickets(): Promise<void> {
+    if (!this.event)
+      return;
     const eventId = this.event.id;
     this.loading = true;
     let page = this.firstRow / this.pageSize + 1;
+    let filter = this._buildFilter();
     let result = await this.apiClient.tickets_GetTickets(
           eventId,
-          this.filter || '',
-          '',
+          filter,
+          undefined,
           page,
-          this.pageSize)
+          this.pageSize,
+          this.filterDelivered,
+          this.filterOnlyValidated)
         .toPromise();
     this.tickets = result.data;
     this.totalRecords = result.totalCount;
     this.loading = false;
   }
 
-  onLazyLoad(event: LazyLoadEvent) {
+  _buildFilter(): string {
+    return this.filter || undefined;
+  }
+
+  pTable_onLazyLoad(event: LazyLoadEvent) {
     this.firstRow = event.first;
     this.pageSize = event.rows;
-    if (this.event) {
-      this.loadTickets();
-    }
+    this.loadTickets();
   }
 
   search(): Boolean {
     if (this.searchText) {
       const v = this.searchText;
       this.filter = 
-        `ticketNumber~=${v};or$` +
-        `firstName~=${v};or$` +
-        `lastName~=${v};or$` +
-        `roomNumber~=${v}`;
+        `ticketNumber~=${v};` +
+        `firstName~=${v};` +
+        `lastName~=${v};` +
+        `roomNumber~=${v};or`;
     }
     else {
       this.filter = null;

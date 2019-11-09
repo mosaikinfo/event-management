@@ -1,50 +1,89 @@
 <h1>Tickets</h1>
-<div class="my-2 clearfix">
-    <a class="btn btn-primary mr-2" [routerLink]='["/tickets/new"]'>Neu</a>
-    <button type="button" class="btn btn-light mr-2"
-            (click)="loadTickets()">
-        <i class="fas fa-redo"></i>
-    </button>
-    <form class="searchbox" #searchBox="ngForm" (submit)="search()">
-        <input name="search" class="form-control searchbox" type="text"
-               placeholder="Suche..." aria-label="Suche..."
-               [(ngModel)]="searchText">
-    </form>
+
+<div class="row">
+	<div class="col-lg-auto my-2">
+		<a class="btn btn-primary mr-2" [routerLink]='["/tickets/new"]'>Neu</a>
+		<button type="button" class="btn btn-light mr-2"
+				(click)="loadTickets()">
+			<i class="fas fa-redo"></i>
+		</button>
+	</div>
+	<div class="col-lg-auto filter my-2">
+		<div class="row">
+			<div class="col-auto d-lg-none">
+				<h2 class="h5">Filter</h2>
+			</div>
+			<label class="mr-2 col-lg-auto">Ticket zugestellt</label>
+			<p-dropdown class="col-lg-auto" 
+				[options]="optionalSwitchOptions" [(ngModel)]="filterDelivered"
+				[showClear]="true" (onChange)="loadTickets()"></p-dropdown>
+		</div>
+	</div>
+	<div class="col-lg-auto filter my-2">
+		<div class="row">
+			<label class="mr-2 col-lg-auto">Check-In</label>
+			<p-dropdown class="col-lg-auto" 
+				[options]="optionalSwitchOptions" [(ngModel)]="filterOnlyValidated"
+				[showClear]="true" (onChange)="loadTickets()"></p-dropdown>
+		</div>
+	</div>
+	<div class="col-lg my-2">
+		<form class="searchbox w-100" #searchBox="ngForm" (submit)="search()">
+			<input name="search" class="form-control searchbox" type="text"
+				placeholder="Suche..." aria-label="Suche..."
+				[(ngModel)]="searchText">
+		</form>
+	</div>
 </div>
-<p-table [value]="tickets"
-         [paginator]="true" pageLinks="10"
-         paginatorPosition="both" [rowsPerPageOptions]="[10, 20, 30, 50, 100]"
-         [first]="firstRow" [rows]="pageSize" [totalRecords]="totalRecords"
-         [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [loading]="loading"
-         selectionMode="single" [(selection)]="selectedTicket">
-    <ng-template pTemplate="header">
-        <tr>
-            <th>Ticket-Nr.</th>
-            <th>Nachname</th>
-            <th>Vorname</th>
-            <th>Ticket-Typ</th>
-            <th>Zimmernr.</th>
-            <th>Check-In</th>
-            <th>Erstellt am</th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-ticket>
-        <tr [pSelectableRow]="ticket" (click)="edit()">
-            <td>{{ ticket.ticketNumber }}</td>
-            <td>{{ ticket.lastName }}</td>
-            <td>{{ ticket.firstName }}</td>
-            <td>{{ getTicketType(ticket.ticketTypeId)?.name }}</td>
-            <td>{{ ticket.roomNumber }}</td>
-            <td>
-                <input type="checkbox" [checked]="ticket.validated" (click)="false">
-            </td>
-            <td>{{ ticket.createdAt | date:'short' }}</td>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="paginatorleft" let-state>
-        <span class="paginator-addition">
-            {{ (state.first + pageSize) > state.totalRecords ? state.totalRecords : state.first + pageSize }}
-            von {{state.totalRecords}}
-        </span>
-    </ng-template>
+
+<p-table [value]="tickets" [responsive]="true"
+	[paginator]="true" pageLinks="10"
+	paginatorPosition="both" [rowsPerPageOptions]="[10, 20, 30, 50, 100]"
+	[first]="firstRow" [rows]="pageSize" [totalRecords]="totalRecords"
+	[lazy]="true" (onLazyLoad)="pTable_onLazyLoad($event)" [loading]="loading"
+	selectionMode="single" [(selection)]="selectedTicket">
+	<ng-template pTemplate="header">
+		<tr>
+			<th>Ticket-Nr.</th>
+			<th>Nachname</th>
+			<th>Vorname</th>
+			<th>Ticket-Typ</th>
+			<th>Zimmer</th>
+			<th>Erstellt am</th>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="body" let-ticket>
+		<tr [pSelectableRow]="ticket" (click)="edit()">
+			<td>
+				<span class="ui-column-title">Ticket-Nr.</span>
+				{{ ticket.ticketNumber }}
+			</td>
+			<td>
+				<span class="ui-column-title">Nachname</span>
+				{{ ticket.lastName }}
+			</td>
+			<td>
+				<span class="ui-column-title">Vorname</span>
+				{{ ticket.firstName }}
+			</td>
+			<td>
+				<span class="ui-column-title">Ticket-Typ</span>
+				{{ getTicketType(ticket.ticketTypeId)?.name }}
+			</td>
+			<td>
+				<span class="ui-column-title">Zimmer</span>
+				{{ ticket.roomNumber }}
+			</td>
+			<td>
+				<span class="ui-column-title">Erstellt am</span>
+				{{ ticket.createdAt | date:'short' }}
+			</td>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="paginatorleft" let-state>
+		<span class="paginator-addition">
+			{{ (state.first + pageSize) > state.totalRecords ? state.totalRecords : state.first + pageSize }}
+			von {{state.totalRecords}}
+		</span>
+	</ng-template>
 </p-table>
