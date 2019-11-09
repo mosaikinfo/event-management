@@ -10,6 +10,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
+import { DropdownModule } from 'primeng/dropdown';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './services/auth.service';
@@ -81,7 +82,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     InputSwitchModule,
     TriStateCheckboxModule,
     ProgressBarModule,
-    ToastModule
+    ToastModule,
+    DropdownModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-DE' },

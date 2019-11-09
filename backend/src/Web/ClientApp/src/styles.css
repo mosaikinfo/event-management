@@ -1,6 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~bootstrap/dist/css/bootstrap.min.css";
 
+@media (min-width: 1200px) {
+    .container {
+        max-width: 95%;
+    }
+}
+
 @media (min-width: 768px) {
     .form-group,
     .form-row {

@@ -36,12 +36,19 @@ namespace EventManagement.WebApp.Controllers
         /// Lists all tickets for a given event.
         /// </summary>
         [HttpGet("events/{eventId}/tickets")]
-        public ActionResult<PaginationResult<Ticket>> GetTickets(Guid eventId, [FromQuery] FopQuery query)
+        public ActionResult<PaginationResult<Ticket>> GetTickets(Guid eventId, [FromQuery] FopQuery query,
+                                                                 bool? isDelivered = null)
         {
             var tickets = _context.Tickets
                 .AsNoTracking()
-                .Where(e => e.EventId == eventId)
-                .OrderByDescending(x => x.CreatedAt);
+                .Where(e => e.EventId == eventId);
+
+            if (isDelivered != null)
+            {
+                tickets = tickets.Where(e => e.IsDelivered == isDelivered.Value);
+            }
+
+            tickets = tickets.OrderByDescending(x => x.CreatedAt);
 
             return _mapper
                 .ProjectTo<Ticket>(tickets)
