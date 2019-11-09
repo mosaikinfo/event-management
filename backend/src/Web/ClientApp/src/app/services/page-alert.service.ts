@@ -31,16 +31,14 @@ export class PageAlertService {
     showSaveSuccessAlert() {
       this.showAlert({
         message: "Änderungen gespeichert!",
-        type: "success",
-        sticky: false
+        type: "success"
       });
     }
 
     showNotImplemented() {
       this.showAlert({
         message: "Diese Funktion ist noch nicht umgesetzt.",
-        type: "warning",
-        sticky: false
+        type: "warning"
       });
     }
 }
@@ -54,5 +52,5 @@ export interface Alert {
   type: string;
   title?: string;
   message: string;
-  sticky: boolean;
+  sticky?: boolean;
 }
