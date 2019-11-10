@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { SessionService } from '../services/session.service';
 import { Event, EventManagementApiClient, MailSettings } from '../services/event-management-api.client';
@@ -8,7 +8,8 @@ import { Event, EventManagementApiClient, MailSettings } from '../services/event
   templateUrl: './nav-menu.component.html',
   styleUrls: ['./nav-menu.component.css']
 })
-export class NavMenuComponent {
+export class NavMenuComponent implements OnInit {
+
   isExpanded = false;
   currentUser: string = "";
   currentEvent: Event;
@@ -18,13 +19,18 @@ export class NavMenuComponent {
     private authService: AuthService,
     private session: SessionService,
     private apiClient: EventManagementApiClient
-  ) {
-   this.authService.onUserLoggedIn
-      .subscribe(claims => this.currentUser = claims['name']);
+  ) {}
+
+  async ngOnInit() {
+    this.authService.onUserLoggedIn
+      .subscribe(claims => {
+        this.currentUser = claims['name'];
+        this.checkIsDemoMode();
+      });
     this.session.onCurrentEventChanged
       .subscribe((evt: Event) => {
         this.currentEvent = evt;
-        this.checkDemoMode();
+        this.checkIsDemoMode();
       });
     this.session.onDemoModeChanged
       .subscribe((demoModelEnabled: Boolean) => {
@@ -44,8 +50,8 @@ export class NavMenuComponent {
     this.isExpanded = !this.isExpanded;
   }
 
-  checkDemoMode() {
-    if (this.currentEvent) {
+  async checkIsDemoMode() {
+    if (await this.authService.isLoggedIn()) {
       this.apiClient.mailSettings_GetMailSettings(this.currentEvent.id)
           .subscribe((settings: MailSettings) => {
             this.demoModeEnabled = settings.enableDemoMode;

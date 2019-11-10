@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-
   private _userManager: UserManager;
 
   @Output() onUserLoggedIn = new EventEmitter<any>();
@@ -30,14 +29,14 @@ export class AuthService {
         userStore: new WebStorageStateStore({ store: window.localStorage }),
     };
     this._userManager = new UserManager(settings);
+    this.init();
+  }
 
+  async init() {
     // If the user is was already logged in before 
     // we trigger this event on application startup.
-    this._userManager.getUser().then((user: User) => {
-      if (user) {
-        this.onUserLoggedIn.emit(user.profile);
-      }
-    })
+    let user: User = await this._userManager.getUser();
+    this.onUserLoggedIn.emit(user.profile);
   }
 
   public getUser(): Promise<User> {
