@@ -3,8 +3,7 @@
 <div class="row">
 	<div class="col-lg-auto my-2">
 		<a class="btn btn-primary mr-2" [routerLink]='["/tickets/new"]'>Neu</a>
-		<button type="button" class="btn btn-light mr-2"
-				(click)="loadTickets()">
+		<button type="button" class="btn btn-light mr-2" (click)="loadTickets()">
 			<i class="fas fa-redo"></i>
 		</button>
 	</div>
@@ -16,7 +15,7 @@
 			<label class="mr-2 col-lg-auto">Ticket zugestellt</label>
 			<p-dropdown class="col-lg-auto" 
 				[options]="optionalSwitchOptions" [(ngModel)]="filterDelivered"
-				[showClear]="true" (onChange)="loadTickets()"></p-dropdown>
+				(onChange)="loadTickets()"></p-dropdown>
 		</div>
 	</div>
 	<div class="col-lg-auto filter my-2">
@@ -24,7 +23,7 @@
 			<label class="mr-2 col-lg-auto">Check-In</label>
 			<p-dropdown class="col-lg-auto" 
 				[options]="optionalSwitchOptions" [(ngModel)]="filterOnlyValidated"
-				[showClear]="true" (onChange)="loadTickets()"></p-dropdown>
+				(onChange)="loadTickets()"></p-dropdown>
 		</div>
 	</div>
 	<div class="col-lg my-2">
