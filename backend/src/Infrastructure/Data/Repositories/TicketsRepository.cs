@@ -23,7 +23,6 @@ namespace EventManagement.Infrastructure.Data.Repositories
         public Task<Ticket> GetAsync(Guid ticketId)
         {
             return _context.Tickets
-                .AsNoTracking()
                 .Include(x => x.Event)
                 .Include(x => x.TicketType)
                 .SingleOrDefaultAsync(x => x.Id == ticketId);

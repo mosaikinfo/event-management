@@ -1,6 +1,6 @@
-﻿using EventManagement.ApplicationCore.Exceptions;
-using EventManagement.ApplicationCore.Models;
+﻿using EventManagement.ApplicationCore.Models;
 using EventManagement.ApplicationCore.TicketDelivery;
+using EventManagement.ApplicationCore.Tickets;
 using EventManagement.WebApp.Shared.Mvc;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
@@ -17,13 +17,19 @@ namespace EventManagement.WebApp.Controllers
     [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class TicketDeliveryController : EventManagementController
     {
+        private readonly ITicketsRepository _ticketsRepository;
         private readonly ITicketDeliveryService _ticketDeliveryService;
+        private readonly ITicketRedirectService _ticketRedirectService;
         private readonly IBackgroundJobClient _backgroundJobs;
 
-        public TicketDeliveryController(ITicketDeliveryService ticketDeliveryService,
+        public TicketDeliveryController(ITicketsRepository ticketsRepository,
+                                        ITicketDeliveryService ticketDeliveryService,
+                                        ITicketRedirectService ticketRedirectService,
                                         IBackgroundJobClient backgroundJobs)
         {
+            _ticketsRepository = ticketsRepository;
             _ticketDeliveryService = ticketDeliveryService;
+            _ticketRedirectService = ticketRedirectService;
             _backgroundJobs = backgroundJobs;
         }
 
@@ -35,21 +41,20 @@ namespace EventManagement.WebApp.Controllers
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public async Task<IActionResult> SendMailAsync(Guid ticketId)
         {
-            var deliveryType = TicketDeliveryType.Email;
-            try
-            {
-                await _ticketDeliveryService.ValidateAsync(ticketId, deliveryType);
-            }
-            catch (TicketNotFoundException)
-            {
+            var ticket = await _ticketsRepository.GetAsync(ticketId);
+            if (ticket == null)
                 return NotFound(new ProblemDetails
                 { Detail = "Ticket with id not found." });
-            }
 
-            string validationUrl = GetTicketValidationUriFormatString();
+            var deliveryType = TicketDeliveryType.Email;
+            await _ticketDeliveryService.ValidateAsync(ticketId, deliveryType);
+
+            string validationUriFormat = GetTicketValidationUriFormatString();
+            string validationUri = GetTicketValidationUri(ticket.TicketSecret);
+            string homepageUrl = await _ticketRedirectService.GetRedirectUrlAsync(ticketId, validationUri);
 
             _backgroundJobs.Enqueue(() => _ticketDeliveryService
-                .SendTicketAsync(ticketId, deliveryType, validationUrl));
+                .SendTicketAsync(ticketId, deliveryType, validationUriFormat, homepageUrl));
 
             return Ok();
         }

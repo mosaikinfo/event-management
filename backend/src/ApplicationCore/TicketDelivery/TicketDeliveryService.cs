@@ -50,14 +50,17 @@ namespace EventManagement.ApplicationCore.TicketDelivery
         [DisplayName("Send {1}")]
         public async Task SendTicketAsync(Guid ticketId,
                                           TicketDeliveryType deliveryType,
-                                          string ticketValidationUriFormat)
+                                          string ticketValidationUriFormat,
+                                          string homepageUrl)
         {
             await ValidateAsync(ticketId, deliveryType);
             TicketDeliveryData ticketData = await _ticketDataRepo.GetAsync(ticketId);
-            await SendTicketByMailAsync(ticketData, ticketValidationUriFormat);
+            await SendTicketByMailAsync(ticketData, ticketValidationUriFormat, homepageUrl);
         }
 
-        private async Task SendTicketByMailAsync(TicketDeliveryData args, string ticketValidationUriFormat)
+        private async Task SendTicketByMailAsync(TicketDeliveryData args,
+                                                 string ticketValidationUriFormat,
+                                                 string homepageUrl)
         {
             if (args.MailSettings == null)
             {
@@ -99,15 +102,15 @@ namespace EventManagement.ApplicationCore.TicketDelivery
                     Subject = args.MailSettings.Subject,
                     Body = args.MailSettings.Body,
                     Attachments =
-                {
-                    new EmailAttachment
                     {
-                        FileName = $"ticket-{args.Ticket.TicketNumber}.pdf",
-                        ContentType = "application/pdf",
-                        Stream = stream
+                        new EmailAttachment
+                        {
+                            FileName = $"ticket-{args.Ticket.TicketNumber}.pdf",
+                            ContentType = "application/pdf",
+                            Stream = stream
+                        }
                     }
-                }
-                }, args.Ticket);
+                }, args.Ticket, homepageUrl);
 
             try
             {

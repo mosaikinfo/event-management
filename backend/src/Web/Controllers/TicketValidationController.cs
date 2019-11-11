@@ -1,4 +1,6 @@
-﻿using EventManagement.Infrastructure.Data;
+﻿using EventManagement.ApplicationCore.Tickets;
+using EventManagement.Infrastructure.Data;
+using EventManagement.WebApp.Shared.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,15 +20,18 @@ namespace EventManagement.WebApp.Controllers
     /// </summary>
     [OpenApiIgnore]
     [AllowAnonymous]
-    public class TicketValidationController : Controller
+    public class TicketValidationController : EventManagementController
     {
         private readonly EventsDbContext _context;
+        private readonly ITicketRedirectService _ticketRedirectService;
         private readonly ILogger _logger;
 
         public TicketValidationController(EventsDbContext context,
+                                          ITicketRedirectService ticketRedirectService,
                                           ILogger<TicketValidationController> logger)
         {
             _context = context;
+            _ticketRedirectService = ticketRedirectService;
             _logger = logger;
         }
 
@@ -91,7 +96,11 @@ namespace EventManagement.WebApp.Controllers
             if (!currentUser.Identity.IsAuthenticated)
             {
                 _logger.LogInformation("Unauthorized. Redirect to event homepage.");
-                return Redirect(ticket.Event.HomepageUrl);
+
+                string validationUri = GetTicketValidationUri(ticket.TicketSecret);
+                string redirectUrl = await _ticketRedirectService.GetRedirectUrlAsync(ticket.Id, validationUri);
+
+                return Redirect(redirectUrl);
             }
             if (ticket.Validated)
             {

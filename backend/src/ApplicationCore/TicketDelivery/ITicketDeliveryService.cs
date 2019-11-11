@@ -24,8 +24,10 @@ namespace EventManagement.ApplicationCore.TicketDelivery
         /// </summary>
         /// <param name="ticketId">Id of the ticket.</param>
         /// <param name="deliveryType">Delivery type (e-mail, SMS, letter post, etc.).</param>
+        /// <param name="homepageUrl">URL to redirect the users to that scan the qr code at themselves.</param>
         /// <exception cref="NotSupportedException">when the delivery type is not yet supported.</exception>
         /// <exception cref="TicketNotFoundException">when the requested ticket doesn't exist.</exception>
-        Task SendTicketAsync(Guid ticketId, TicketDeliveryType deliveryType, string ticketValidationUriFormat);
+        Task SendTicketAsync(Guid ticketId, TicketDeliveryType deliveryType,
+                             string ticketValidationUriFormat, string homepageUrl);
     }
 }

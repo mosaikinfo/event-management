@@ -1,5 +1,6 @@
 using AutoMapper;
 using EventManagement.ApplicationCore.Auditing;
+using EventManagement.ApplicationCore.Identity;
 using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.ApplicationCore.Services;
 using EventManagement.ApplicationCore.TicketDelivery;
@@ -8,6 +9,7 @@ using EventManagement.ApplicationCore.Tickets;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.Infrastructure.Data.Repositories;
+using EventManagement.Infrastructure.Identity;
 using EventManagement.Infrastructure.Messaging;
 using EventManagement.WebApp.Shared.Hangfire;
 using Hangfire;
@@ -63,6 +65,7 @@ namespace EventManagement.WebApp
             services.TryAddTransient<ITicketNumberService, TicketNumberService>();
             services.TryAddTransient<ITicketDeliveryService, TicketDeliveryService>();
             services.TryAddTransient<IPdfTicketService, PdfTicketService>();
+            services.TryAddTransient<ITicketRedirectService, TicketRedirectService>();
 
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential(persistKey: true)
@@ -70,6 +73,8 @@ namespace EventManagement.WebApp
                 .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
                 .AddClientStore<EventManagementClientStore>()
                 .AddProfileService<UserProfileService>();
+
+            services.TryAddTransient<IJwtTokenService, JwtTokenService>();
 
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)

@@ -12,9 +12,18 @@ namespace EventManagement.WebApp.Shared.Mvc
         /// </summary>
         protected string GetTicketValidationUriFormatString()
         {
+            return GetTicketValidationUri(
+                EventManagementConstants.TicketGeneration.SecretUrlPlaceholder);
+        }
+
+        /// <summary>
+        /// Build the URI to validate a ticket at entrance control.
+        /// </summary>
+        protected string GetTicketValidationUri(string secret)
+        {
             return Url.ActionAbsoluteUrl<TicketValidationController>(
                 nameof(TicketValidationController.ValidateTicketByQrCodeValueAsync),
-                new { secret = EventManagementConstants.TicketGeneration.SecretUrlPlaceholder });
+                new { secret = secret });
         }
     }
 }
