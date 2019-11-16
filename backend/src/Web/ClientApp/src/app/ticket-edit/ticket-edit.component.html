@@ -26,6 +26,9 @@
       - {{ model.lastName }}, {{ model.firstName }}
       </span>
     </h2>
+    <p *ngIf="!isNew() && model.bookingDate">
+      Buchungsdatum: {{ model.bookingDate | date:'longDate' }}
+    </p>
   </div>
 
   <div *ngIf="!isNew()">
@@ -110,6 +113,14 @@
     <label for="firstName">Vorname</label>
     <input name="firstName" type="text" class="form-control"
            [(ngModel)]="model.firstName" maxlength="300">
+  </div>
+  <div class="form-group">
+    <label for="gender">Geschlecht</label>
+    <select name="gender" [(ngModel)]="model.gender" class="custom-select">
+      <option [ngValue]="null">keine Angabe</option>
+      <option value="m">männlich</option>
+      <option value="f">weiblich</option>
+    </select>
   </div>
   <div class="form-group">
     <label for="birthDate">Geburtsdatum</label>

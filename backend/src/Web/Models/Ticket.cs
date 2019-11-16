@@ -20,8 +20,10 @@ namespace EventManagement.WebApp.Models
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public DateTime? BirthDate { get; set; }
+        public string Gender { get; set; }
         public string Address { get; set; }
         public string RoomNumber { get; set; }
+        public DateTime? BookingDate { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? EditedAt { get; set; }
 
@@ -37,9 +39,19 @@ namespace EventManagement.WebApp.Models
             if (EventId == Guid.Empty)
                 yield return new ValidationResult(
                     "The field is required.", new[] { nameof(EventId) });
+
             if (TicketTypeId == Guid.Empty)
                 yield return new ValidationResult(
                     "The field is required.", new[] { nameof(TicketTypeId) });
+
+            if (Gender != null && GenderExtensions.FromStringValue(Gender) == null)
+                yield return new ValidationResult(
+                    $"Gender '{Gender}' is not an allowed value. Allowed values: 'm' or 'f'.",
+                    new[] { nameof(Gender) });
+
+            if (BookingDate != null && BookingDate > DateTime.UtcNow)
+                yield return new ValidationResult(
+                    "The BookingDate must be in the past.", new[] { nameof(BookingDate) });
         }
     }
 }

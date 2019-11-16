@@ -54,12 +54,10 @@ namespace EventManagement.ApplicationCore.TicketGeneration
                 EventDate = ticket.Event.StartTime.ToString("dddd, dd.MM.yyyy"),
                 EventLocation = ticket.Event.Location,
                 TicketType = ticket.TicketType.Name,
-                //Price = $"{ticket.TicketType.Price} €",
                 Transmissible = "false",
                 BeginTime = ticket.Event.StartTime.ToString("hh:mm") + " Uhr",
                 Address = GetAddressRows(ticket).ToList(),
-                BookingDate = ticket.CreatedAt.ToString("dd.MM.yyyy"),
-                //BookingNumber = ticket.TicketNumber
+                BookingDate = ticket.BookingDate?.ToString("dd.MM.yyyy"),
             };
             if (ticket.LastName != null)
             {

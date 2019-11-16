@@ -48,6 +48,7 @@
 			<th>Vorname</th>
 			<th>Ticket-Typ</th>
 			<th>Zimmer</th>
+			<th>Buchungsdatum</th>
 			<th>Erstellt am</th>
 		</tr>
 	</ng-template>
@@ -72,6 +73,10 @@
 			<td>
 				<span class="ui-column-title">Zimmer</span>
 				{{ ticket.roomNumber }}
+			</td>
+			<td>
+				<span class="ui-column-title">Buchungsdatum</span>
+				{{ ticket.bookingDate | date:'mediumDate' }}
 			</td>
 			<td>
 				<span class="ui-column-title">Erstellt am</span>

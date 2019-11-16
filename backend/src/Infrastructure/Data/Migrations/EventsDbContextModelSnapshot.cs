@@ -209,6 +209,8 @@ namespace EventManagement.Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("BirthDate");
 
+                    b.Property<DateTime?>("BookingDate");
+
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<Guid?>("CreatorId");
@@ -226,6 +228,9 @@ namespace EventManagement.Infrastructure.Data.Migrations
 
                     b.Property<string>("FirstName")
                         .HasMaxLength(300);
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("nchar(1)");
 
                     b.Property<bool>("IsDeleted");
 

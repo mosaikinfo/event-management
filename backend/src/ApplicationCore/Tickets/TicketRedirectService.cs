@@ -4,7 +4,6 @@ using EventManagement.ApplicationCore.Models;
 using IdentityModel;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +23,7 @@ namespace EventManagement.ApplicationCore.Tickets
 
         public async Task<string> GetRedirectUrlAsync(Guid ticketId, string ticketValidationUrl)
         {
-            Models.Ticket ticket = await _tickets.GetAsync(ticketId);
+            Ticket ticket = await _tickets.GetAsync(ticketId);
 
             if (ticket == null)
                 throw new TicketNotFoundException();
@@ -48,12 +47,12 @@ namespace EventManagement.ApplicationCore.Tickets
 
             if (ticket.BirthDate != null)
             {
-                string birthdate = ticket.BirthDate.Value.ToString("s", CultureInfo.InvariantCulture);
-                birthdate = string.Concat(birthdate, "Z");
+                string birthdate = ticket.BirthDate.Value.ToString("yyyy-MM-dd");
                 yield return new Claim(JwtClaimTypes.BirthDate, birthdate);
             }
 
-            // TODO: yield return new Claim(JwtClaimTypes.Gender, ticket.Gender);
+            if (ticket.Gender.HasValue)
+                yield return new Claim(JwtClaimTypes.Gender, ticket.Gender.Value.GetStringValue());
 
             if (ticket.RoomNumber != null)
                 yield return new Claim(EventManagementClaimTypes.Room, ticket.RoomNumber);

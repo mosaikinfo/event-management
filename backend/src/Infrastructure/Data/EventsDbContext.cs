@@ -77,6 +77,12 @@ namespace EventManagement.Infrastructure.Data
                 entity.Property(e => e.RoomNumber).HasMaxLength(300);
                 entity.Property(e => e.AmountPaid).HasColumnType("decimal(5, 2)");
 
+                entity.Property(e => e.Gender)
+                    .HasColumnType("nchar(1)")
+                    .HasConversion(
+                        value => value.HasValue ? value.Value.GetStringValue() : null,
+                        value => GenderExtensions.FromStringValue(value));
+
                 entity.Property(e => e.PaymentStatus)
                     .IsRequired()
                     .HasMaxLength(100)
