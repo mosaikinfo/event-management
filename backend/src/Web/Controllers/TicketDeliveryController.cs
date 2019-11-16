@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -67,18 +68,16 @@ namespace EventManagement.WebApp.Controllers
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public async Task<BatchSendResult> SendBatchMailsAsync(Guid eventId, TicketsSendSpecification spec)
         {
+            var ticketTypes = spec.TicketTypes ?? new List<Guid>();
+
             var query = _context.Tickets
                 .AsNoTracking()
-                .Where(x => x.EventId == eventId);
+                .Where(x => x.EventId == eventId)
+                .Where(x => ticketTypes.Contains(x.TicketTypeId));
 
             if (!spec.SendAll)
             {
                 query = query.Where(x => !x.IsDelivered);
-            }
-
-            if (spec.TicketTypes != null && spec.TicketTypes.Any())
-            {
-                query = query.Where(x => spec.TicketTypes.Contains(x.TicketTypeId));
             }
 
             var tickets = await query.ToListAsync();

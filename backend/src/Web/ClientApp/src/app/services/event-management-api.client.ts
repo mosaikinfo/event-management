@@ -878,7 +878,7 @@ export class EventManagementApiClient extends ServiceBase {
      * @param ticketId Id of the ticket.
      */
     ticketDelivery_SendMail(ticketId: string): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/tickets/{ticketId}/mail";
+        let url_ = this.baseUrl + "/api/tickets/{ticketId}/sendmail";
         if (ticketId === undefined || ticketId === null)
             throw new Error("The parameter 'ticketId' must be defined.");
         url_ = url_.replace("{ticketId}", encodeURIComponent("" + ticketId)); 
@@ -926,6 +926,77 @@ export class EventManagementApiClient extends ServiceBase {
             }));
         }
         return _observableOf<FileResponse>(<any>null);
+    }
+
+    /**
+     * Send multiple tickets via e-mail at once.
+     * @param eventId Id of the event.
+     * @param sendAll (optional) Allows sending e-mails twice (even if the ticket has been sent before).
+     * @param ticketTypes (optional) Ticket types to filter by.
+     * @param dryRun (optional) Try the method without sending e-mails.
+     * @return result of the batch send.
+     */
+    ticketDelivery_SendBatchMails(eventId: string, sendAll: boolean | undefined, ticketTypes: string[] | null | undefined, dryRun: boolean | undefined): Observable<BatchSendResult> {
+        let url_ = this.baseUrl + "/api/events/{eventId}/tickets/sendmails?";
+        if (eventId === undefined || eventId === null)
+            throw new Error("The parameter 'eventId' must be defined.");
+        url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
+        if (sendAll === null)
+            throw new Error("The parameter 'sendAll' cannot be null.");
+        else if (sendAll !== undefined)
+            url_ += "SendAll=" + encodeURIComponent("" + sendAll) + "&"; 
+        if (ticketTypes !== undefined)
+            ticketTypes && ticketTypes.forEach(item => { url_ += "TicketTypes=" + encodeURIComponent("" + item) + "&"; });
+        if (dryRun === null)
+            throw new Error("The parameter 'dryRun' cannot be null.");
+        else if (dryRun !== undefined)
+            url_ += "DryRun=" + encodeURIComponent("" + dryRun) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("post", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processTicketDelivery_SendBatchMails(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTicketDelivery_SendBatchMails(<any>response_);
+                } catch (e) {
+                    return <Observable<BatchSendResult>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BatchSendResult>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processTicketDelivery_SendBatchMails(response: HttpResponseBase): Observable<BatchSendResult> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = BatchSendResult.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BatchSendResult>(<any>null);
     }
 
     /**
@@ -1953,6 +2024,50 @@ export interface IMailSettings {
     body: string;
     enableDemoMode?: boolean;
     demoEmailRecipients?: string[] | undefined;
+}
+
+export class BatchSendResult implements IBatchSendResult {
+    dryRun?: boolean;
+    mailsSent?: number;
+    ticketsWithoutEmailAddress?: number;
+
+    constructor(data?: IBatchSendResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.dryRun = data["dryRun"];
+            this.mailsSent = data["mailsSent"];
+            this.ticketsWithoutEmailAddress = data["ticketsWithoutEmailAddress"];
+        }
+    }
+
+    static fromJS(data: any): BatchSendResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new BatchSendResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["dryRun"] = this.dryRun;
+        data["mailsSent"] = this.mailsSent;
+        data["ticketsWithoutEmailAddress"] = this.ticketsWithoutEmailAddress;
+        return data; 
+    }
+}
+
+export interface IBatchSendResult {
+    dryRun?: boolean;
+    mailsSent?: number;
+    ticketsWithoutEmailAddress?: number;
 }
 
 export class TicketQuotaReportRow implements ITicketQuotaReportRow {

@@ -20,6 +20,9 @@
             <a class="nav-link text-dark" [routerLink]='["/tickets"]' (click)="collapse()">Tickets</a>
           </li>
           <li *ngIf="currentEvent" class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
+            <a class="nav-link text-dark" [routerLink]='["/tickets/sendmails"]' (click)="collapse()">E-Mail-Versand</a>
+          </li>
+          <li *ngIf="currentEvent" class="nav-item" [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
             <a class="nav-link text-dark" [routerLink]='["/entrance-control"]' (click)="collapse()">Einlasskontrolle</a>
           </li>
         </ul>
