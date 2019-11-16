@@ -53,7 +53,8 @@ namespace EventManagement.ApplicationCore.Tickets
                 yield return new Claim(JwtClaimTypes.BirthDate, birthdate);
             }
 
-            // TODO: yield return new Claim(JwtClaimTypes.Gender, ticket.Gender);
+            if (ticket.Gender.HasValue)
+                yield return new Claim(JwtClaimTypes.Gender, ticket.Gender.Value.GetStringValue());
 
             if (ticket.RoomNumber != null)
                 yield return new Claim(EventManagementClaimTypes.Room, ticket.RoomNumber);
