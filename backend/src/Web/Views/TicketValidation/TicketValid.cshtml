@@ -21,13 +21,13 @@
                     {
                         <span>Offen</span>
                     }
+                    @if (Model.PaymentStatus == PaymentStatus.PaidPartial)
+                    {
+                        <span>Teilweise bezahlt</span>
+                    }
                     else if (Model.PaymentStatus == PaymentStatus.Paid)
                     {
-                        <span>Offen</span>
-                    }
-                    else if (Model.PaymentStatus == PaymentStatus.Presold)
-                    {
-                        <span>Vorverkauf</span>
+                        <span>Bezahlt</span>
                     }
                 </dd>
                 @if (!string.IsNullOrEmpty(Model.LastName))

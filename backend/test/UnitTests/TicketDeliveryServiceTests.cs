@@ -40,7 +40,7 @@ namespace EventManagement.UnitTests
                             TicketType = new TicketType
                             {
                                 Name = "VIP",
-                                Price = 15.00m
+                                Price = 15.00f
                             },
                             Event = new Event
                             {
