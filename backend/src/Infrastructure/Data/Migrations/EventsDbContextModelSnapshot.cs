@@ -209,6 +209,8 @@ namespace EventManagement.Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("BirthDate");
 
+                    b.Property<DateTime?>("BookingDate");
+
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<Guid?>("CreatorId");

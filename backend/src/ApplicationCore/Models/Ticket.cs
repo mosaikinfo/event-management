@@ -20,6 +20,7 @@ namespace EventManagement.ApplicationCore.Models
         public DateTime? BirthDate { get; set; }
         public string Address { get; set; }
         public string RoomNumber { get; set; }
+        public DateTime? BookingDate { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? EditedAt { get; set; }
         public Guid? CreatorId { get; set; }
