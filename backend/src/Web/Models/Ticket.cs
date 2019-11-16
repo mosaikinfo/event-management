@@ -20,6 +20,7 @@ namespace EventManagement.WebApp.Models
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public DateTime? BirthDate { get; set; }
+        public string Gender { get; set; }
         public string Address { get; set; }
         public string RoomNumber { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -40,6 +41,9 @@ namespace EventManagement.WebApp.Models
             if (TicketTypeId == Guid.Empty)
                 yield return new ValidationResult(
                     "The field is required.", new[] { nameof(TicketTypeId) });
+            if (Gender != null && GenderExtensions.FromStringValue(Gender) == null)
+                yield return new ValidationResult(
+                    $"Gender '{Gender}' is not an allowed value. Allowed values: 'm' or 'f'.");
         }
     }
 }

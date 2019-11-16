@@ -227,6 +227,9 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.Property<string>("FirstName")
                         .HasMaxLength(300);
 
+                    b.Property<string>("Gender")
+                        .HasColumnType("nchar(1)");
+
                     b.Property<bool>("IsDeleted");
 
                     b.Property<bool>("IsDelivered");

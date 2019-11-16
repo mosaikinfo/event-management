@@ -20,6 +20,7 @@ namespace EventManagement.UnitTests
             var ticketId = Guid.NewGuid();
             var deliveryType = TicketDeliveryType.Email;
             const string validationUri = "http://myevent/";
+            const string homePageUrl = "http://myevent/";
 
             var tickets = new Mock<ITicketsRepository>();
             tickets.Setup(c => c.ExistsAsync(It.IsAny<Guid>()))
@@ -64,7 +65,7 @@ namespace EventManagement.UnitTests
                 emailService.Object, pdfTicketService.Object,
                 auditEventLog.Object, Logger);
 
-            await service.SendTicketAsync(ticketId, deliveryType, validationUri);
+            await service.SendTicketAsync(ticketId, deliveryType, validationUri, homePageUrl);
 
             Mock.VerifyAll(tickets, ticketsDeliveryData, emailService, pdfTicketService, auditEventLog);
         }
@@ -75,6 +76,7 @@ namespace EventManagement.UnitTests
             var ticketId = Guid.NewGuid();
             var deliveryType = TicketDeliveryType.LetterPost;
             const string validationUri = "http://myevent/";
+            const string homePageUrl = "http://myevent/";
 
             var tickets = new Mock<ITicketsRepository>();
             var ticketsDeliveryData = new Mock<ITicketDeliveryDataRepository>();
@@ -87,7 +89,7 @@ namespace EventManagement.UnitTests
                 auditEventLog.Object, Logger);
 
             Func<Task> f = async () => await service
-                .SendTicketAsync(ticketId, deliveryType, validationUri);
+                .SendTicketAsync(ticketId, deliveryType, validationUri, homePageUrl);
 
             f.Should().Throw<NotSupportedException>();
         }
