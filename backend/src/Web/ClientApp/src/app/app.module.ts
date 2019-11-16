@@ -11,6 +11,11 @@ import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { DropdownModule } from 'primeng/dropdown';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { CheckboxModule } from 'primeng/checkbox';
+import { BlockUIModule } from 'primeng/blockui';
+import { PanelModule } from 'primeng/panel';
+import { FieldsetModule } from 'primeng/fieldset';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './services/auth.service';
@@ -46,6 +51,7 @@ import { MailSettingsComponent } from './mail-settings/mail-settings.component';
 import { TicketDetailComponent } from './ticket-detail/ticket-detail.component';
 import { TicketAuditLogComponent } from './ticket-audit-log/ticket-audit-log.component';
 import { EventDangerZoneComponent } from './event-danger-zone/event-danger-zone.component';
+import { BatchSendComponent } from './batch-send/batch-send.component';
 
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
@@ -68,7 +74,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     MailSettingsComponent,
     TicketDetailComponent,
     TicketAuditLogComponent,
-    EventDangerZoneComponent
+    EventDangerZoneComponent,
+    BatchSendComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -83,7 +90,12 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     TriStateCheckboxModule,
     ProgressBarModule,
     ToastModule,
-    DropdownModule
+    DropdownModule,
+    RadioButtonModule,
+    CheckboxModule,
+    BlockUIModule,
+    PanelModule,
+    FieldsetModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-DE' },

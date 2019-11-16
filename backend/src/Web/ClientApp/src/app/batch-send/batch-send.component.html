@@ -1,0 +1,49 @@
+<form #form="ngForm">
+    <p-blockUI [blocked]="result" [target]="pnl"></p-blockUI>
+    <p-fieldset #pnl legend="Tickets versenden">
+      <div class="form-group">
+        <label>E-Mail verschicken an</label>
+        <div class="ui-g">
+          <div class="ui-g-12"><p-radioButton name="sendAll" [value]="false" [(ngModel)]="sendAll"
+              label="Jeden, der noch kein Ticket erhalten hat."></p-radioButton></div>
+            <div class="ui-g-12"><p-radioButton name="sendAll" [value]="true" [(ngModel)]="sendAll"
+                label="Alle"></p-radioButton></div>
+        </div>
+      </div>
+      <div class="form-group">
+          <label>Sende nur an Personen mit Zahlungsstatus</label>
+          <div class="ui-g">
+              <div class="ui-g-12" *ngFor="let item of paymentStatus">
+                <p-checkbox name="group1" [value]="item.value"
+                  [label]="item.name" [(ngModel)]="selectedPaymentStatus"></p-checkbox>
+              </div>
+          </div>
+      </div>
+      <div class="form-group">
+          <label>Sende nur an Personen mit dem Ticket-Typ</label>
+          <div class="ui-g">
+              <div class="ui-g-12" *ngFor="let ticketType of ticketTypes">
+                <p-checkbox name="group1" [value]="ticketType.id"
+                  [label]="ticketType.name" [(ngModel)]="selectedTicketTypes"></p-checkbox>
+              </div>
+          </div>
+      </div>
+      <div>
+        <button type="button" (click)="submit(true)" class="btn btn-primary" [disabled]="result">E-Mails versenden</button>
+      </div>
+    </p-fieldset>
+    
+    <div *ngIf="result" class="mt-4">
+      <div class="alert alert-warning">
+        <p>Du bist gerade dabei <strong>{{ result.mailsSent }} E-Mails</strong> zu versenden.</p>
+        <p *ngIf="result.ticketsWithoutEmailAddress">
+          {{ result.ticketsWithoutEmailAddress }} weitere Tickets können nicht versendet
+          werden, weil sie keine E-Mail-Adresse haben.
+        </p>
+      </div>
+      <p>
+        <button type="button" (click)="cancel()" class="btn btn-outline-secondary mr-2">Abbrechen</button>
+        <button type="button" (click)="submit()" class="btn btn-primary" [disabled]="result.mailsSent === 0">Bestätigen</button>
+      </p>
+    </div>
+  </form>

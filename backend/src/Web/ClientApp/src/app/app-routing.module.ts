@@ -13,6 +13,7 @@ import { TicketDetailComponent } from './ticket-detail/ticket-detail.component';
 import { EntranceControlComponent } from './entrance-control/entrance-control.component';
 import { EntranceControlManualComponent } from './entrance-control-manual/entrance-control-manual.component';
 import { EntranceControlAppComponent } from './entrance-control-app/entrance-control-app.component';
+import { BatchSendComponent } from './batch-send/batch-send.component';
 
 const routes: Routes = [
     { 
@@ -39,6 +40,11 @@ const routes: Routes = [
         path: 'events/:id',
         component: EventSettingsComponent, 
         canActivate: [AuthGuardService] 
+    },
+    { 
+        path: 'tickets/sendmails',
+        component: BatchSendComponent, 
+        canActivate: [AuthGuardService, EventGuardService] 
     },
     { 
         path: 'tickets', 
