@@ -16,6 +16,7 @@ namespace EventManagement.TicketGeneration
         public string EventLocation { get; set; }
         public string TicketType { get; set; }
         public string Price { get; set; }
+        public string Transmissible { get; set; }
         public string EntranceTime { get; set; }
         public string BeginTime { get; set; }
         public IList<string> Address { get; set; } = new List<string>();
