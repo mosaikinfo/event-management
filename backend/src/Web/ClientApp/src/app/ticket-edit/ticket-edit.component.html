@@ -56,14 +56,19 @@
   <div class="form-group">
     <select name="paymentStatus" [(ngModel)]="model.paymentStatus" class="custom-select">
       <option value="{{ PaymentStatus.Open }}">Offen</option>
-      <option value="{{ PaymentStatus.PaidPartial }}">Anzahlung geleistet</option>
+      <option value="{{ PaymentStatus.PaidPartial }}">Teilweise bezahlt</option>
       <option value="{{ PaymentStatus.Paid }}">Bezahlt</option>
     </select>
   </div>
 
   <div class="form-group">
     <label for="amountPaid">Bereits bezahlter Betrag</label>
-    <input name="amountPaid" [(ngModel)]="model.amountPaid" type="number" class="form-control">
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">€</span>
+      </div>
+      <input name="amountPaid" [(ngModel)]="model.amountPaid" type="number" class="form-control" readonly="readonly">
+    </div>
   </div>
 
   <hr>

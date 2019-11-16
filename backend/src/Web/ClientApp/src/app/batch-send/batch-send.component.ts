@@ -14,7 +14,7 @@ export class BatchSendComponent implements OnInit {
   dryRun: boolean;
   paymentStatus = [
     { name: "Offen", value: PaymentStatus.Open },
-    { name: "Anzahlung geleistet", value: PaymentStatus.PaidPartial },
+    { name: "Teilweise bezahlt", value: PaymentStatus.PaidPartial },
     { name: "Bezahlt", value: PaymentStatus.Paid }
   ];
   selectedPaymentStatus: PaymentStatus[] = [];
