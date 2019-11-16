@@ -4,6 +4,7 @@ using QRCoder;
 using System;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Text;
 
 namespace EventManagement.TicketGeneration
 {
@@ -36,8 +37,9 @@ namespace EventManagement.TicketGeneration
             Font standardfont = FontFactory.GetFont("Arial", 13);
             Font standardboldfont = FontFactory.GetFont("Arial", 13, Font.BOLD);
             Font smallfont = FontFactory.GetFont("Arial", 10);
-            Font importantfont = FontFactory.GetFont("Arial", 13, Font.BOLD, new BaseColor(16711680));
-            Font notefont = FontFactory.GetFont("Arial", 13, Font.BOLD, new BaseColor(51200));
+            Font redfont = FontFactory.GetFont("Arial", 13, Font.BOLD, new BaseColor(16711680));
+            Font greenfont = FontFactory.GetFont("Arial", 13, Font.BOLD, new BaseColor(51200));
+            Font yellowfont = FontFactory.GetFont("Arial", 13, Font.BOLD, new BaseColor(16763904));
             Font smallitalicfont = FontFactory.GetFont("Arial", 8, Font.ITALIC);
 
             // Generate QR Code
@@ -72,6 +74,7 @@ namespace EventManagement.TicketGeneration
             logocell.Image = Image.GetInstance(values.EventLogo);
             logocell.HorizontalAlignment = 2;
             logocell.VerticalAlignment = 1;
+            logocell.FixedHeight = 120;
             logocell.BorderWidth = 0;
             logocell.Rowspan = 2;
             headertable.AddCell(logocell);
@@ -82,7 +85,7 @@ namespace EventManagement.TicketGeneration
             ticketidcell.BorderWidth = 0;
             headertable.AddCell(ticketidcell);
 
-            PdfPCell importantnotecell = new PdfPCell(new Phrase(new Chunk("Bitte zeigen Sie den QR-Code gut lesbar beim Einlass vor.", importantfont)));
+            PdfPCell importantnotecell = new PdfPCell(new Phrase(new Chunk("Bitte zeigen Sie den QR-Code gut lesbar beim Einlass vor.", yellowfont)));
             importantnotecell.HorizontalAlignment = 0;
             importantnotecell.VerticalAlignment = 1;
             importantnotecell.BorderWidth = 0;
@@ -162,7 +165,17 @@ namespace EventManagement.TicketGeneration
             eventstartcell.PaddingBottom = 20;
             eventtable.AddCell(eventstartcell);
 
-            PdfPCell eventpricecell = new PdfPCell(new Phrase(new Chunk(values.Price, standardfont)));
+            var sb = new StringBuilder();
+            if (values.Price != null)
+            {
+                sb.AppendLine(values.Price);
+            }
+            else
+            {
+                sb.AppendLine();
+            }
+
+            PdfPCell eventpricecell = new PdfPCell(new Phrase(new Chunk(sb.ToString(), standardfont)));
             eventpricecell.BorderWidth = 0;
             eventpricecell.HorizontalAlignment = 0;
             eventpricecell.VerticalAlignment = 2;
@@ -174,11 +187,24 @@ namespace EventManagement.TicketGeneration
             eventlocationtitlecell.VerticalAlignment = 2;
             eventtable.AddCell(eventlocationtitlecell);
 
-            PdfPCell ticketinfocell = new PdfPCell(new Phrase(new Chunk("Dieses Ticket ist übertragbar.", notefont)));
+
+            sb = new StringBuilder();
+
+            if (values.Transmissible == "true")
+            {
+                sb.AppendLine("Dieses Ticket ist übertragbar.");
+            }
+            else
+            {
+                sb.AppendLine("Dieses Ticket ist nicht übertragbar.");
+            }
+
+            PdfPCell ticketinfocell = new PdfPCell(new Phrase(new Chunk(sb.ToString(), smallfont)));
             ticketinfocell.BorderWidth = 0;
             ticketinfocell.HorizontalAlignment = 0;
             ticketinfocell.VerticalAlignment = 2;
             eventtable.AddCell(ticketinfocell);
+
 
             string address = string.Join("\n", values.Address ?? new string[0]);
             PdfPCell eventlocationcell = new PdfPCell(new Phrase(new Chunk(address, standardfont)));
@@ -192,6 +218,7 @@ namespace EventManagement.TicketGeneration
             #endregion
 
             // Generate Traffic Ticket
+            #region
             if (values.QrTrafficImageUrl != null)
             {
                 //Generate Traffic Table
@@ -226,13 +253,14 @@ namespace EventManagement.TicketGeneration
                 trafficinfo.VerticalAlignment = 1;
                 traffictable.AddCell(trafficinfo);
 
-                PdfPCell trafficnote = new PdfPCell(new Phrase(new Chunk("Das Verkehrsticket ist nicht übertragbar!", importantfont)));
+                PdfPCell trafficnote = new PdfPCell(new Phrase(new Chunk("Das Verkehrsticket ist nicht übertragbar!", redfont)));
                 trafficnote.BorderWidth = 0;
                 trafficnote.VerticalAlignment = 1;
                 traffictable.AddCell(trafficnote);
 
                 document.Add(traffictable);
             }
+            #endregion
 
             // Generate Booking Table
             #region
@@ -244,7 +272,22 @@ namespace EventManagement.TicketGeneration
             bookingtable.SpacingBefore = 10f;
             bookingtable.SpacingAfter = 10f;
 
-            PdfPCell bookinginfocell = new PdfPCell(new Phrase(new Chunk("Bestellt von\nBuchung:\nBuchungsnummer:", smallfont)));
+
+            var sb1 = new StringBuilder();
+            sb1.AppendLine("Bestellt von");
+            sb1.AppendLine("Buchungsdatum:");
+            var sb2 = new StringBuilder();
+            sb2.AppendLine(values.Buyer);
+            sb2.AppendLine(values.BookingDate);
+
+            if (values.BookingNumber != null)
+            {
+                sb1.AppendLine("Buchungsnummer:");
+                sb2.AppendLine(values.BookingNumber);
+            }
+            
+
+            PdfPCell bookinginfocell = new PdfPCell(new Phrase(new Chunk(sb1.ToString(), smallfont)));
             bookinginfocell.BorderWidth = 0;
             bookinginfocell.BorderWidthTop = 2;
             bookinginfocell.PaddingTop = 10;
@@ -252,7 +295,8 @@ namespace EventManagement.TicketGeneration
             bookinginfocell.VerticalAlignment = 0;
             bookingtable.AddCell(bookinginfocell);
 
-            PdfPCell bookingdatacell = new PdfPCell(new Phrase(new Chunk(values.Buyer + "\n" + values.BookingDate + "\n" + values.BookingNumber, smallfont)));
+            
+            PdfPCell bookingdatacell = new PdfPCell(new Phrase(new Chunk(sb2.ToString(), smallfont)));
             bookingdatacell.BorderWidth = 0;
             bookingdatacell.BorderWidthTop = 2;
             bookingdatacell.PaddingTop = 10;
