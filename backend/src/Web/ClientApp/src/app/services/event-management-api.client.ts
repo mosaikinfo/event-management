@@ -2077,7 +2077,6 @@ export enum PaymentStatus {
     Open = 0,
     Paid = 1,
     PaidPartial = 2,
-    Presold = 3,
 }
 
 export class TicketQuotaReportRow implements ITicketQuotaReportRow {
