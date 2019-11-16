@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SessionService } from '../services/session.service';
-import { EventManagementApiClient, Event, TicketType, BatchSendResult } from '../services/event-management-api.client';
+import { EventManagementApiClient, Event, TicketType, BatchSendResult, PaymentStatus } from '../services/event-management-api.client';
 import { PageAlertService } from '../services/page-alert.service';
 
 @Component({
@@ -12,9 +12,16 @@ export class BatchSendComponent implements OnInit {
   currentEvent: Event;
   sendAll: boolean = false;
   dryRun: boolean;
+  paymentStatus = [
+    { name: "Offen", value: PaymentStatus.Open },
+    { name: "Anzahlung geleistet", value: PaymentStatus.PaidPartial },
+    { name: "Bezahlt", value: PaymentStatus.Paid }
+  ];
+  selectedPaymentStatus: PaymentStatus[] = [];
   ticketTypes: TicketType[] = [];
   selectedTicketTypes: string[] = [];
   result: BatchSendResult;
+  
 
   constructor(
     private session: SessionService,
@@ -30,8 +37,11 @@ export class BatchSendComponent implements OnInit {
   async submit(dryRun: boolean) {
     this.result = <BatchSendResult>await this.apiClient
       .ticketDelivery_SendBatchMails(
-        this.currentEvent.id, this.sendAll, this.selectedTicketTypes, dryRun)
-      .toPromise();
+        this.currentEvent.id,
+        this.sendAll,
+        this.selectedTicketTypes,
+        this.selectedPaymentStatus,
+        dryRun).toPromise();
     if (!dryRun) {
       this.alertService.showAlert({
         message: "E-Mails wurden zur Warteschlange hinzugefügt.",

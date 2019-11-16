@@ -69,11 +69,13 @@ namespace EventManagement.WebApp.Controllers
         public async Task<BatchSendResult> SendBatchMailsAsync(Guid eventId, TicketsSendSpecification spec)
         {
             var ticketTypes = spec.TicketTypes ?? new List<Guid>();
+            var paymentStatus = spec.PaymentStatus ?? new List<PaymentStatus>();
 
             var query = _context.Tickets
                 .AsNoTracking()
-                .Where(x => x.EventId == eventId)
-                .Where(x => ticketTypes.Contains(x.TicketTypeId));
+                .Where(x => x.EventId == eventId &&
+                            ticketTypes.Contains(x.TicketTypeId) &&
+                            paymentStatus.Contains(x.PaymentStatus));
 
             if (!spec.SendAll)
             {

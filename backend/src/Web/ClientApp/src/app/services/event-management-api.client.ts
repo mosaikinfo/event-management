@@ -933,10 +933,11 @@ export class EventManagementApiClient extends ServiceBase {
      * @param eventId Id of the event.
      * @param sendAll (optional) Allows sending e-mails twice (even if the ticket has been sent before).
      * @param ticketTypes (optional) Ticket types to filter by.
+     * @param paymentStatus (optional) Payment status to filter by.
      * @param dryRun (optional) Try the method without sending e-mails.
      * @return result of the batch send.
      */
-    ticketDelivery_SendBatchMails(eventId: string, sendAll: boolean | undefined, ticketTypes: string[] | null | undefined, dryRun: boolean | undefined): Observable<BatchSendResult> {
+    ticketDelivery_SendBatchMails(eventId: string, sendAll: boolean | undefined, ticketTypes: string[] | null | undefined, paymentStatus: PaymentStatus[] | null | undefined, dryRun: boolean | undefined): Observable<BatchSendResult> {
         let url_ = this.baseUrl + "/api/events/{eventId}/tickets/sendmails?";
         if (eventId === undefined || eventId === null)
             throw new Error("The parameter 'eventId' must be defined.");
@@ -947,6 +948,8 @@ export class EventManagementApiClient extends ServiceBase {
             url_ += "SendAll=" + encodeURIComponent("" + sendAll) + "&"; 
         if (ticketTypes !== undefined)
             ticketTypes && ticketTypes.forEach(item => { url_ += "TicketTypes=" + encodeURIComponent("" + item) + "&"; });
+        if (paymentStatus !== undefined)
+            paymentStatus && paymentStatus.forEach(item => { url_ += "PaymentStatus=" + encodeURIComponent("" + item) + "&"; });
         if (dryRun === null)
             throw new Error("The parameter 'dryRun' cannot be null.");
         else if (dryRun !== undefined)
@@ -2070,6 +2073,13 @@ export interface IBatchSendResult {
     ticketsWithoutEmailAddress?: number;
 }
 
+export enum PaymentStatus {
+    Open = 0,
+    Paid = 1,
+    PaidPartial = 2,
+    Presold = 3,
+}
+
 export class TicketQuotaReportRow implements ITicketQuotaReportRow {
     name?: string | undefined;
     price?: number;
@@ -2302,13 +2312,6 @@ export interface ITicket {
     isDelivered?: boolean;
     deliveryDate?: Date | undefined;
     deliveryType?: TicketDeliveryType | undefined;
-}
-
-export enum PaymentStatus {
-    Open = 0,
-    Paid = 1,
-    PaidPartial = 2,
-    Presold = 3,
 }
 
 export enum TicketDeliveryType {

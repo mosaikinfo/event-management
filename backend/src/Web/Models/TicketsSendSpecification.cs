@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EventManagement.ApplicationCore.Models;
+using System;
 using System.Collections.Generic;
 
 namespace EventManagement.WebApp.Models
@@ -17,6 +18,11 @@ namespace EventManagement.WebApp.Models
         /// Ticket types to filter by.
         /// </summary>
         public List<Guid> TicketTypes { get; set; }
+
+        /// <summary>
+        /// Payment status to filter by.
+        /// </summary>
+        public List<PaymentStatus> PaymentStatus { get; set; }
 
         /// <summary>
         /// Try the method without sending e-mails.
