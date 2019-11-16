@@ -26,6 +26,9 @@
       - {{ model.lastName }}, {{ model.firstName }}
       </span>
     </h2>
+    <p *ngIf="!isNew() && model.bookingDate">
+      Buchungsdatum: {{ model.bookingDate | date:'longDate' }}
+    </p>
   </div>
 
   <div *ngIf="!isNew()">
