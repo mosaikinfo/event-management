@@ -1,11 +1,15 @@
 ﻿using EventManagement.ApplicationCore.Models;
 using EventManagement.ApplicationCore.TicketDelivery;
 using EventManagement.ApplicationCore.Tickets;
+using EventManagement.Infrastructure.Data;
+using EventManagement.WebApp.Models;
 using EventManagement.WebApp.Shared.Mvc;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EventManagement.WebApp.Controllers
@@ -17,16 +21,19 @@ namespace EventManagement.WebApp.Controllers
     [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class TicketDeliveryController : EventManagementController
     {
+        private readonly EventsDbContext _context;
         private readonly ITicketsRepository _ticketsRepository;
         private readonly ITicketDeliveryService _ticketDeliveryService;
         private readonly ITicketRedirectService _ticketRedirectService;
         private readonly IBackgroundJobClient _backgroundJobs;
 
-        public TicketDeliveryController(ITicketsRepository ticketsRepository,
+        public TicketDeliveryController(EventsDbContext context,
+                                        ITicketsRepository ticketsRepository,
                                         ITicketDeliveryService ticketDeliveryService,
                                         ITicketRedirectService ticketRedirectService,
                                         IBackgroundJobClient backgroundJobs)
         {
+            _context = context;
             _ticketsRepository = ticketsRepository;
             _ticketDeliveryService = ticketDeliveryService;
             _ticketRedirectService = ticketRedirectService;
@@ -37,7 +44,7 @@ namespace EventManagement.WebApp.Controllers
         /// Send a ticket via e-mail.
         /// </summary>
         /// <param name="ticketId">Id of the ticket.</param>
-        [HttpPost("tickets/{ticketId}/mail")]
+        [HttpPost("tickets/{ticketId}/sendMail")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public async Task<IActionResult> SendMailAsync(Guid ticketId)
         {
@@ -46,17 +53,65 @@ namespace EventManagement.WebApp.Controllers
                 return NotFound(new ProblemDetails
                 { Detail = "Ticket with id not found." });
 
+            await SendMailAsync(ticket);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Send multiple tickets via e-mail at once.
+        /// </summary>
+        /// <param name="eventId">Id of the event.</param>
+        /// <param name="spec">Specifies the list of tickets you want to send.</param>
+        /// <returns>result of the batch send.</returns>
+        [HttpPost("events/{eventId}/tickets/sendMails")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
+        public async Task<BatchSendResult> SendBatchMailsAsync(Guid eventId, TicketsSendSpecification spec)
+        {
+            var query = _context.Tickets
+                .AsNoTracking()
+                .Where(x => x.EventId == eventId);
+
+            if (!spec.SendAll)
+            {
+                query = query.Where(x => !x.IsDelivered);
+            }
+
+            if (spec.TicketTypes != null && spec.TicketTypes.Any())
+            {
+                query = query.Where(x => spec.TicketTypes.Contains(x.TicketTypeId));
+            }
+
+            var tickets = await query.ToListAsync();
+            var ticketsWithEmail = tickets.Where(x => x.Mail != null).ToList();
+            var ticketsWithoutEmail = tickets.Where(x => x.Mail == null).ToList();
+
+            if (!spec.DryRun)
+            {
+                foreach (ApplicationCore.Models.Ticket ticket in ticketsWithEmail)
+                {
+                    await SendMailAsync(ticket);
+                }
+            }
+
+            return new BatchSendResult
+            {
+                DryRun = spec.DryRun,
+                MailsSent = ticketsWithEmail.Count,
+                TicketsWithoutEmailAddress = ticketsWithoutEmail.Count
+            };
+        }
+
+        private async Task SendMailAsync(ApplicationCore.Models.Ticket ticket)
+        {
             var deliveryType = TicketDeliveryType.Email;
-            await _ticketDeliveryService.ValidateAsync(ticketId, deliveryType);
+            await _ticketDeliveryService.ValidateAsync(ticket.Id, deliveryType);
 
             string validationUriFormat = GetTicketValidationUriFormatString();
             string validationUri = GetTicketValidationUri(ticket.TicketSecret);
-            string homepageUrl = await _ticketRedirectService.GetRedirectUrlAsync(ticketId, validationUri);
+            string homepageUrl = await _ticketRedirectService.GetRedirectUrlAsync(ticket.Id, validationUri);
 
             _backgroundJobs.Enqueue(() => _ticketDeliveryService
-                .SendTicketAsync(ticketId, deliveryType, validationUriFormat, homepageUrl));
-
-            return Ok();
+                .SendTicketAsync(ticket.Id, deliveryType, validationUriFormat, homepageUrl));
         }
     }
 }
