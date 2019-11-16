@@ -12,7 +12,8 @@ namespace EventManagement.ApplicationCore.TicketDelivery
         /// <param name="mail">text email message using the #script language within the message body and subject.</param>
         /// <param name="ticket">Ticket data to populate the variables that can be used within the template.</param>
         /// <returns>rendered template</returns>
-        public static async Task<EmailMessage> RenderTicketMailAsync(EmailMessage mail, Models.Ticket ticket)
+        public static async Task<EmailMessage> RenderTicketMailAsync(
+            EmailMessage mail, Models.Ticket ticket, string homepageUrl)
         {
             var context = new ScriptContext
             {
@@ -25,7 +26,7 @@ namespace EventManagement.ApplicationCore.TicketDelivery
                     ["TicketPrice"] = ticket.TicketType.Price,
                     ["EventName"] = ticket.Event.Name,
                     ["EventLocation"] = ticket.Event.Location,
-                    ["EventHomepageUrl"] = ticket.Event.HomepageUrl,
+                    ["EventHomepageUrl"] = homepageUrl,
                     ["EventHost"] = ticket.Event.Host
                 }
             };
