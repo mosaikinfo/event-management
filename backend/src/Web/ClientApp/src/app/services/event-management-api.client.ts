@@ -2075,8 +2075,10 @@ export class Ticket implements ITicket {
     lastName?: string | undefined;
     firstName?: string | undefined;
     birthDate?: Date | undefined;
+    gender?: string | undefined;
     address?: string | undefined;
     roomNumber?: string | undefined;
+    bookingDate?: Date | undefined;
     createdAt?: Date;
     editedAt?: Date | undefined;
     creator?: string | undefined;
@@ -2109,8 +2111,10 @@ export class Ticket implements ITicket {
             this.lastName = data["lastName"];
             this.firstName = data["firstName"];
             this.birthDate = data["birthDate"] ? new Date(data["birthDate"].toString()) : <any>undefined;
+            this.gender = data["gender"];
             this.address = data["address"];
             this.roomNumber = data["roomNumber"];
+            this.bookingDate = data["bookingDate"] ? new Date(data["bookingDate"].toString()) : <any>undefined;
             this.createdAt = data["createdAt"] ? new Date(data["createdAt"].toString()) : <any>undefined;
             this.editedAt = data["editedAt"] ? new Date(data["editedAt"].toString()) : <any>undefined;
             this.creator = data["creator"];
@@ -2143,8 +2147,10 @@ export class Ticket implements ITicket {
         data["lastName"] = this.lastName;
         data["firstName"] = this.firstName;
         data["birthDate"] = this.birthDate ? this.birthDate.toISOString() : <any>undefined;
+        data["gender"] = this.gender;
         data["address"] = this.address;
         data["roomNumber"] = this.roomNumber;
+        data["bookingDate"] = this.bookingDate ? this.bookingDate.toISOString() : <any>undefined;
         data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
         data["editedAt"] = this.editedAt ? this.editedAt.toISOString() : <any>undefined;
         data["creator"] = this.creator;
@@ -2170,8 +2176,10 @@ export interface ITicket {
     lastName?: string | undefined;
     firstName?: string | undefined;
     birthDate?: Date | undefined;
+    gender?: string | undefined;
     address?: string | undefined;
     roomNumber?: string | undefined;
+    bookingDate?: Date | undefined;
     createdAt?: Date;
     editedAt?: Date | undefined;
     creator?: string | undefined;
