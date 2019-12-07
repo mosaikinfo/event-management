@@ -32,8 +32,6 @@ namespace EventManagement.ApplicationCore.Tickets
             int lifetime = 365 * 24 * 3600; // 365 days.
             var jwt = await _tokenService.IssueJwtAsync(lifetime, claims);
             var sb = new StringBuilder(ticket.Event.HomepageUrl);
-            if (!ticket.Event.HomepageUrl.EndsWith("/"))
-                sb.Append("/");
             sb.Append(jwt);
             return sb.ToString();
         }
