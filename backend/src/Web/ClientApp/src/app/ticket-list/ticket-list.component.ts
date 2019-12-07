@@ -11,7 +11,6 @@ import { SessionService } from '../services/session.service';
 })
 export class TicketListComponent implements OnInit {
   event: Event;
-  ticketTypes: TicketType[];
   tickets: Ticket[];
   selectedTicket: Ticket;
   
@@ -27,6 +26,9 @@ export class TicketListComponent implements OnInit {
   ];
   filterDelivered: boolean;
   filterOnlyValidated: boolean;
+
+  ticketTypeOptions: SelectItem[];
+  selectedTicketType: any;
 
   searchText: string;
   filter: string;
@@ -44,9 +46,16 @@ export class TicketListComponent implements OnInit {
   }
 
   async loadTicketTypes(): Promise<void> {
-    this.ticketTypes = await this.apiClient
+    let ticketTypes = await this.apiClient
       .ticketTypes_GetTicketTypes(this.event.id)
       .toPromise();
+    this.ticketTypeOptions = [{ label: "Alle", value: undefined }];
+    for(let ticketType of ticketTypes) {
+      this.ticketTypeOptions.push({
+        label: ticketType.name, 
+        value: ticketType.id
+      });
+    }
   }
 
   async loadTickets(): Promise<void> {
@@ -63,7 +72,8 @@ export class TicketListComponent implements OnInit {
           page,
           this.pageSize,
           this.filterDelivered,
-          this.filterOnlyValidated)
+          this.filterOnlyValidated,
+          this.selectedTicketType)
         .toPromise();
     this.tickets = result.data;
     this.totalRecords = result.totalCount;
@@ -101,12 +111,5 @@ export class TicketListComponent implements OnInit {
     if (this.selectedTicket) {
       this.router.navigate(["/tickets", this.selectedTicket.id]);
     }
-  }
-
-  getTicketType(ticketTypeId: string): TicketType {
-    if (this.ticketTypes) {
-      return this.ticketTypes.find(t => t.id === ticketTypeId);
-    }
-    return null;
   }
 }

@@ -12,6 +12,15 @@
 			<div class="col-auto d-lg-none">
 				<h2 class="h5">Filter</h2>
 			</div>
+			<label class="mr-2 col-lg-auto">Ticket-Typ</label>
+			<p-dropdown class="col-lg-auto" 
+				[options]="ticketTypeOptions"
+				[(ngModel)]="selectedTicketType"
+				(onChange)="loadTickets()"></p-dropdown>
+		</div>
+	</div>
+	<div class="col-lg-auto filter my-2">
+		<div class="row">
 			<label class="mr-2 col-lg-auto">Ticket zugestellt</label>
 			<p-dropdown class="col-lg-auto" 
 				[options]="optionalSwitchOptions" [(ngModel)]="filterDelivered"
@@ -68,7 +77,7 @@
 			</td>
 			<td>
 				<span class="ui-column-title">Ticket-Typ</span>
-				{{ getTicketType(ticket.ticketTypeId)?.name }}
+				{{ ticket.ticketTypeName }}
 			</td>
 			<td>
 				<span class="ui-column-title">Zimmer</span>

@@ -11,6 +11,7 @@ namespace EventManagement.WebApp.Models
         public string TicketNumber { get; set; }
         public Guid EventId { get; set; }
         public Guid TicketTypeId { get; set; }
+        public string TicketTypeName { get; set; }
         public bool Validated { get; set; }
         public string Mail { get; set; }
         public string Phone { get; set; }
