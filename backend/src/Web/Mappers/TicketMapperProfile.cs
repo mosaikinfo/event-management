@@ -23,7 +23,8 @@ namespace EventManagement.WebApp.Mappers
                     e => GenderExtensions.FromStringValue(e.Gender)))
                 .ForMember(e => e.BirthDate, opt => opt.MapFrom(
                     e => e.BirthDate.HasValue ? (DateTime?)e.BirthDate.Value.ToLocalTime().Date : null))
-                .ForMember(e => e.PaymentStatus, opt => opt.MapFrom<PaymentStatusResolver>());
+                .ForMember(e => e.PaymentStatus, opt => opt.MapFrom<PaymentStatusResolver>())
+                .ForMember(e => e.TicketType, opt => opt.Ignore());
         }
 
         public class PaymentStatusResolver : IValueResolver<Models.Ticket, Ticket, PaymentStatus>
