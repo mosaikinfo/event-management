@@ -2203,7 +2203,7 @@ export class Ticket implements ITicket {
     phone?: string | undefined;
     paymentStatus?: PaymentStatus;
     amountPaid?: number | undefined;
-    termsAccepted?: boolean | undefined;
+    termsAccepted?: boolean;
     lastName?: string | undefined;
     firstName?: string | undefined;
     birthDate?: Date | undefined;
@@ -2307,7 +2307,7 @@ export interface ITicket {
     phone?: string | undefined;
     paymentStatus?: PaymentStatus;
     amountPaid?: number | undefined;
-    termsAccepted?: boolean | undefined;
+    termsAccepted?: boolean;
     lastName?: string | undefined;
     firstName?: string | undefined;
     birthDate?: Date | undefined;

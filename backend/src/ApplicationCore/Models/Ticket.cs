@@ -13,7 +13,7 @@ namespace EventManagement.ApplicationCore.Models
         public string Phone { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public float? AmountPaid { get; set; }
-        public bool? TermsAccepted { get; set; }
+        public bool TermsAccepted { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public Gender? Gender { get; set; }

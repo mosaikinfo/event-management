@@ -35,8 +35,7 @@
     <h2 class="h5">Einlasskontrolle</h2>
     <div class="form-group input-switch">
       <label>Ticket wurde geprüft</label>
-      <p-inputSwitch name="validated" [(ngModel)]="model.validated">
-      </p-inputSwitch>
+      <p-inputSwitch name="validated" [(ngModel)]="model.validated"></p-inputSwitch>
     </div>
   </div>
 
@@ -74,15 +73,8 @@
   <hr>
   <h2 class="h5">Einverständniserklärung</h2>
   <div class="form-group input-switch">
-    <label>Hat die Person die Bedingungen (z. B. Datenschutzbestimmungen/AGB) des Veranstalters akzeptiert?</label>
-    <div>
-      <p-triStateCheckbox name="termsAccepted" [(ngModel)]="model.termsAccepted"></p-triStateCheckbox>
-      <p [ngSwitch]="model.termsAccepted">
-        (<span *ngSwitchCase="null">unbekannt</span>
-        <span *ngSwitchCase="false">nicht akzeptiert</span>
-        <span *ngSwitchCase="true">akzeptiert</span>)
-      </p>
-    </div>
+    <label>Liegt die Einverständniserklärung der Eltern vor?</label>
+    <p-inputSwitch name="termsAccepted" [(ngModel)]="model.termsAccepted"></p-inputSwitch>
   </div>
 
   <hr>

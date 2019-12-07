@@ -255,7 +255,7 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.Property<string>("RoomNumber")
                         .HasMaxLength(300);
 
-                    b.Property<bool?>("TermsAccepted");
+                    b.Property<bool>("TermsAccepted");
 
                     b.Property<string>("TicketNumber")
                         .IsRequired()
