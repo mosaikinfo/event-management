@@ -120,7 +120,7 @@ namespace EventManagement.WebApp.Controllers
                     Time = entity.BookingDate.Value,
                     TicketId = entity.Id,
                     Action = EventManagementConstants.Auditing.Actions.TicketOrder,
-                    Detail = $"Ticket der Kategorie {entity.TicketType.Name} wurde für {entity.TicketType.Price:c} bestellt.",
+                    Detail = $"Ticket der Kategorie \"{entity.TicketType.Name}\" wurde für {entity.TicketType.Price:c} bestellt.",
                     Succeeded = true
                 });
             }
@@ -188,6 +188,20 @@ namespace EventManagement.WebApp.Controllers
             if (model.EventId != entity.EventId)
                 return BadRequest(
                     new ProblemDetails { Detail = "The ticket is only valid for a single event." });
+
+            if (model.TermsAccepted != entity.TermsAccepted)
+            {
+                await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent
+                {
+                    Time = DateTime.UtcNow,
+                    TicketId = entity.Id,
+                    Action = EventManagementConstants.Auditing.Actions.TermsAccepted,
+                    Detail = model.TermsAccepted
+                        ? "Die Einverständniserklärung der Eltern wurde abgegeben."
+                        : "Status der Einverständniserklärung wurde in \"nicht abgegeben\" geändert.",
+                    Succeeded = model.TermsAccepted
+                });
+            }
 
             _mapper.Map(model, entity);
             SetAuthorInfo(entity);

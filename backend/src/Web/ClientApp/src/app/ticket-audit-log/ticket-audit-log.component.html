@@ -6,21 +6,26 @@
 </nav>
 
 <div *ngFor="let entry of entries" class="row mt-4">
-  <div [ngSwitch]="entry.action" class="col-sm mb-2" style="max-width: 80px">
-    <span *ngSwitchCase="'email_sent'" [ngClass]="{
+  <div class="col-sm mb-2" style="max-width: 80px">
+    <span [ngSwitch]="entry.action" [ngClass]="{
         'icon': true,
         'icon-success': entry.succeeded,
         'icon-danger': !entry.succeeded 
       }">
-      <i class="material-icons">
-        {{ entry.succeeded ? 'email' : 'cancel_schedule_send' }}
-      </i>
-    </span>
-    <span *ngSwitchCase="'ticket_order'" class="icon icon-success">
-      <i class="fas fa-shopping-cart"></i>
-    </span>
-    <span *ngSwitchDefault class="icon icon-success">
-      <i class="material-icons">done</i>
+      <span *ngSwitchCase="'email_sent'">
+        <i class="material-icons">
+          {{ entry.succeeded ? 'email' : 'cancel_schedule_send' }}
+        </i>
+      </span>
+      <span *ngSwitchCase="'ticket_order'">
+        <i class="fas fa-shopping-cart"></i>
+      </span>
+      <span *ngSwitchCase="'terms_accepted'">
+        <i class="fas fa-file-signature"></i>
+      </span>
+      <span *ngSwitchDefault>
+        <i class="material-icons">done</i>
+      </span>
     </span>
   </div>
   <div class="col-sm">
