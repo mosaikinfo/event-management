@@ -137,23 +137,12 @@ namespace EventManagement.WebApp.Controllers
         /// <returns>updated ticket.</returns>
         [HttpPut("tickets/{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
-        public ActionResult UpdateTicket(Guid id, [FromBody] Ticket model)
+        public async Task<IActionResult> UpdateTicketAsync(Guid id, [FromBody] Ticket model)
         {
             if (id != model.Id)
                 return BadRequest(new ProblemDetails { Detail = "wrong id" });
-            var entity = _context.Tickets.Find(model.Id);
-            if (entity == null)
-                return NotFound();
-            if (model.TicketNumber != entity.TicketNumber)
-                return BadRequest(
-                    new ProblemDetails { Detail = "The TicketNumber can't be changed." });
-            if (model.EventId != entity.EventId)
-                return BadRequest(
-                    new ProblemDetails { Detail = "The ticket is only valid for a single event." });
-            _mapper.Map(model, entity);
-            SetAuthorInfo(entity);
-            _context.SaveChanges();
-            return NoContent();
+
+            return await UpdateTicketResultAsync(id, model);
         }
 
         /// <summary>
@@ -165,22 +154,44 @@ namespace EventManagement.WebApp.Controllers
         /// <returns></returns>
         [HttpPatch("tickets/{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Update))]
-        public ActionResult UpdateTicketPatch(Guid id, [FromBody] JsonPatchDocument<Ticket> patchDoc)
+        public Task<IActionResult> UpdateTicketPatchAsync(Guid id, [FromBody] JsonPatchDocument<Ticket> patchDoc)
         {
-            var entity = _context.Tickets.Find(id);
+            return UpdateTicketResultAsync(id, source =>
+            {
+                var model = _mapper.Map<Ticket>(source);
+                patchDoc.ApplyTo(model);
+                return model;
+            });
+        }
+
+        /// <summary>Update ticket data and return the right <see cref="IActionResult"/>.</summary>
+        /// <param name="id">Id of the ticket to update.</param>
+        /// <param name="model">New model with updated values.</param>
+        private Task<IActionResult> UpdateTicketResultAsync(Guid id, Ticket model)
+            => UpdateTicketResultAsync(id, x => model);
+
+        /// <summary>Update ticket data and return the right <see cref="IActionResult"/>.</summary>
+        /// <param name="id">Id of the ticket to update.</param>
+        /// <param name="modelResolver">Function that returns the new model with updated values.</param>
+        private async Task<IActionResult> UpdateTicketResultAsync(Guid id,
+            Func<ApplicationCore.Models.Ticket, Ticket> modelResolver)
+        {
+            ApplicationCore.Models.Ticket entity = await _context.Tickets.FindAsync(id);
             if (entity == null)
                 return NotFound();
-            var model = _mapper.Map<Ticket>(entity);
-            patchDoc.ApplyTo(model);
+
+            Ticket model = modelResolver(entity);
+
             if (model.TicketNumber != entity.TicketNumber)
                 return BadRequest(
                     new ProblemDetails { Detail = "The TicketNumber can't be changed." });
             if (model.EventId != entity.EventId)
                 return BadRequest(
                     new ProblemDetails { Detail = "The ticket is only valid for a single event." });
+
             _mapper.Map(model, entity);
             SetAuthorInfo(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
