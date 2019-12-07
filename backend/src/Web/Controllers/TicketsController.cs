@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EventManagement.ApplicationCore.Auditing;
 using EventManagement.ApplicationCore.Interfaces;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EventManagement.WebApp.Controllers
 {
@@ -22,14 +24,17 @@ namespace EventManagement.WebApp.Controllers
         private readonly EventsDbContext _context;
         private readonly IMapper _mapper;
         private readonly ITicketNumberService _ticketNumberService;
+        private readonly IAuditEventLog _auditEventLog;
 
         public TicketsController(EventsDbContext context,
                                  IMapper mapper,
-                                 ITicketNumberService ticketNumberService)
+                                 ITicketNumberService ticketNumberService,
+                                 IAuditEventLog auditEventLog)
         {
             _context = context;
             _mapper = mapper;
             _ticketNumberService = ticketNumberService;
+            _auditEventLog = auditEventLog;
         }
 
         /// <summary>
@@ -89,7 +94,7 @@ namespace EventManagement.WebApp.Controllers
         /// <returns>details of created ticket.</returns>
         [HttpPost("tickets")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
-        public ActionResult<Ticket> CreateTicket(Ticket model)
+        public async Task<ActionResult<Ticket>> CreateTicketAsync(Ticket model)
         {
             if (model.Id != Guid.Empty)
                 return BadRequest(
@@ -106,6 +111,20 @@ namespace EventManagement.WebApp.Controllers
             SetAuthorInfo(entity);
             _context.Add(entity);
             _context.SaveChanges();
+            _context.Entry(entity).Reference(e => e.TicketType).Load();
+
+            if (entity.BookingDate != null)
+            {
+                await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent
+                {
+                    Time = entity.BookingDate.Value,
+                    TicketId = entity.Id,
+                    Action = EventManagementConstants.Auditing.Actions.TicketOrder,
+                    Detail = $"Ticket der Kategorie {entity.TicketType.Name} wurde für {entity.TicketType.Price:c} bestellt.",
+                    Succeeded = true
+                });
+            }
+
             model = _mapper.Map<Ticket>(entity);
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
         }
@@ -193,7 +212,7 @@ namespace EventManagement.WebApp.Controllers
             }
             else
             {
-                // It is only an API Client (S2S) without user.
+                // API Client (S2S) without user.
                 // TODO: Save client id as author information.
                 entity.EditorId = null;
             }

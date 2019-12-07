@@ -38,6 +38,7 @@
         {
             public static class Actions
             {
+                public const string TicketOrder = "ticket_order";
                 public const string EmailSent = "email_sent";
             }
         }

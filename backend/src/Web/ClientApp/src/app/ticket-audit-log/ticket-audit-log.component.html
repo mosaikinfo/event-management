@@ -9,14 +9,17 @@
   <div [ngSwitch]="entry.action" class="col-sm mb-2" style="max-width: 80px">
     <span *ngSwitchCase="'email_sent'" [ngClass]="{
         'icon': true,
-        'icon-primary': entry.succeeded,
+        'icon-success': entry.succeeded,
         'icon-danger': !entry.succeeded 
       }">
       <i class="material-icons">
         {{ entry.succeeded ? 'email' : 'cancel_schedule_send' }}
       </i>
     </span>
-    <span *ngSwitchDefault class="icon icon-primary">
+    <span *ngSwitchCase="'ticket_order'" class="icon icon-success">
+      <i class="fas fa-shopping-cart"></i>
+    </span>
+    <span *ngSwitchDefault class="icon icon-success">
       <i class="material-icons">done</i>
     </span>
   </div>
