@@ -61,6 +61,8 @@ namespace EventManagement.ApplicationCore.Tickets
 
             if (ticketValidationUrl != null)
                 yield return new Claim(EventManagementClaimTypes.QrCode, ticketValidationUrl);
+
+            yield return new Claim(EventManagementClaimTypes.TicketType, ticket.TicketType.Name);
         }
     }
 }
