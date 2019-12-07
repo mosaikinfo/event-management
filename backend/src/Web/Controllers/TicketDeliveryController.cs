@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace EventManagement.WebApp.Controllers
@@ -22,6 +23,11 @@ namespace EventManagement.WebApp.Controllers
     [Authorize(EventManagementConstants.AdminApi.PolicyName)]
     public class TicketDeliveryController : EventManagementController
     {
+        /// <summary>
+        /// Time delay in seconds between each e-mail when batch sending e-mail.
+        /// </summary>
+        public const int BatchMailSentIntervalSeconds = 2;
+
         private readonly EventsDbContext _context;
         private readonly ITicketsRepository _ticketsRepository;
         private readonly ITicketDeliveryService _ticketDeliveryService;
@@ -88,9 +94,11 @@ namespace EventManagement.WebApp.Controllers
 
             if (!spec.DryRun)
             {
+                int secondsDelay = 0;
                 foreach (ApplicationCore.Models.Ticket ticket in ticketsWithEmail)
                 {
-                    await SendMailAsync(ticket);
+                    secondsDelay += BatchMailSentIntervalSeconds;
+                    await SendMailAsync(ticket, secondsDelay);
                 }
             }
 
@@ -102,7 +110,8 @@ namespace EventManagement.WebApp.Controllers
             };
         }
 
-        private async Task SendMailAsync(ApplicationCore.Models.Ticket ticket)
+        private async Task SendMailAsync(ApplicationCore.Models.Ticket ticket,
+                                         int secondsDelay = BatchMailSentIntervalSeconds)
         {
             var deliveryType = TicketDeliveryType.Email;
             await _ticketDeliveryService.ValidateAsync(ticket.Id, deliveryType);
@@ -111,8 +120,13 @@ namespace EventManagement.WebApp.Controllers
             string validationUri = GetTicketValidationUri(ticket.TicketSecret);
             string homepageUrl = await _ticketRedirectService.GetRedirectUrlAsync(ticket.Id, validationUri);
 
-            _backgroundJobs.Enqueue(() => _ticketDeliveryService
-                .SendTicketAsync(ticket.Id, deliveryType, validationUriFormat, homepageUrl));
+            Expression<Action> methodCall =
+                () => _ticketDeliveryService.SendTicketAsync(
+                    ticket.Id, deliveryType, validationUriFormat, homepageUrl);
+
+            _backgroundJobs.Schedule(
+                methodCall,
+                TimeSpan.FromSeconds(secondsDelay));
         }
     }
 }

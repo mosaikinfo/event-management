@@ -94,15 +94,13 @@ namespace EventManagement.ApplicationCore.TicketDelivery
                 }
             }
 
-            var mail = await EmailTemplateService.RenderTicketMailAsync(
-                new EmailMessage
-                {
-                    From = { args.MailSettings.SenderAddress },
-                    To = recipients,
-                    ReplyTo = { args.MailSettings.ReplyToAddress },
-                    Subject = args.MailSettings.Subject,
-                    Body = args.MailSettings.Body,
-                    Attachments =
+            var message = new EmailMessage
+            {
+                From = { args.MailSettings.SenderAddress },
+                To = recipients,
+                Subject = args.MailSettings.Subject,
+                Body = args.MailSettings.Body,
+                Attachments =
                     {
                         new EmailAttachment
                         {
@@ -111,7 +109,13 @@ namespace EventManagement.ApplicationCore.TicketDelivery
                             Stream = stream
                         }
                     }
-                }, args.Ticket, homepageUrl);
+            };
+
+            if (!string.IsNullOrEmpty(args.MailSettings.ReplyToAddress))
+                message.ReplyTo.Add(args.MailSettings.ReplyToAddress);
+
+            var mail = await EmailTemplateService
+                .RenderTicketMailAsync(message, args.Ticket, homepageUrl);
 
             try
             {
