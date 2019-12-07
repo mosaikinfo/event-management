@@ -21,6 +21,8 @@ namespace EventManagement.WebApp.Models
         [Required]
         public string SenderAddress { get; set; }
 
+        public string ReplyToAddress { get; set; }
+
         [Required]
         public string Subject { get; set; }
 

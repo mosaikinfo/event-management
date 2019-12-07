@@ -16,6 +16,8 @@ namespace EventManagement.ApplicationCore.Models
 
         public string SenderAddress { get; set; }
 
+        public string ReplyToAddress { get; set; }
+
         public string Subject { get; set; } = "Your ticket | {{ EventName }}";
 
         public string Body { get; set; } = @"{{#if FirstName}}Hi {{FirstName}}{{else}}Hey Dude{{/if}},

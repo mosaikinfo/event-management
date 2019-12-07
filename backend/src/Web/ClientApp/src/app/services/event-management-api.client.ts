@@ -1959,6 +1959,7 @@ export class MailSettings implements IMailSettings {
     smtpPassword?: string | undefined;
     useStartTls?: boolean;
     senderAddress!: string;
+    replyToAddress?: string | undefined;
     subject!: string;
     body!: string;
     enableDemoMode?: boolean;
@@ -1981,6 +1982,7 @@ export class MailSettings implements IMailSettings {
             this.smtpPassword = data["smtpPassword"];
             this.useStartTls = data["useStartTls"];
             this.senderAddress = data["senderAddress"];
+            this.replyToAddress = data["replyToAddress"];
             this.subject = data["subject"];
             this.body = data["body"];
             this.enableDemoMode = data["enableDemoMode"];
@@ -2007,6 +2009,7 @@ export class MailSettings implements IMailSettings {
         data["smtpPassword"] = this.smtpPassword;
         data["useStartTls"] = this.useStartTls;
         data["senderAddress"] = this.senderAddress;
+        data["replyToAddress"] = this.replyToAddress;
         data["subject"] = this.subject;
         data["body"] = this.body;
         data["enableDemoMode"] = this.enableDemoMode;
@@ -2026,6 +2029,7 @@ export interface IMailSettings {
     smtpPassword?: string | undefined;
     useStartTls?: boolean;
     senderAddress: string;
+    replyToAddress?: string | undefined;
     subject: string;
     body: string;
     enableDemoMode?: boolean;

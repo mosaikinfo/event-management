@@ -9,6 +9,8 @@ namespace EventManagement.ApplicationCore.TicketDelivery
 
         public IList<string> To { get; set; } = new List<string>();
 
+        public IList<string> ReplyTo { get; set; } = new List<string>();
+
         public string Subject { get; set; }
 
         public string Body { get; set; }

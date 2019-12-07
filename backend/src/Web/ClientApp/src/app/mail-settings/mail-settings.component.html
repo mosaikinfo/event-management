@@ -74,6 +74,14 @@
   </div>
 
   <div class="form-group">
+    <label for="replyToAddress">Reply-To E-Mail-Adresse</label>
+    <p class="form-text text-muted">
+      Nur ausfüllen, wenn die Antworten an eine andere E-Mail-Adresse geschickt werden sollen.
+    </p>
+    <input type="email" class="form-control" name="replyToAddress" id="replyToAddress" maxlength="300" [(ngModel)]="model.replyToAddress">
+  </div>
+
+  <div class="form-group">
     <label for="subject">Betreff</label>
     <input type="text" class="form-control" name="subject" id="subject" maxlength="300" [(ngModel)]="model.subject" required>
   </div>

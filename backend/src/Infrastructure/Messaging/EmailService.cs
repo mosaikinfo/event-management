@@ -53,6 +53,7 @@ namespace EventManagement.Infrastructure.Messaging
             var message = new MimeMessage();
             message.From.AddRange(mail.From.Select(a => new MailboxAddress(a)));
             message.To.AddRange(mail.To.Select(a => new MailboxAddress(a)));
+            message.ReplyTo.AddRange(mail.ReplyTo.Select(a => new MailboxAddress(a)));
             message.Subject = mail.Subject;
             var builder = new BodyBuilder { TextBody = mail.Body };
             foreach (var attachment in mail.Attachments)

@@ -99,6 +99,7 @@ namespace EventManagement.ApplicationCore.TicketDelivery
                 {
                     From = { args.MailSettings.SenderAddress },
                     To = recipients,
+                    ReplyTo = { args.MailSettings.ReplyToAddress },
                     Subject = args.MailSettings.Subject,
                     Body = args.MailSettings.Body,
                     Attachments =
