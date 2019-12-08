@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EventManagement.ApplicationCore.Auditing;
 using EventManagement.ApplicationCore.Interfaces;
+using EventManagement.ApplicationCore.Models.Extensions;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Extensions;
@@ -205,6 +206,21 @@ namespace EventManagement.WebApp.Controllers
 
             _mapper.Map(model, entity);
             SetAuthorInfo(entity);
+
+            if (_context.Entry(entity).Property(e => e.PaymentStatus).IsModified)
+            {
+                string description = entity.PaymentStatus.GetDescription();
+                float amountPaid = entity.AmountPaid.GetValueOrDefault();
+                await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent
+                {
+                    Time = DateTime.UtcNow,
+                    TicketId = entity.Id,
+                    Action = EventManagementConstants.Auditing.Actions.PaymentStatusUpdated,
+                    Detail = $"Der Zahlungstatus wurde auf \"{description}\" geändert. " +
+                             $"Bereits bezahlter Betrag: {amountPaid:c}",
+                    Succeeded = true
+                });
+            }
             await _context.SaveChangesAsync();
             return NoContent();
         }

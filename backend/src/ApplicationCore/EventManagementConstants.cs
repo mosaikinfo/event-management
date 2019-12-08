@@ -41,6 +41,7 @@
                 public const string TicketOrder = "ticket_order";
                 public const string EmailSent = "email_sent";
                 public const string TermsAccepted = "terms_accepted";
+                public const string PaymentStatusUpdated = "payment_status_updated";
             }
         }
     }

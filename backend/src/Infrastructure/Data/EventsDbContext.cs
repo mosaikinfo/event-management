@@ -1,4 +1,5 @@
 ﻿using EventManagement.ApplicationCore.Models;
+using EventManagement.ApplicationCore.Models.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 
