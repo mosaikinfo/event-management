@@ -27,6 +27,13 @@
       <span *ngSwitchCase="'payment_status_updated'">
         <i class="fas fa-coins"></i>
       </span>
+      <span *ngSwitchCase="'ticket_validated'">
+        <i [ngClass]="{ 
+          'fas': true,
+          'fa-user-check': entry.level === 'success',
+          'fa-user-times': entry.level === 'fail'
+        }"></i>
+      </span>
       <span *ngSwitchDefault>
         <i class="material-icons">done</i>
       </span>

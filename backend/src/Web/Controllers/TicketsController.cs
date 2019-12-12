@@ -215,6 +215,17 @@ namespace EventManagement.WebApp.Controllers
                         : "Status der Einverständniserklärung wurde in \"nicht abgegeben\" geändert."
                 });
             }
+            if (model.Validated != entity.Validated)
+            {
+                var checkInStatus = model.Validated ? "erfolgreich" : "ausstehend";
+                await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent(model.Validated)
+                {
+                    Time = DateTime.UtcNow,
+                    TicketId = entity.Id,
+                    Action = EventManagementConstants.Auditing.Actions.TicketValidated,
+                    Detail = $"Check-In-Status wurde \"{checkInStatus}\" geändert."
+                });
+            }
 
             _mapper.Map(model, entity);
             SetAuthorInfo(entity);
