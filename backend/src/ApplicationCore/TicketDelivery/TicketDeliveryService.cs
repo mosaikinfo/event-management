@@ -70,7 +70,7 @@ namespace EventManagement.ApplicationCore.TicketDelivery
             ModelValidator.Validate(args.MailSettings);
             if (string.IsNullOrEmpty(args.Ticket.Mail))
             {
-                await LogAuditEvent(args, false, "Die E-Mail-Adresse des Empfängers fehlt.");
+                await LogAuditEvent(args, false, "Ticket konnte nicht versendet werden, weil keine E-Mail-Adresse vorhanden ist.");
                 throw new EventManagementException("The ticket has no email address.");
             }
 
@@ -137,16 +137,15 @@ namespace EventManagement.ApplicationCore.TicketDelivery
             if (detail == null)
             {
                 detail = succeeded
-                    ? $"Ticket wurde per E-Mail zugestellt an {args.Ticket.Mail}"
-                    : $"Die E-Mail konnte leider nicht an {args.Ticket.Mail} zugestellt werden.";
+                    ? $"Ticket wurde per E-Mail versendet an {args.Ticket.Mail}"
+                    : $"Die E-Mail konnte leider nicht an {args.Ticket.Mail} versendet werden.";
             }
-            return _auditEventLog.AddAsync(new AuditEvent
+            return _auditEventLog.AddAsync(new AuditEvent(succeeded)
             {
                 Time = DateTime.UtcNow,
                 TicketId = args.Ticket.Id,
                 Action = EventManagementConstants.Auditing.Actions.EmailSent,
-                Detail = detail,
-                Succeeded = succeeded
+                Detail = detail
             });
         }
     }

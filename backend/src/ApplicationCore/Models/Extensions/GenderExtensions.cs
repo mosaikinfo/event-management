@@ -1,4 +1,4 @@
-﻿namespace EventManagement.ApplicationCore.Models
+﻿namespace EventManagement.ApplicationCore.Models.Extensions
 {
     public static class GenderExtensions
     {

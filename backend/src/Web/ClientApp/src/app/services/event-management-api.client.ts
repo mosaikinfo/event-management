@@ -1680,7 +1680,7 @@ export class AuditEvent implements IAuditEvent {
     time?: Date;
     action?: string | undefined;
     detail?: string | undefined;
-    succeeded?: boolean;
+    level?: string | undefined;
 
     constructor(data?: IAuditEvent) {
         if (data) {
@@ -1696,7 +1696,7 @@ export class AuditEvent implements IAuditEvent {
             this.time = data["time"] ? new Date(data["time"].toString()) : <any>undefined;
             this.action = data["action"];
             this.detail = data["detail"];
-            this.succeeded = data["succeeded"];
+            this.level = data["level"];
         }
     }
 
@@ -1712,7 +1712,7 @@ export class AuditEvent implements IAuditEvent {
         data["time"] = this.time ? this.time.toISOString() : <any>undefined;
         data["action"] = this.action;
         data["detail"] = this.detail;
-        data["succeeded"] = this.succeeded;
+        data["level"] = this.level;
         return data; 
     }
 }
@@ -1721,7 +1721,7 @@ export interface IAuditEvent {
     time?: Date;
     action?: string | undefined;
     detail?: string | undefined;
-    succeeded?: boolean;
+    level?: string | undefined;
 }
 
 export class Client implements IClient {
@@ -2203,7 +2203,7 @@ export class Ticket implements ITicket {
     phone?: string | undefined;
     paymentStatus?: PaymentStatus;
     amountPaid?: number | undefined;
-    termsAccepted?: boolean | undefined;
+    termsAccepted?: boolean;
     lastName?: string | undefined;
     firstName?: string | undefined;
     birthDate?: Date | undefined;
@@ -2307,7 +2307,7 @@ export interface ITicket {
     phone?: string | undefined;
     paymentStatus?: PaymentStatus;
     amountPaid?: number | undefined;
-    termsAccepted?: boolean | undefined;
+    termsAccepted?: boolean;
     lastName?: string | undefined;
     firstName?: string | undefined;
     birthDate?: Date | undefined;

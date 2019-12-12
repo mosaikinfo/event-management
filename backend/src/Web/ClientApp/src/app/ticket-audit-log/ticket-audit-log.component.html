@@ -6,18 +6,37 @@
 </nav>
 
 <div *ngFor="let entry of entries" class="row mt-4">
-  <div [ngSwitch]="entry.action" class="col-sm mb-2" style="max-width: 80px">
-    <span *ngSwitchCase="'email_sent'" [ngClass]="{
+  <div class="col-sm mb-2" style="max-width: 80px">
+    <span [ngSwitch]="entry.action" [ngClass]="{
         'icon': true,
-        'icon-primary': entry.succeeded,
-        'icon-danger': !entry.succeeded 
+        'icon-success': entry.level === 'success',
+        'icon-warning': entry.level === 'warn',
+        'icon-danger': entry.level === 'fail'
       }">
-      <i class="material-icons">
-        {{ entry.succeeded ? 'email' : 'cancel_schedule_send' }}
-      </i>
-    </span>
-    <span *ngSwitchDefault class="icon icon-primary">
-      <i class="material-icons">done</i>
+      <span *ngSwitchCase="'email_sent'">
+        <i class="material-icons">
+          {{ entry.level === 'success' ? 'email' : 'cancel_schedule_send' }}
+        </i>
+      </span>
+      <span *ngSwitchCase="'ticket_order'">
+        <i class="fas fa-shopping-cart"></i>
+      </span>
+      <span *ngSwitchCase="'terms_accepted'">
+        <i class="fas fa-file-signature"></i>
+      </span>
+      <span *ngSwitchCase="'payment_status_updated'">
+        <i class="fas fa-coins"></i>
+      </span>
+      <span *ngSwitchCase="'ticket_validated'">
+        <i [ngClass]="{ 
+          'fas': true,
+          'fa-user-check': entry.level === 'success',
+          'fa-user-times': entry.level === 'fail'
+        }"></i>
+      </span>
+      <span *ngSwitchDefault>
+        <i class="material-icons">done</i>
+      </span>
     </span>
   </div>
   <div class="col-sm">

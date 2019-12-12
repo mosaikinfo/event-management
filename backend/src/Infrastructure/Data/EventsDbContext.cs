@@ -1,4 +1,5 @@
 ﻿using EventManagement.ApplicationCore.Models;
+using EventManagement.ApplicationCore.Models.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -166,6 +167,13 @@ namespace EventManagement.Infrastructure.Data
                 entity.ToTable("AuditEventLog");
                 entity.Property(e => e.Action).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Detail).HasMaxLength(1000);
+
+                entity.Property(e => e.Level)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasConversion(
+                        value => value.GetStringValue(),
+                        value => (AuditEventLevel) Enum.Parse(typeof(AuditEventLevel), value, true));
 
                 entity.HasOne(e => e.Ticket)
                       .WithMany()

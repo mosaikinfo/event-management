@@ -15,11 +15,11 @@
 .icon.icon-danger {
     background-color: #dc3545;
 }
+.icon.icon-warning {
+    background-color: #ffc107;
+}
 .icon.icon-success {
     background-color: #28a745;
-}
-.icon > * {
-    font-size: 30px;
 }
 
 .col-sm {

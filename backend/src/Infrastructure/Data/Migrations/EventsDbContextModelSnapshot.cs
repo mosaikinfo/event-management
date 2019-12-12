@@ -31,7 +31,9 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.Property<string>("Detail")
                         .HasMaxLength(1000);
 
-                    b.Property<bool>("Succeeded");
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
                     b.Property<Guid>("TicketId");
 
@@ -255,7 +257,7 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.Property<string>("RoomNumber")
                         .HasMaxLength(300);
 
-                    b.Property<bool?>("TermsAccepted");
+                    b.Property<bool>("TermsAccepted");
 
                     b.Property<string>("TicketNumber")
                         .IsRequired()

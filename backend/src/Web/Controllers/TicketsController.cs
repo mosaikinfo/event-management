@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using EventManagement.ApplicationCore.Auditing;
 using EventManagement.ApplicationCore.Interfaces;
+using EventManagement.ApplicationCore.Models.Extensions;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Extensions;
@@ -10,10 +12,17 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using AuditEventLevel = EventManagement.ApplicationCore.Models.AuditEventLevel;
+using PaymentStatus = EventManagement.ApplicationCore.Models.PaymentStatus;
 
 namespace EventManagement.WebApp.Controllers
 {
+    /// <summary>
+    /// API to find, create, update and delete tickets.
+    /// </summary>
     [ApiController]
     [Route("api")]
     [Authorize(EventManagementConstants.AdminApi.PolicyName)]
@@ -22,14 +31,25 @@ namespace EventManagement.WebApp.Controllers
         private readonly EventsDbContext _context;
         private readonly IMapper _mapper;
         private readonly ITicketNumberService _ticketNumberService;
+        private readonly IAuditEventLog _auditEventLog;
+
+        private static readonly Dictionary<PaymentStatus, AuditEventLevel> _levels =
+            new Dictionary<PaymentStatus, AuditEventLevel>
+            {
+                { PaymentStatus.Paid, AuditEventLevel.Success },
+                { PaymentStatus.PaidPartial, AuditEventLevel.Warn },
+                { PaymentStatus.Open, AuditEventLevel.Fail }
+            };
 
         public TicketsController(EventsDbContext context,
                                  IMapper mapper,
-                                 ITicketNumberService ticketNumberService)
+                                 ITicketNumberService ticketNumberService,
+                                 IAuditEventLog auditEventLog)
         {
             _context = context;
             _mapper = mapper;
             _ticketNumberService = ticketNumberService;
+            _auditEventLog = auditEventLog;
         }
 
         /// <summary>
@@ -89,7 +109,7 @@ namespace EventManagement.WebApp.Controllers
         /// <returns>details of created ticket.</returns>
         [HttpPost("tickets")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
-        public ActionResult<Ticket> CreateTicket(Ticket model)
+        public async Task<ActionResult<Ticket>> CreateTicketAsync(Ticket model)
         {
             if (model.Id != Guid.Empty)
                 return BadRequest(
@@ -106,6 +126,19 @@ namespace EventManagement.WebApp.Controllers
             SetAuthorInfo(entity);
             _context.Add(entity);
             _context.SaveChanges();
+            _context.Entry(entity).Reference(e => e.TicketType).Load();
+
+            if (entity.BookingDate != null)
+            {
+                await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent
+                {
+                    Time = entity.BookingDate.Value,
+                    TicketId = entity.Id,
+                    Action = EventManagementConstants.Auditing.Actions.TicketOrder,
+                    Detail = $"Ticket der Kategorie \"{entity.TicketType.Name}\" wurde für {entity.TicketType.Price:c} bestellt."
+                });
+            }
+
             model = _mapper.Map<Ticket>(entity);
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
         }
@@ -118,23 +151,12 @@ namespace EventManagement.WebApp.Controllers
         /// <returns>updated ticket.</returns>
         [HttpPut("tickets/{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
-        public ActionResult UpdateTicket(Guid id, [FromBody] Ticket model)
+        public async Task<IActionResult> UpdateTicketAsync(Guid id, [FromBody] Ticket model)
         {
             if (id != model.Id)
                 return BadRequest(new ProblemDetails { Detail = "wrong id" });
-            var entity = _context.Tickets.Find(model.Id);
-            if (entity == null)
-                return NotFound();
-            if (model.TicketNumber != entity.TicketNumber)
-                return BadRequest(
-                    new ProblemDetails { Detail = "The TicketNumber can't be changed." });
-            if (model.EventId != entity.EventId)
-                return BadRequest(
-                    new ProblemDetails { Detail = "The ticket is only valid for a single event." });
-            _mapper.Map(model, entity);
-            SetAuthorInfo(entity);
-            _context.SaveChanges();
-            return NoContent();
+
+            return await UpdateTicketResultAsync(id, model);
         }
 
         /// <summary>
@@ -146,22 +168,83 @@ namespace EventManagement.WebApp.Controllers
         /// <returns></returns>
         [HttpPatch("tickets/{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Update))]
-        public ActionResult UpdateTicketPatch(Guid id, [FromBody] JsonPatchDocument<Ticket> patchDoc)
+        public Task<IActionResult> UpdateTicketPatchAsync(Guid id, [FromBody] JsonPatchDocument<Ticket> patchDoc)
         {
-            var entity = _context.Tickets.Find(id);
+            return UpdateTicketResultAsync(id, source =>
+            {
+                var model = _mapper.Map<Ticket>(source);
+                patchDoc.ApplyTo(model);
+                return model;
+            });
+        }
+
+        /// <summary>Update ticket data and return the right <see cref="IActionResult"/>.</summary>
+        /// <param name="id">Id of the ticket to update.</param>
+        /// <param name="model">New model with updated values.</param>
+        private Task<IActionResult> UpdateTicketResultAsync(Guid id, Ticket model)
+            => UpdateTicketResultAsync(id, x => model);
+
+        /// <summary>Update ticket data and return the right <see cref="IActionResult"/>.</summary>
+        /// <param name="id">Id of the ticket to update.</param>
+        /// <param name="modelResolver">Function that returns the new model with updated values.</param>
+        private async Task<IActionResult> UpdateTicketResultAsync(Guid id,
+            Func<ApplicationCore.Models.Ticket, Ticket> modelResolver)
+        {
+            ApplicationCore.Models.Ticket entity = await _context.Tickets.FindAsync(id);
             if (entity == null)
                 return NotFound();
-            var model = _mapper.Map<Ticket>(entity);
-            patchDoc.ApplyTo(model);
+
+            Ticket model = modelResolver(entity);
+
             if (model.TicketNumber != entity.TicketNumber)
                 return BadRequest(
                     new ProblemDetails { Detail = "The TicketNumber can't be changed." });
             if (model.EventId != entity.EventId)
                 return BadRequest(
                     new ProblemDetails { Detail = "The ticket is only valid for a single event." });
+
+            if (model.TermsAccepted != entity.TermsAccepted)
+            {
+                await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent(model.TermsAccepted)
+                {
+                    Time = DateTime.UtcNow,
+                    TicketId = entity.Id,
+                    Action = EventManagementConstants.Auditing.Actions.TermsAccepted,
+                    Detail = model.TermsAccepted
+                        ? "Die Einverständniserklärung der Eltern wurde abgegeben."
+                        : "Status der Einverständniserklärung wurde in \"nicht abgegeben\" geändert."
+                });
+            }
+            if (model.Validated != entity.Validated)
+            {
+                var checkInStatus = model.Validated ? "erfolgreich" : "ausstehend";
+                await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent(model.Validated)
+                {
+                    Time = DateTime.UtcNow,
+                    TicketId = entity.Id,
+                    Action = EventManagementConstants.Auditing.Actions.TicketValidated,
+                    Detail = $"Check-In-Status wurde \"{checkInStatus}\" geändert."
+                });
+            }
+
             _mapper.Map(model, entity);
             SetAuthorInfo(entity);
-            _context.SaveChanges();
+
+            if (_context.Entry(entity).Property(e => e.PaymentStatus).IsModified)
+            {
+                string description = entity.PaymentStatus.GetDescription();
+                float amountPaid = entity.AmountPaid.GetValueOrDefault();
+                await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent
+                {
+                    Time = DateTime.UtcNow,
+                    TicketId = entity.Id,
+                    Action = EventManagementConstants.Auditing.Actions.PaymentStatusUpdated,
+                    Detail = $"Der Zahlungstatus wurde auf \"{description}\" geändert. " +
+                             $"Bereits bezahlter Betrag: {amountPaid:c}",
+                    Level = _levels[entity.PaymentStatus]
+                });
+            }
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
@@ -193,7 +276,7 @@ namespace EventManagement.WebApp.Controllers
             }
             else
             {
-                // It is only an API Client (S2S) without user.
+                // API Client (S2S) without user.
                 // TODO: Save client id as author information.
                 entity.EditorId = null;
             }
