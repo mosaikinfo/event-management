@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EventManagement.ApplicationCore.Models.Extensions;
 
 namespace EventManagement.WebApp.Mappers
 {
@@ -6,7 +7,8 @@ namespace EventManagement.WebApp.Mappers
     {
         public AuditEventMapperProfile()
         {
-            CreateMap<ApplicationCore.Models.AuditEvent, Models.AuditEvent>();
+            CreateMap<ApplicationCore.Models.AuditEvent, Models.AuditEvent>()
+                .ForMember(e => e.Level, opt => opt.MapFrom(e => e.Level.GetStringValue()));
         }
     }
 }

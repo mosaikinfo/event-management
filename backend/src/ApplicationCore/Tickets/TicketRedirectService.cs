@@ -1,6 +1,7 @@
 ﻿using EventManagement.ApplicationCore.Exceptions;
 using EventManagement.ApplicationCore.Identity;
 using EventManagement.ApplicationCore.Models;
+using EventManagement.ApplicationCore.Models.Extensions;
 using IdentityModel;
 using System;
 using System.Collections.Generic;

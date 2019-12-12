@@ -10,6 +10,6 @@ namespace EventManagement.WebApp.Models
 
         public string Detail { get; set; }
 
-        public bool Succeeded { get; set; }
+        public string Level { get; set; }
     }
 }

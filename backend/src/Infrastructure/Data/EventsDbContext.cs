@@ -168,6 +168,13 @@ namespace EventManagement.Infrastructure.Data
                 entity.Property(e => e.Action).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Detail).HasMaxLength(1000);
 
+                entity.Property(e => e.Level)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasConversion(
+                        value => value.GetStringValue(),
+                        value => (AuditEventLevel) Enum.Parse(typeof(AuditEventLevel), value, true));
+
                 entity.HasOne(e => e.Ticket)
                       .WithMany()
                       .HasForeignKey(e => e.TicketId);

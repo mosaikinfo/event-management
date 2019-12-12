@@ -9,12 +9,13 @@
   <div class="col-sm mb-2" style="max-width: 80px">
     <span [ngSwitch]="entry.action" [ngClass]="{
         'icon': true,
-        'icon-success': entry.succeeded,
-        'icon-danger': !entry.succeeded 
+        'icon-success': entry.level === 'success',
+        'icon-warning': entry.level === 'warn',
+        'icon-danger': entry.level === 'fail'
       }">
       <span *ngSwitchCase="'email_sent'">
         <i class="material-icons">
-          {{ entry.succeeded ? 'email' : 'cancel_schedule_send' }}
+          {{ entry.level === 'success' ? 'email' : 'cancel_schedule_send' }}
         </i>
       </span>
       <span *ngSwitchCase="'ticket_order'">

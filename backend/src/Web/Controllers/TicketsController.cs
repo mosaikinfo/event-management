@@ -12,11 +12,17 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AuditEventLevel = EventManagement.ApplicationCore.Models.AuditEventLevel;
+using PaymentStatus = EventManagement.ApplicationCore.Models.PaymentStatus;
 
 namespace EventManagement.WebApp.Controllers
 {
+    /// <summary>
+    /// API to find, create, update and delete tickets.
+    /// </summary>
     [ApiController]
     [Route("api")]
     [Authorize(EventManagementConstants.AdminApi.PolicyName)]
@@ -26,6 +32,14 @@ namespace EventManagement.WebApp.Controllers
         private readonly IMapper _mapper;
         private readonly ITicketNumberService _ticketNumberService;
         private readonly IAuditEventLog _auditEventLog;
+
+        private static readonly Dictionary<PaymentStatus, AuditEventLevel> _levels =
+            new Dictionary<PaymentStatus, AuditEventLevel>
+            {
+                { PaymentStatus.Paid, AuditEventLevel.Success },
+                { PaymentStatus.PaidPartial, AuditEventLevel.Warn },
+                { PaymentStatus.Open, AuditEventLevel.Fail }
+            };
 
         public TicketsController(EventsDbContext context,
                                  IMapper mapper,
@@ -121,8 +135,7 @@ namespace EventManagement.WebApp.Controllers
                     Time = entity.BookingDate.Value,
                     TicketId = entity.Id,
                     Action = EventManagementConstants.Auditing.Actions.TicketOrder,
-                    Detail = $"Ticket der Kategorie \"{entity.TicketType.Name}\" wurde für {entity.TicketType.Price:c} bestellt.",
-                    Succeeded = true
+                    Detail = $"Ticket der Kategorie \"{entity.TicketType.Name}\" wurde für {entity.TicketType.Price:c} bestellt."
                 });
             }
 
@@ -192,15 +205,14 @@ namespace EventManagement.WebApp.Controllers
 
             if (model.TermsAccepted != entity.TermsAccepted)
             {
-                await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent
+                await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent(model.TermsAccepted)
                 {
                     Time = DateTime.UtcNow,
                     TicketId = entity.Id,
                     Action = EventManagementConstants.Auditing.Actions.TermsAccepted,
                     Detail = model.TermsAccepted
                         ? "Die Einverständniserklärung der Eltern wurde abgegeben."
-                        : "Status der Einverständniserklärung wurde in \"nicht abgegeben\" geändert.",
-                    Succeeded = model.TermsAccepted
+                        : "Status der Einverständniserklärung wurde in \"nicht abgegeben\" geändert."
                 });
             }
 
@@ -218,7 +230,7 @@ namespace EventManagement.WebApp.Controllers
                     Action = EventManagementConstants.Auditing.Actions.PaymentStatusUpdated,
                     Detail = $"Der Zahlungstatus wurde auf \"{description}\" geändert. " +
                              $"Bereits bezahlter Betrag: {amountPaid:c}",
-                    Succeeded = true
+                    Level = _levels[entity.PaymentStatus]
                 });
             }
             await _context.SaveChangesAsync();

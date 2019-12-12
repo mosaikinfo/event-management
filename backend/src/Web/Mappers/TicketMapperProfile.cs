@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventManagement.ApplicationCore.Models;
+using EventManagement.ApplicationCore.Models.Extensions;
 using EventManagement.Infrastructure.Data;
 using System;
 

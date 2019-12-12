@@ -140,13 +140,12 @@ namespace EventManagement.ApplicationCore.TicketDelivery
                     ? $"Ticket wurde per E-Mail versendet an {args.Ticket.Mail}"
                     : $"Die E-Mail konnte leider nicht an {args.Ticket.Mail} versendet werden.";
             }
-            return _auditEventLog.AddAsync(new AuditEvent
+            return _auditEventLog.AddAsync(new AuditEvent(succeeded)
             {
                 Time = DateTime.UtcNow,
                 TicketId = args.Ticket.Id,
                 Action = EventManagementConstants.Auditing.Actions.EmailSent,
-                Detail = detail,
-                Succeeded = succeeded
+                Detail = detail
             });
         }
     }
