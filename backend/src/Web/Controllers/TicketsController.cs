@@ -234,13 +234,15 @@ namespace EventManagement.WebApp.Controllers
             {
                 string description = entity.PaymentStatus.GetDescription();
                 float amountPaid = entity.AmountPaid.GetValueOrDefault();
+                _context.Entry(entity).Reference(e => e.TicketType).Load();
                 await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent
                 {
                     Time = DateTime.UtcNow,
                     TicketId = entity.Id,
                     Action = EventManagementConstants.Auditing.Actions.PaymentStatusUpdated,
                     Detail = $"Der Zahlungstatus wurde auf \"{description}\" geändert. " +
-                             $"Bereits bezahlter Betrag: {amountPaid:c}",
+                             $"Bereits bezahlter Betrag: {amountPaid:c} von {entity.TicketType.Price:c}. " +
+                             $"Ticket-Typ: {entity.TicketType.Name}.",
                     Level = _levels[entity.PaymentStatus]
                 });
             }

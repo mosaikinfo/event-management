@@ -24,7 +24,10 @@ namespace EventManagement.WebApp.Mappers
                     e => GenderExtensions.FromStringValue(e.Gender)))
                 .ForMember(e => e.BirthDate, opt => opt.MapFrom(
                     e => e.BirthDate.HasValue ? (DateTime?)e.BirthDate.Value.ToLocalTime().Date : null))
+                .ForMember(e => e.PaymentStatus, opt => opt.SetMappingOrder(0))
                 .ForMember(e => e.PaymentStatus, opt => opt.MapFrom<PaymentStatusResolver>())
+                .ForMember(e => e.TicketTypeId, opt => opt.SetMappingOrder(1))
+                .ForMember(e => e.AmountPaid, opt => opt.SetMappingOrder(2))
                 .ForMember(e => e.TicketType, opt => opt.Ignore());
         }
 
@@ -40,7 +43,8 @@ namespace EventManagement.WebApp.Mappers
             public PaymentStatus Resolve(Models.Ticket source, Ticket destination,
                                          PaymentStatus destMember, ResolutionContext context)
             {
-                if (source.AmountPaid != destination.AmountPaid)
+                if (source.AmountPaid != destination.AmountPaid ||
+                    source.TicketTypeId != destination.TicketTypeId)
                 {
                     if (source.AmountPaid == null || source.AmountPaid == 0.0)
                     {
