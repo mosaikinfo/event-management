@@ -223,7 +223,7 @@ namespace EventManagement.WebApp.Controllers
                     Time = DateTime.UtcNow,
                     TicketId = entity.Id,
                     Action = EventManagementConstants.Auditing.Actions.TicketValidated,
-                    Detail = $"Check-In-Status wurde \"{checkInStatus}\" geändert."
+                    Detail = $"Check-In-Status wurde auf \"{checkInStatus}\" geändert."
                 });
             }
 
