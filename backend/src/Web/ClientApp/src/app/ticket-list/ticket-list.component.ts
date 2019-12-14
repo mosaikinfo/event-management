@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LazyLoadEvent, SelectItem } from 'primeng/components/common/api';
-import { Event, Ticket, EventManagementApiClient, TicketType } from '../services/event-management-api.client';
+import { Event, Ticket, EventManagementApiClient, TicketType, PaymentStatus } from '../services/event-management-api.client';
 import { SessionService } from '../services/session.service';
 
 @Component({
@@ -18,6 +18,14 @@ export class TicketListComponent implements OnInit {
   firstRow: number = 0;
   pageSize: number = 30;
   totalRecords: number;
+
+  paymentStatusOptions: SelectItem[] = [
+    { label: "Beliebig", value: undefined },
+    { label: "Offen", value: PaymentStatus.Open },
+    { label: "Teilweise bezahlt", value: PaymentStatus.PaidPartial },
+    { label: "Bezahlt", value: PaymentStatus.Paid }
+  ];
+  selectedPaymentStatus: PaymentStatus;
 
   optionalSwitchOptions: SelectItem[] = [
     { label: "Beliebig", value: undefined },
@@ -73,7 +81,8 @@ export class TicketListComponent implements OnInit {
           this.pageSize,
           this.filterDelivered,
           this.filterOnlyValidated,
-          this.selectedTicketType)
+          this.selectedTicketType,
+          this.selectedPaymentStatus)
         .toPromise();
     this.tickets = result.data;
     this.totalRecords = result.totalCount;

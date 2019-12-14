@@ -60,10 +60,11 @@ namespace EventManagement.WebApp.Controllers
         /// <param name="isDelivered">if true, only delivered tickets are listed.</param>
         /// <param name="validated">if true, which have gone through entrance control successfully will be listed.</param>
         /// <param name="ticketTypeId">Filter the list by a specific ticket type.</param>
+        /// <param name="paymentStatus">List all tickets with a specific payment status.</param>
         [HttpGet("events/{eventId}/tickets")]
         public ActionResult<PaginationResult<Ticket>> GetTickets(Guid eventId, [FromQuery] FopQuery query,
                                                                  bool? isDelivered, bool? validated,
-                                                                 Guid? ticketTypeId)
+                                                                 Guid? ticketTypeId, PaymentStatus? paymentStatus)
         {
             var tickets = _context.Tickets
                 .AsNoTracking()
@@ -81,6 +82,10 @@ namespace EventManagement.WebApp.Controllers
             if (ticketTypeId != null)
             {
                 tickets = tickets.Where(e => e.TicketTypeId == ticketTypeId.Value);
+            }
+            if (paymentStatus != null)
+            {
+                tickets = tickets.Where(e => e.PaymentStatus == paymentStatus);
             }
 
             tickets = tickets.OrderByDescending(x => x.CreatedAt);

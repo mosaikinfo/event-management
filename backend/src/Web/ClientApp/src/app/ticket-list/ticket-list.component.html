@@ -2,40 +2,45 @@
 
 <div class="row">
 	<div class="col-lg-auto my-2">
+		<label class="d-none d-lg-block">&nbsp;</label>
 		<a class="btn btn-primary mr-2" [routerLink]='["/tickets/new"]'>Neu</a>
 		<button type="button" class="btn btn-light mr-2" (click)="loadTickets()">
 			<i class="fas fa-redo"></i>
 		</button>
 	</div>
 	<div class="col-lg-auto filter my-2">
-		<div class="row">
-			<div class="col-auto d-lg-none">
-				<h2 class="h5">Filter</h2>
-			</div>
-			<label class="mr-2 col-lg-auto">Ticket-Typ</label>
-			<p-dropdown class="col-lg-auto" 
-				[options]="ticketTypeOptions"
-				[(ngModel)]="selectedTicketType"
-				(onChange)="loadTickets()"></p-dropdown>
+		<div class="d-lg-none">
+			<h2 class="h5">Filter</h2>
 		</div>
+		<label class="d-block">Ticket-Typ</label>
+		<p-dropdown class="d-block"
+			[options]="ticketTypeOptions"
+			[(ngModel)]="selectedTicketType"
+			(onChange)="loadTickets()"></p-dropdown>
 	</div>
 	<div class="col-lg-auto filter my-2">
-		<div class="row">
-			<label class="mr-2 col-lg-auto">Ticket zugestellt</label>
-			<p-dropdown class="col-lg-auto" 
-				[options]="optionalSwitchOptions" [(ngModel)]="filterDelivered"
-				(onChange)="loadTickets()"></p-dropdown>
-		</div>
+		<label class="d-block">Zahlungsstatus</label>
+		<p-dropdown class="d-block"
+			[options]="paymentStatusOptions"
+			[(ngModel)]="selectedPaymentStatus"
+			(onChange)="loadTickets()"></p-dropdown>
 	</div>
 	<div class="col-lg-auto filter my-2">
-		<div class="row">
-			<label class="mr-2 col-lg-auto">Check-In</label>
-			<p-dropdown class="col-lg-auto" 
-				[options]="optionalSwitchOptions" [(ngModel)]="filterOnlyValidated"
-				(onChange)="loadTickets()"></p-dropdown>
-		</div>
+		<label class="d-block">Ticket zugestellt</label>
+		<p-dropdown class="d-block" 
+			[options]="optionalSwitchOptions" [(ngModel)]="filterDelivered"
+			(onChange)="loadTickets()"></p-dropdown>
 	</div>
-	<div class="col-lg my-2">
+	<div class="col-lg-auto filter my-2">
+		<label class="d-block">Check-In</label>
+		<p-dropdown class="d-block" 
+			[options]="optionalSwitchOptions" [(ngModel)]="filterOnlyValidated"
+			(onChange)="loadTickets()"></p-dropdown>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col my-2">
 		<form class="searchbox w-100" #searchBox="ngForm" (submit)="search()">
 			<input name="search" class="form-control searchbox" type="text"
 				placeholder="Suche..." aria-label="Suche..."
