@@ -37,6 +37,12 @@ namespace EventManagement.WebApp.Models
         [Required]
         public string HomepageUrl { get; set; }
 
+        /// <summary>
+        /// True, if you want to add personal information in form 
+        /// of a JSON Web Token (JWT) when redirecting to the homepage.
+        /// </summary>
+        public bool IncludePersonalInformation { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (StartTime > EndTime)

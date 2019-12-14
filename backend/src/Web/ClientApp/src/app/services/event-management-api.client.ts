@@ -1847,6 +1847,9 @@ export class Event implements IEvent {
     zipCode!: string;
     city!: string;
     homepageUrl!: string;
+    /** True, if you want to add personal information in form 
+of a JSON Web Token (JWT) when redirecting to the homepage. */
+    includePersonalInformation?: boolean;
 
     constructor(data?: IEvent) {
         if (data) {
@@ -1870,6 +1873,7 @@ export class Event implements IEvent {
             this.zipCode = data["zipCode"];
             this.city = data["city"];
             this.homepageUrl = data["homepageUrl"];
+            this.includePersonalInformation = data["includePersonalInformation"];
         }
     }
 
@@ -1893,6 +1897,7 @@ export class Event implements IEvent {
         data["zipCode"] = this.zipCode;
         data["city"] = this.city;
         data["homepageUrl"] = this.homepageUrl;
+        data["includePersonalInformation"] = this.includePersonalInformation;
         return data; 
     }
 }
@@ -1909,6 +1914,9 @@ export interface IEvent {
     zipCode: string;
     city: string;
     homepageUrl: string;
+    /** True, if you want to add personal information in form 
+of a JSON Web Token (JWT) when redirecting to the homepage. */
+    includePersonalInformation?: boolean;
 }
 
 export class EventStatus implements IEventStatus {

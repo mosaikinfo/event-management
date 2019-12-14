@@ -85,7 +85,19 @@
       </small>
   </div>
 
-  <div>
+  <div class="form-group">
+    <div class="form-group input-switch mb-0">
+      <label>Personendaten mitsenden</label>
+      <p-inputSwitch name="includePersonalInformation" [(ngModel)]="model.includePersonalInformation"></p-inputSwitch>
+    </div>
+    <small class="form-text text-muted">
+      Wenn die Option aktiviert ist, werden personenbezogene Information 
+      in der URL in Form eines JSON Web Tokens (JWT) mitgesendet.
+      <a href="https://gist.github.com/doeringp/a0f7e66f18c32e1017c726d8374d4c18" target="_blank">Mehr Informationen</a>
+    </small>
+  </div>
+
+  <div class="mt-4">
     <button type="submit" class="btn btn-primary" [disabled]="!eventForm.form.valid">Speichern</button>
   </div>
 </form>

@@ -29,12 +29,16 @@ namespace EventManagement.ApplicationCore.Tickets
             if (ticket == null)
                 throw new TicketNotFoundException();
 
-            var claims = GetClaims(ticket, ticketValidationUrl);
-            int lifetime = 365 * 24 * 3600; // 365 days.
-            var jwt = await _tokenService.IssueJwtAsync(lifetime, claims);
-            var sb = new StringBuilder(ticket.Event.HomepageUrl);
-            sb.Append(jwt);
-            return sb.ToString();
+            if (ticket.Event.IncludePersonalInformation)
+            {
+                var claims = GetClaims(ticket, ticketValidationUrl);
+                int lifetime = 365 * 24 * 3600; // 365 days.
+                var jwt = await _tokenService.IssueJwtAsync(lifetime, claims);
+                var sb = new StringBuilder(ticket.Event.HomepageUrl);
+                sb.Append(jwt);
+                return sb.ToString();
+            }
+            return ticket.Event.HomepageUrl;
         }
 
         private IEnumerable<Claim> GetClaims(Ticket ticket, string ticketValidationUrl)
