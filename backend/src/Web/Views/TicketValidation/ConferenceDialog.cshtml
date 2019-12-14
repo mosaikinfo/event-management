@@ -14,9 +14,10 @@
 
 <body>
 
-    <div class="answerfield" id="answerfield">
+    <div class="chatfield" id="chatfield"></div>
 
-        <div class=splitter>
+    <div class="answerfield" id="answerfield">
+        <div class="splitter">
             <div class=splitter-icon></div>
         </div>
         <button class="answer">
@@ -27,68 +28,22 @@
         </button>
     </div>
 
-    <div class="chatfield" id="chatfield">
-
-        <div class="message-server" id="basicInformation" style="display: block">
+    <script id="message-server-template" type="text/x-handlebars-template">
+        <div class="message-server">
             <div class="messagebox-server">
                 <div class="messagetext-server">
-                    <p>Max Mustermann</p>
-                    <p>17</p>
+                    {{ breaklines content }}
                 </div>
             </div>
         </div>
+    </script>
 
-        <div class="message-user">
-            <div class="messagebox-user">
-                <div class="messagetext-user">
-                    <p>Ja, das stimmt!</p>
-                </div>
-            </div>
-        </div>
+    <script type="text/javascript">
+        var model = @Html.Raw(Json.Serialize(Model))
+    </script>
 
-        <div class="message-server">
-            <div class="messagebox-server-green">
-                <div class="message-icon">
-                    <span style="font-size: 30px; color: #155724;">
-                        <i class="far fa-check-circle"></i>
-                    </span>
-
-                </div>
-                <div class="messagetext-server">
-                    <p style="color: #155724">Check-in erfolgreich.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="message-server">
-            <div class="messagebox-server-yellow">
-                <div class="message-icon">
-                    <span style="font-size: 30px; color: #856404;">
-                        <i class="far fa-question-circle"></i>
-                    </span>
-                </div>
-                <div class="messagetext-server">
-                    <p Style="color:  #856404">Hast du die Einverständniserklärung deiner Eltern dabei?</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="message-server">
-            <div class="messagebox-server-red">
-                <div class="message-icon">
-                    <span style="font-size: 30px; color: #721c24;">
-                        <i class="far fa-times-circle"></i>
-                    </span>
-
-                </div>
-                <div class="messagetext-server">
-                    <p style="color: #721c24">Leider gibt es ein Problem beim Check-in. Bitte gehe zur Support Line, unsere Mitarbeiter dort helfen dir weiter.</p>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/handlebars/handlebars.min.js"></script>
+    <script src="~/js/conference-dialog.js"></script>
 </body>
-
 </html>
