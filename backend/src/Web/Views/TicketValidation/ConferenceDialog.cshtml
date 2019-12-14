@@ -1,0 +1,94 @@
+﻿@model EventManagement.WebApp.Models.ConferenceDialogModel
+@{
+    Layout = null;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>@Model.EventName</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/css/conference-dialog.css" />
+</head>
+
+<body>
+
+    <div class="answerfield" id="answerfield">
+
+        <div class=splitter>
+            <div class=splitter-icon></div>
+        </div>
+        <button class="answer">
+            Ja, das ist richtig!
+        </button>
+        <button class="answer">
+            Nein das ist falsch!
+        </button>
+    </div>
+
+    <div class="chatfield" id="chatfield">
+
+        <div class="message-server" id="basicInformation" style="display: block">
+            <div class="messagebox-server">
+                <div class="messagetext-server">
+                    <p>Max Mustermann</p>
+                    <p>17</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="message-user">
+            <div class="messagebox-user">
+                <div class="messagetext-user">
+                    <p>Ja, das stimmt!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="message-server">
+            <div class="messagebox-server-green">
+                <div class="message-icon">
+                    <span style="font-size: 30px; color: #155724;">
+                        <i class="far fa-check-circle"></i>
+                    </span>
+
+                </div>
+                <div class="messagetext-server">
+                    <p style="color: #155724">Check-in erfolgreich.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="message-server">
+            <div class="messagebox-server-yellow">
+                <div class="message-icon">
+                    <span style="font-size: 30px; color: #856404;">
+                        <i class="far fa-question-circle"></i>
+                    </span>
+                </div>
+                <div class="messagetext-server">
+                    <p Style="color:  #856404">Hast du die Einverständniserklärung deiner Eltern dabei?</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="message-server">
+            <div class="messagebox-server-red">
+                <div class="message-icon">
+                    <span style="font-size: 30px; color: #721c24;">
+                        <i class="far fa-times-circle"></i>
+                    </span>
+
+                </div>
+                <div class="messagetext-server">
+                    <p style="color: #721c24">Leider gibt es ein Problem beim Check-in. Bitte gehe zur Support Line, unsere Mitarbeiter dort helfen dir weiter.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

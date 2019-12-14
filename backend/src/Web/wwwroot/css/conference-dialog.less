@@ -1,0 +1,269 @@
+﻿
+body {
+    padding-top: 1em;
+    margin: 0px;
+}
+
+div.chatfield {
+    z-index: 1;
+    padding-bottom: 150px;
+}
+
+div.message-server {
+    overflow: auto;
+}
+
+div.messagebox-server {
+    display: inline-block;
+    max-width: 70%;
+    float: left;
+    margin-bottom: 10px;
+    margin-left: 1em;
+    margin-right: 1em;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-radius: 0 0.5em 0.5em 0.5em;
+    background-color: #F2F2F2;
+    position: relative;
+}
+
+div.messagebox-server:after {
+    width: 0;
+    height: 0;
+    border-left: 0.5em solid transparent;
+    border-right: 0.5em solid transparent;
+    border-top: 0.75em solid #F2F2F2;
+    border-radius: 0.2em 0.2em 0.2em 0.2em;
+    position: absolute;
+    content: "";
+    top: 0px;
+    left: -0.5em;
+}
+
+div.messagetext-server {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.9em;
+    text-align: left;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    letter-spacing: 0.02em;
+    color: black;
+}
+
+div.messagebox-server-green {
+    display: inline-block;
+    max-width: 70%;
+    float: left;
+    margin-bottom: 10px;
+    margin-left: 1em;
+    margin-right: 1em;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-radius: 0 0.5em 0.5em 0.5em;
+    background-color: #d4edda;
+    position: relative;
+}
+
+div.messagebox-server-green:after {
+    width: 0;
+    height: 0;
+    border-left: 0.5em solid transparent;
+    border-right: 0.5em solid transparent;
+    border-top: 0.75em solid #d4edda;
+    border-radius: 0.2em 0.2em 0.2em 0.2em;
+    position: absolute;
+    content: "";
+    top: 0px;
+    left: -0.5em;
+}
+
+div.messagebox-server-yellow {
+    display: inline-block;
+    max-width: 70%;
+    float: left;
+    margin-bottom: 10px;
+    margin-left: 1em;
+    margin-right: 1em;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-radius: 0 0.5em 0.5em 0.5em;
+    background-color: #fff3cd;
+    position: relative;
+}
+
+div.messagebox-server-yellow:after {
+    width: 0;
+    height: 0;
+    border-left: 0.5em solid transparent;
+    border-right: 0.5em solid transparent;
+    border-top: 0.75em solid #fff3cd;
+    border-radius: 0.2em 0.2em 0.2em 0.2em;
+    position: absolute;
+    content: "";
+    top: 0px;
+    left: -0.5em;
+}
+
+div.messagebox-server-red {
+    display: inline-block;
+    max-width: 70%;
+    float: left;
+    margin-bottom: 10px;
+    margin-left: 1em;
+    margin-right: 1em;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-radius: 0 0.5em 0.5em 0.5em;
+    background-color: #f8d7da;
+    position: relative;
+}
+
+div.messagebox-server-red:after {
+    width: 0;
+    height: 0;
+    border-left: 0.5em solid transparent;
+    border-right: 0.5em solid transparent;
+    border-top: 0.75em solid #f8d7da;
+    border-radius: 0.2em 0.2em 0.2em 0.2em;
+    position: absolute;
+    content: "";
+    top: 0px;
+    left: -0.5em;
+}
+
+div.message-icon {
+    margin-top: 1em;
+    text-align: center;
+}
+
+div.message-user {
+    overflow: auto;
+}
+
+div.messagebox-user {
+    display: inline-block;
+    max-width: 70%;
+    float: right;
+    margin-bottom: 10px;
+    margin-left: 1em;
+    margin-right: 1em;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-radius: 0.5em 0 0.5em 0.5em;
+    background-color: #d1ecf1;
+    position: relative;
+}
+
+div.messagebox-user:after {
+    width: 0;
+    height: 0;
+    border-left: 0.5em solid transparent;
+    border-right: 0.5em solid transparent;
+    border-top: 0.75em solid #d1ecf1;
+    border-radius: 0.2em 0.2em 0.2em 0.2em;
+    position: absolute;
+    content: "";
+    top: 0px;
+    right: -0.5em;
+}
+
+div.messagetext-user {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.9em;
+    text-align: left;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    letter-spacing: 0.02em;
+    color: black;
+}
+
+p {
+    margin-top: 0.025em;
+    margin-bottom: 0.025em;
+    line-height: 1.4;
+}
+
+.answerfield {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0px 5px 10px black;
+    z-index: 2;
+    height: 150px;
+    overflow: auto;
+}
+
+button.answer {
+    display: block;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.6em;
+    letter-spacing: 0.02em;
+    padding-top: 0.75em;
+    padding-bottom: 0.75em;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-radius: 0.5em 0.5em 0.5em 0.5em;
+    background-color: #d1ecf1;
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.9em;
+    text-align: center;
+    margin-top: 0.2em;
+    color: black;
+    box-shadow: transparent;
+    border: transparent;
+}
+
+button.answer:active {
+    box-shadow: inset 0px 0px 5px rgba(0,0,0,0.2);
+}
+
+button.answer:focus {
+    outline: none;
+}
+
+div.splitter {
+    height: auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+div.splitter-icon {
+    width: 0;
+    height: 0;
+    margin-left: auto;
+    margin-right: auto;
+    border-left: 0.75em solid transparent;
+    border-right: 0.75em solid transparent;
+    border-bottom: 1.5em solid #2E2E2E;
+    position: relative;
+    content: "";
+}
+
+div.splitter-icon:after {
+    width: 0;
+    height: 0;
+    margin-left: auto;
+    margin-right: auto;
+    border-left: 0.12em solid transparent;
+    border-right: 0.12em solid transparent;
+    border-bottom: 0.4em solid white;
+    position: absolute;
+    bottom: -1.5em;
+    left: -0.12em;
+    content: "";
+}

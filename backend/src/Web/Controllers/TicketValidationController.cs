@@ -1,4 +1,6 @@
-﻿using EventManagement.ApplicationCore.Tickets;
+﻿using AutoMapper;
+using EventManagement.ApplicationCore.Tickets;
+using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Shared.Mvc;
 using Microsoft.AspNetCore.Authentication;
@@ -24,14 +26,17 @@ namespace EventManagement.WebApp.Controllers
     {
         private readonly EventsDbContext _context;
         private readonly ITicketRedirectService _ticketRedirectService;
+        private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public TicketValidationController(EventsDbContext context,
                                           ITicketRedirectService ticketRedirectService,
+                                          IMapper mapper,
                                           ILogger<TicketValidationController> logger)
         {
             _context = context;
             _ticketRedirectService = ticketRedirectService;
+            _mapper = mapper;
             _logger = logger;
         }
 
@@ -52,14 +57,7 @@ namespace EventManagement.WebApp.Controllers
             ApplicationCore.Models.Ticket ticket =
                 await FindTicketAsync(e => e.TicketNumber == number);
 
-            if (ticket == null)
-            {
-                _logger.LogInformation(
-                    "Ticket with number {number} was not found in the database.",
-                    number);
-                return TicketNotFound();
-            }
-            return await ValidateTicketAsync(ticket);
+            return await ValidateTicketAsync(ticket, ticketNumber: number);
         }
 
         /// <summary>
@@ -76,18 +74,36 @@ namespace EventManagement.WebApp.Controllers
             ApplicationCore.Models.Ticket ticket =
                 await FindTicketAsync(e => e.TicketSecret == secret);
 
-            if (ticket == null)
-            {
-                _logger.LogInformation("Ticket with secret {secret} was not found in the database.", secret);
-                return TicketNotFound();
-            }
-            return await ValidateTicketAsync(ticket);
+
+            return await ValidateTicketAsync(ticket, ticketSecret: secret);
         }
 
-        private async Task<IActionResult> ValidateTicketAsync(ApplicationCore.Models.Ticket ticket)
+        private async Task<IActionResult> ValidateTicketAsync(ApplicationCore.Models.Ticket ticket, 
+                                                              string ticketNumber = null, 
+                                                              string ticketSecret = null)
         {
+            var evt = ticket?.Event;
+            if (evt == null)
+            {
+                UserContext userContext = User.GetContext();
+                if (userContext?.EventId != null)
+                {
+                    evt = _context.Events.Find(userContext.EventId);
+                }
+            }
+            if (evt != null && evt.IsConference)
+            {
+                return CheckInDialog(ticket);
+            }
+
             if (ticket == null)
-                throw new ArgumentNullException(nameof(ticket));
+            {
+                string lookupValueType = ticketNumber == null ? "secret" : "number";
+                string lookupValue = ticketNumber ?? ticketSecret;
+                _logger.LogInformation(
+                    $"Ticket with {lookupValueType} {lookupValue} was not found in the database.", lookupValue);
+                return TicketNotFound();
+            }
 
             ClaimsPrincipal currentUser = await TryGetAuthenticatedUser();
 
@@ -141,6 +157,12 @@ namespace EventManagement.WebApp.Controllers
         {
             ViewBag.ErrorMessage = "Dieses Ticket existiert leider nicht!";
             return View("TicketError");
+        }
+
+        private IActionResult CheckInDialog(ApplicationCore.Models.Ticket ticket)
+        {
+            var model = _mapper.Map<Models.ConferenceDialogModel>(ticket);
+            return View("ConferenceDialog", model);
         }
     }
 }
