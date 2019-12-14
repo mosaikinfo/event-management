@@ -1838,6 +1838,9 @@ export interface IProblemDetails {
 export class Event implements IEvent {
     id?: string;
     name!: string;
+    /** If the event is a conference this affects nearly every process.
+If it's not a conference (eg: a concert) the personal information doesn't matter. */
+    isConference?: boolean;
     startTime!: Date;
     endTime!: Date;
     entranceTime?: Date | undefined;
@@ -1864,6 +1867,7 @@ of a JSON Web Token (JWT) when redirecting to the homepage. */
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.isConference = data["isConference"];
             this.startTime = data["startTime"] ? new Date(data["startTime"].toString()) : <any>undefined;
             this.endTime = data["endTime"] ? new Date(data["endTime"].toString()) : <any>undefined;
             this.entranceTime = data["entranceTime"] ? new Date(data["entranceTime"].toString()) : <any>undefined;
@@ -1888,6 +1892,7 @@ of a JSON Web Token (JWT) when redirecting to the homepage. */
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["isConference"] = this.isConference;
         data["startTime"] = this.startTime ? this.startTime.toISOString() : <any>undefined;
         data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
         data["entranceTime"] = this.entranceTime ? this.entranceTime.toISOString() : <any>undefined;
@@ -1905,6 +1910,9 @@ of a JSON Web Token (JWT) when redirecting to the homepage. */
 export interface IEvent {
     id?: string;
     name: string;
+    /** If the event is a conference this affects nearly every process.
+If it's not a conference (eg: a concert) the personal information doesn't matter. */
+    isConference?: boolean;
     startTime: Date;
     endTime: Date;
     entranceTime?: Date | undefined;
