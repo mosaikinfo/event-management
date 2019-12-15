@@ -119,7 +119,11 @@ namespace EventManagement.WebApp
                 pipeline.AddLessBundle("css/site.css", "css/site.less");
                 pipeline.AddLessBundle("css/ticket-validation.css", "css/ticket-validation.less");
                 pipeline.AddLessBundle("css/conference-dialog.css", "conference-dialog/styles.less");
-                pipeline.AddJavaScriptBundle("js/conference-dialog.js", "conference-dialog/main.js");
+
+                pipeline.AddJavaScriptBundle("js/conference-dialog.js",
+                    "lib/jquery/jquery.min.js",
+                    "lib/handlebars/handlebars.min.js",
+                    "conference-dialog/main.js");
             });
 
             // Configure authentication to protect our web api.

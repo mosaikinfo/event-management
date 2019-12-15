@@ -15,7 +15,7 @@
 <body>
 
     <script id="message-template" type="text/x-handlebars-template">
-        <div class="message message-left message-server">
+        <div class="message message-{{ alignment }}">
             <div class="message-body">
                 {{ breaklines content }}
             </div>
@@ -77,8 +77,6 @@
         var model = @Html.Raw(Json.Serialize(Model))
     </script>
 
-    <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/handlebars/handlebars.min.js"></script>
     <script src="~/js/conference-dialog.js"></script>
 </body>
 </html>
