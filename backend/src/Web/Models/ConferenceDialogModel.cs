@@ -5,6 +5,10 @@ namespace EventManagement.WebApp.Models
 {
     public class ConferenceDialogModel
     {
+        public Guid TicketId { get; set; }
+
+        public bool Validated { get; set; }
+
         public string EventName { get; set; }
 
         public string FirstName { get; set; }
@@ -30,5 +34,13 @@ namespace EventManagement.WebApp.Models
                 return age;
             }
         }
+
+        public bool TermsAccepted { get; set; }
+
+        public string TicketTypeName { get; set; }
+
+        public string RoomNumber { get; set; }
+
+        public string PaymentStatus { get; set; }
     }
 }

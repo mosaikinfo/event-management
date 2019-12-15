@@ -30,7 +30,8 @@ namespace EventManagement.WebApp.Mappers
                 .ForMember(e => e.AmountPaid, opt => opt.SetMappingOrder(2))
                 .ForMember(e => e.TicketType, opt => opt.Ignore());
 
-            CreateMap<Ticket, Models.ConferenceDialogModel>();
+            CreateMap<Ticket, Models.ConferenceDialogModel>()
+                .ForMember(e => e.TicketId, opt => opt.MapFrom(e => e.Id));
         }
 
         public class PaymentStatusResolver : IValueResolver<Models.Ticket, Ticket, PaymentStatus>

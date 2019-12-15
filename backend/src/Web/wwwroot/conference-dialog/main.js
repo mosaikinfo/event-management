@@ -1,9 +1,17 @@
 ﻿(function () {
+    const API_BASE_URL = '/api';
+    const TEXT_SUPPORT_LINE = 'Bitte gehe zur Support-Line. Unsere Mitarbeiter dort helfen dir weiter.';
+
+    const ticket = window.model;
+    if (!ticket) {
+        throw "Ticket data is missing.";
+    }
+
     /** Samples:
       
     chat.addMessage({
-        content: `${model.firstName} ${model.lastName}\n` +
-            `${model.age} Jahre alt`
+        content: `${ticket.firstName} ${ticket.lastName}\n` +
+                 `${ticket.age} Jahre alt`
     });
     chat.addMessage({
         category: 'user',
@@ -92,9 +100,16 @@
             });
         }
 
+        goToSupportLine(reason) {
+            this.addMessage({
+                category: 'danger',
+                iconCssClass: 'far fa-times-circle',
+                content: reason ? `${reason}. ${TEXT_SUPPORT_LINE}` : TEXT_SUPPORT_LINE
+            });
+        }
+
     }
 
-    const API_BASE_URL = '/api';
     const chat = new CheckInDialog("#chat-root");
 
     /**
@@ -135,40 +150,70 @@
             return new Handlebars.SafeString(text);
         });
 
-        console.log(model);
+        console.log(ticket);
 
-        const response = await http(API_BASE_URL + '/events');
-        const json = await response.json();
-        console.log(json);
-
-        chat.addMessage({
-            content: `${model.firstName} ${model.lastName}\n` +
-                `${model.age} Jahre alt`
-        });
+        if (ticket.validated) {
+            chat.goToSupportLine('Das Ticket wurde bereits verwendet');
+        }
 
         chat.addMessage({
-            category: 'warning',
-            iconCssClass: 'far fa-question-circle',
-            content: 'Hast du die Einverständniserklärung deiner Eltern dabei?'
+            content: `${ticket.firstName} ${ticket.lastName}\n` +
+                     `${ticket.age} Jahre alt`
         });
 
-        const selectedOption = await chat.ask([
-            { value: true, label: 'Ja, habe ich.' },
-            { value: false, label: 'Nein' },
-        ]);
-        console.log(selectedOption);
-
-        setTimeout(function () {
-            if (selectedOption.value) {
+        if (ticket.age < 18) {
+            if (ticket.termsAccepted) {
                 chat.addMessage({
-                    category: 'success',
-                    iconCssClass: 'far fa-check-circle',
-                    content: 'Check-in erfolgreich'
+                    content: 'Die Einverständniserklärung der Eltern wurde bereits abgegeben.'
                 });
             } else {
-                chat.showTechnicalIssue();
+                chat.addMessage({
+                    category: 'warning',
+                    iconCssClass: 'far fa-question-circle',
+                    content: 'Hast du die Einverständniserklärung deiner Eltern dabei?'
+                });
+
+                const answer = await chat.ask([
+                    { value: true, label: 'Ja, habe ich' },
+                    { value: false, label: 'Nein, habe ich nicht' },
+                ]);
+
+                if (answer.value) {
+                    chat.addMessage({
+                        category: 'warning',
+                        iconCssClass: 'fas fa-hand-holding',
+                        content: 'Nimm die Einverständniserklärung entgegen.'
+                    })
+                    await chat.ask([{ label: 'Erledigt' }]);
+                    // TODO: send result to server.
+                } else {
+                    chat.goToSupportLine();
+                    return;
+                }
             }
-        }, 1000)
+        }
+
+        chat.addMessage({
+            content: `Ticket-Typ: ${ticket.ticketTypeName}\n` +
+                     `Zimmernummer: ${ticket.roomNumber}`
+        });
+
+        if (ticket.paymentStatus !== 'Paid') {
+            chat.goToSupportLine("Das Ticket ist noch nicht vollständig bezahlt");
+            return;
+        }
+
+        // TODO: update check-in status.
+
+        chat.addMessage({
+            category: 'success',
+            iconCssClass: 'far fa-check-circle',
+            content: 'Check-in erfolgreich'
+        });
+
+        //const response = await http(API_BASE_URL + '/events');
+        //const json = await response.json();
+        //console.log(json);
     }
     main();
 })();

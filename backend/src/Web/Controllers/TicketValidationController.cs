@@ -3,7 +3,6 @@ using EventManagement.ApplicationCore.Tickets;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Shared.Mvc;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +16,12 @@ using System.Threading.Tasks;
 namespace EventManagement.WebApp.Controllers
 {
     /// <summary>
-    /// Controller to validate tickets either by scanning the QR Code
+    /// API for the ticket validation (check-in) process at the entrance of the event.
+    /// 
+    /// Tickets can be validated by scanning the QR code that is printed on the ticket
     /// or by entering the ticket number manually.
+    /// 
+    /// If the event is a conference, a dialog will with some questions will be displayed.
     /// </summary>
     [OpenApiIgnore]
     [AllowAnonymous]
@@ -116,7 +119,7 @@ namespace EventManagement.WebApp.Controllers
             }
             if (currentEvent != null && currentEvent.IsConference)
             {
-                return CheckInDialog(ticket);
+                return ConferenceCheckInDialog(ticket);
             }
 
             if (ticket.Validated)
@@ -138,29 +141,13 @@ namespace EventManagement.WebApp.Controllers
                     .SingleOrDefaultAsync(filter);
         }
 
-        private async Task<ClaimsPrincipal> TryGetAuthenticatedUser()
-        {
-            // check default auth cookie.
-            if (!User.Identity.IsAuthenticated)
-            {
-                var auth = await HttpContext.AuthenticateAsync(
-                    EventManagementConstants.MasterQrCode.AuthenticationScheme);
-                // check master qr auth cookie.
-                if (auth.Succeeded)
-                {
-                    return auth.Principal;
-                }
-            }
-            return User;
-        }
-
         private IActionResult TicketNotFound()
         {
             ViewBag.ErrorMessage = "Dieses Ticket existiert leider nicht!";
             return View("TicketError");
         }
 
-        private IActionResult CheckInDialog(ApplicationCore.Models.Ticket ticket)
+        private IActionResult ConferenceCheckInDialog(ApplicationCore.Models.Ticket ticket)
         {
             var model = _mapper.Map<Models.ConferenceDialogModel>(ticket);
             return View("ConferenceDialog", model);
