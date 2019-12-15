@@ -1,6 +1,4 @@
 ﻿(function () {
-    const API_BASE_URL = '/api';
-
     /** Samples:
       
     chat.addMessage({
@@ -24,7 +22,7 @@
     });
     chat.addMessage({
         category: 'danger',
-        iconCssClass: 'far fa-check-circle',
+        iconCssClass: 'far fa-times-circle',
         content: 'Leider gibt es ein Problem beim Check-in. Bitte gehe zur Support Line, unsere Mitarbeiter dort helfen dir weiter.'
     });
     const selectedOption = await chat.ask([
@@ -34,7 +32,6 @@
     console.log(`Decision: ${selectedOption.value}`);
     */
     class Chat {
-
         constructor(containerCssSelector) {
             this.container = $(containerCssSelector);
             this.messageTemplate = Handlebars.compile($('#message-template').html());
@@ -74,6 +71,63 @@
         }
     }
 
+    class CheckInDialog extends Chat {
+        constructor(containerCssSelector) {
+            super(containerCssSelector);
+        }
+
+        showTechnicalIssue() {
+            this.addMessage({
+                category: 'danger',
+                iconCssClass: 'far fa-times-circle',
+                content: 'Leider gibt es ein technisches Problem. Bitte gehe zur Support-Line. Unsere Mitarbeiter dort helfen dir weiter.'
+            });
+        }
+
+        showConnectionIssues() {
+            this.addMessage({
+                category: 'danger',
+                iconCssClass: 'far fa-times-circle',
+                content: 'Verbindungsprobleme. Bitte überprüfe deine Internetverbindung.'
+            });
+        }
+
+    }
+
+    const API_BASE_URL = '/api';
+    const chat = new CheckInDialog("#chat-root");
+
+    /**
+     * Improved secure implementation of the fetch() method.
+     * 
+     * The standard behavior of the fetch() method is that it doesn't fail,
+     * when a http status code 4xx or 5xx is returned from the server.
+     * This method returns a Promise that will perform the http request
+     * with the fetch() method. It will reject the Promise, when a HTTP
+     * status code is returned that indiciates a failure.
+     * Furthermore it does some additional error handling.
+     */
+    function http(input, init) {
+        return new Promise((resolve, reject) => {
+            fetch(input, init).then(response => {
+                // response only can be ok in range of 2XX
+                if (response.ok) {
+                    // you can call response.json() here too if you want to return json
+                    resolve(response);
+                } else {
+                    chat.showTechnicalIssue();
+                    reject(response);
+                }
+            })
+                .catch(error => {
+                    // it will be invoked mostly for network errors
+                    console.log(error);
+                    chat.showConnectionIssues();
+                    reject(error);
+                });
+        });
+    }
+
     async function main() {
         Handlebars.registerHelper('breaklines', function (text) {
             text = Handlebars.Utils.escapeExpression(text);
@@ -82,9 +136,8 @@
         });
 
         console.log(model);
-        const chat = new Chat("#chat-root");
 
-        const response = await fetch(API_BASE_URL + '/events');
+        const response = await http(API_BASE_URL + '/events');
         const json = await response.json();
         console.log(json);
 
@@ -113,11 +166,7 @@
                     content: 'Check-in erfolgreich'
                 });
             } else {
-                chat.addMessage({
-                    category: 'danger',
-                    iconCssClass: 'far fa-check-circle',
-                    content: 'Leider gibt es ein Problem beim Check-in. Bitte gehe zur Support Line, unsere Mitarbeiter dort helfen dir weiter.'
-                });
+                chat.showTechnicalIssue();
             }
         }, 1000)
     }
