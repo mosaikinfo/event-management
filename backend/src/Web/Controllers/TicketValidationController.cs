@@ -74,28 +74,13 @@ namespace EventManagement.WebApp.Controllers
             ApplicationCore.Models.Ticket ticket =
                 await FindTicketAsync(e => e.TicketSecret == secret);
 
-
             return await ValidateTicketAsync(ticket, ticketSecret: secret);
         }
 
-        private async Task<IActionResult> ValidateTicketAsync(ApplicationCore.Models.Ticket ticket, 
-                                                              string ticketNumber = null, 
+        private async Task<IActionResult> ValidateTicketAsync(ApplicationCore.Models.Ticket ticket,
+                                                              string ticketNumber = null,
                                                               string ticketSecret = null)
         {
-            var evt = ticket?.Event;
-            if (evt == null)
-            {
-                UserContext userContext = User.GetContext();
-                if (userContext?.EventId != null)
-                {
-                    evt = _context.Events.Find(userContext.EventId);
-                }
-            }
-            if (evt != null && evt.IsConference)
-            {
-                return CheckInDialog(ticket);
-            }
-
             if (ticket == null)
             {
                 string lookupValueType = ticketNumber == null ? "secret" : "number";
@@ -118,6 +103,22 @@ namespace EventManagement.WebApp.Controllers
 
                 return Redirect(redirectUrl);
             }
+
+            var currentEvent = ticket.Event;
+            if (currentEvent == null)
+            {
+                // try to get the event for which the master qr code was issued.
+                UserContext userContext = User.GetContext();
+                if (userContext?.EventId != null)
+                {
+                    currentEvent = _context.Events.Find(userContext.EventId);
+                }
+            }
+            if (currentEvent != null && currentEvent.IsConference)
+            {
+                return CheckInDialog(ticket);
+            }
+
             if (ticket.Validated)
             {
                 _logger.LogInformation("The ticket has already been used before.");
