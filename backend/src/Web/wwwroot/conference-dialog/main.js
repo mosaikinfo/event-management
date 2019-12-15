@@ -89,6 +89,11 @@
         console.log(json);
 
         chat.addMessage({
+            content: `${model.firstName} ${model.lastName}\n` +
+                `${model.age} Jahre alt`
+        });
+
+        chat.addMessage({
             category: 'warning',
             iconCssClass: 'far fa-question-circle',
             content: 'Hast du die Einverständniserklärung deiner Eltern dabei?'
