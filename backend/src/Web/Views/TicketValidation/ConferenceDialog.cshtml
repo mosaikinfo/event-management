@@ -14,29 +14,64 @@
 
 <body>
 
-    <div class="chatfield" id="chatfield"></div>
-
-    <div class="answerfield" id="answerfield">
-        <div class="splitter">
-            <div class=splitter-icon></div>
-        </div>
-        <button class="answer">
-            Ja, das ist richtig!
-        </button>
-        <button class="answer">
-            Nein das ist falsch!
-        </button>
-    </div>
-
-    <script id="message-server-template" type="text/x-handlebars-template">
-        <div class="message-server">
-            <div class="messagebox-server">
-                <div class="messagetext-server">
-                    {{ breaklines content }}
-                </div>
+    <script id="message-template" type="text/x-handlebars-template">
+        <div class="message message-left message-server">
+            <div class="message-body">
+                {{ breaklines content }}
             </div>
         </div>
     </script>
+
+    <div class="chat-panel">
+
+        <div class="message message-right message-user">
+            <div class="message-body">
+                <p>Ja, das stimmt!</p>
+            </div>
+        </div>
+
+        <div class="message message-left message-server">
+            <div class="message-body">
+                Ticket prüfen
+            </div>
+        </div>
+
+        <div class="message message-left message-success">
+            <div class="message-body">
+                <div class="message-icon">
+                    <i class="far fa-check-circle"></i>
+                </div>
+                <p>Check-in erfolgreich.</p>
+            </div>
+        </div>
+
+        <div class="message message-left message-warning">
+            <div class="message-body">
+                <div class="message-icon">
+                    <i class="far fa-question-circle"></i>
+                </div>
+                <p>Hast du die Einverständniserklärung deiner Eltern dabei?</p>
+            </div>
+        </div>
+
+        <div class="message message-left message-danger">
+            <div class="message-body">
+                <div class="message-icon">
+                    <i class="far fa-times-circle"></i>
+                </div>
+                <p>Leider gibt es ein Problem beim Check-in. Bitte gehe zur Support Line, unsere Mitarbeiter dort helfen dir weiter.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="answer-panel">
+        <div class="splitter">
+            <div class="splitter-icon"></div>
+        </div>
+        <button class="answer">Ja, das ist richtig!</button>
+        <button class="answer">Nein das ist falsch!</button>
+    </div>
 
     <script type="text/javascript">
         var model = @Html.Raw(Json.Serialize(Model))
