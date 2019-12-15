@@ -15,68 +15,35 @@
 <body>
 
     <script id="message-template" type="text/x-handlebars-template">
-        <div class="message message-{{ alignment }}">
+        <div class="message message-{{ alignment }} message-{{ category }}">
             <div class="message-body">
+                {{#if iconCssClass }}
+                    <div class="message-icon">
+                        <i class="{{ iconCssClass }}"></i>
+                    </div>
+                {{/if}}
                 {{ breaklines content }}
             </div>
         </div>
     </script>
 
-    <div class="chat-panel">
-
-        <div class="message message-right message-user">
-            <div class="message-body">
-                <p>Ja, das stimmt!</p>
+    <script id="answer-dialog-template" type="text/x-handlebars-template">
+        <div class="answer-panel">
+            <div class="splitter">
+                <div class="splitter-icon"></div>
             </div>
+            {{#each answerOptions }}
+                <button class="answer" data-index="{{ @@index }}">{{ label }}</button>
+            {{/each}}
         </div>
+    </script>
 
-        <div class="message message-left message-server">
-            <div class="message-body">
-                Ticket prüfen
-            </div>
-        </div>
-
-        <div class="message message-left message-success">
-            <div class="message-body">
-                <div class="message-icon">
-                    <i class="far fa-check-circle"></i>
-                </div>
-                <p>Check-in erfolgreich.</p>
-            </div>
-        </div>
-
-        <div class="message message-left message-warning">
-            <div class="message-body">
-                <div class="message-icon">
-                    <i class="far fa-question-circle"></i>
-                </div>
-                <p>Hast du die Einverständniserklärung deiner Eltern dabei?</p>
-            </div>
-        </div>
-
-        <div class="message message-left message-danger">
-            <div class="message-body">
-                <div class="message-icon">
-                    <i class="far fa-times-circle"></i>
-                </div>
-                <p>Leider gibt es ein Problem beim Check-in. Bitte gehe zur Support Line, unsere Mitarbeiter dort helfen dir weiter.</p>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="answer-panel">
-        <div class="splitter">
-            <div class="splitter-icon"></div>
-        </div>
-        <button class="answer">Ja, das ist richtig!</button>
-        <button class="answer">Nein das ist falsch!</button>
-    </div>
+    @* This is the area for answers and questions. *@
+    <div id="chat-root"></div>
 
     <script type="text/javascript">
         var model = @Html.Raw(Json.Serialize(Model))
     </script>
-
     <script src="~/js/conference-dialog.js"></script>
 </body>
 </html>
