@@ -1,8 +1,9 @@
 ﻿using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Shared.Mvc;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -15,34 +16,71 @@ namespace EventManagement.WebApp.Controllers
     [OpenApiIgnore]
     public class CheckInDialogController : EventManagementController
     {
-        private readonly EventsDbContext _context;
-        private readonly ILogger _logger;
+        private readonly EventsDbContext _db;
 
-        public CheckInDialogController(EventsDbContext context,
-                                          ILogger<CheckInDialogController> logger)
+        public CheckInDialogController(EventsDbContext dbContext)
         {
-            _context = context;
-            _logger = logger;
+            _db = dbContext;
         }
 
-        [HttpPost("checkin/save.dialogResult")]
-        public async Task<IActionResult> SaveDialogResultAsync(Models.ConferenceDialogResult model)
+        [HttpPost("checkin/setTermsAccepted")]
+        public async Task<IActionResult> SetTermsAcceptedAsync(ConferenceDialogResult model)
         {
-            ClaimsPrincipal currentUser = await TryGetAuthenticatedUser();
+            var context = await ValidateAndReturnContextAsync(model);
+            if (context.Result != null)
+                return context.Result;
+            // TODO: log audit event.
+            context.Ticket.TermsAccepted = true;
+            _db.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPost("checkin/complete")]
+        public async Task<IActionResult> CompleteCheckInAsync(ConferenceDialogResult model)
+        {
+            var context = await ValidateAndReturnContextAsync(model);
+            if (context.Result != null)
+                return context.Result;
+            // TODO: log audit event.
+            context.Ticket.Validated = true;
+            _db.SaveChanges();
+            return Ok();
+        }
+
+        private async Task<DialogContext> ValidateAndReturnContextAsync(ConferenceDialogResult model)
+        {
+            var context = new DialogContext
+            {
+                User = await TryGetAuthenticatedUser()
+            };
             // TODO: check if the user has the permission for the event.
-            if (!currentUser.Identity.IsAuthenticated)
-                return Unauthorized();
-
-            var ticket = await _context.Tickets.FindAsync(model.TicketId);
-
-            if (ticket == null)
+            if (!context.User.Identity.IsAuthenticated)
+            {
+                context.Result = Unauthorized();
+                return context;
+            }
+            context.Ticket = await _db.Tickets.FindAsync(model.TicketId);
+            if (context.Ticket == null)
             {
                 ModelState.AddModelError(
                     nameof(model.TicketId), "Ticket not found in database.");
-                return BadRequest();
+                context.Result = BadRequest();
+                return context;
             }
-
-            return Ok();
+            return context;
         }
+
+        private class DialogContext
+        {
+            public ClaimsPrincipal User { get; set; }
+            public ApplicationCore.Models.Ticket Ticket { get; set; }
+            public IActionResult Result { get; set; }
+        }
+    }
+
+    public class ConferenceDialogResult
+    {
+        [Required]
+        public Guid TicketId { get; set; }
     }
 }

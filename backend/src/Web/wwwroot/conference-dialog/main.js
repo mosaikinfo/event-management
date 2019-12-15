@@ -1,5 +1,4 @@
 ﻿(function () {
-    const API_BASE_URL = '/api';
     const TEXT_SUPPORT_LINE = 'Bitte gehe zur Support-Line. Unsere Mitarbeiter dort helfen dir weiter.';
 
     const ticket = window.model;
@@ -143,6 +142,14 @@
         });
     }
 
+    function postJson(url, data) {
+        return http(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+    }
+
     async function main() {
         Handlebars.registerHelper('breaklines', function (text) {
             text = Handlebars.Utils.escapeExpression(text);
@@ -154,6 +161,7 @@
 
         if (ticket.validated) {
             chat.goToSupportLine('Das Ticket wurde bereits verwendet');
+            return;
         }
 
         chat.addMessage({
@@ -185,7 +193,8 @@
                         content: 'Nimm die Einverständniserklärung entgegen.'
                     })
                     await chat.ask([{ label: 'Erledigt' }]);
-                    // TODO: send result to server.
+                    await postJson(
+                        '/checkin/setTermsAccepted', { ticketId: ticket.ticketId })
                 } else {
                     chat.goToSupportLine();
                     return;
@@ -203,17 +212,14 @@
             return;
         }
 
-        // TODO: update check-in status.
+        await postJson(
+            '/checkin/complete', { ticketId: ticket.ticketId })
 
         chat.addMessage({
             category: 'success',
             iconCssClass: 'far fa-check-circle',
             content: 'Check-in erfolgreich'
         });
-
-        //const response = await http(API_BASE_URL + '/events');
-        //const json = await response.json();
-        //console.log(json);
     }
     main();
 })();
