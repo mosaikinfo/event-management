@@ -11,6 +11,12 @@ namespace EventManagement.WebApp.Models
         [Required]
         public string Name { get; set; }
 
+        /// <summary>
+        /// If the event is a conference this affects nearly every process.
+        /// If it's not a conference (eg: a concert) the personal information doesn't matter.
+        /// </summary>
+        public bool IsConference { get; set; }
+
         [Required]
         public DateTime StartTime { get; set; }
 

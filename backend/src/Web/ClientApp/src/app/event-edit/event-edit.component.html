@@ -6,6 +6,19 @@
            [(ngModel)]="model.name" required>
   </div>
 
+  <div class="form-group">
+    <div class="form-group input-switch mb-0">
+      <label>Ist die Veranstaltung eine Konferenz?</label>
+      <p-inputSwitch name="isConference" [(ngModel)]="model.isConference"></p-inputSwitch>
+    </div>
+    <small class="form-text text-muted">
+      Bei Veranstaltungen, die keine Konferenz sind (z.B. Konzert, Festival), ist nicht relevant
+      wem das Ticket gehört. Bei Konferenzen benötigen wir auch die genauen Informationen zur Person, der
+      das Ticket gehört. Bei Konferenzen gibt es beim Check-In einen Dialog, während bei anderen Veranstaltungen
+      dem Kontrolleur nur angezeigt wird, ob das Ticket gültig ist oder nicht.
+    </small>
+  </div>
+
   <div class="form-row">
     <div class="form-group col">
       <label for="startTime">Beginn</label>

@@ -1,5 +1,8 @@
 ﻿using EventManagement.WebApp.Controllers;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace EventManagement.WebApp.Shared.Mvc
 {
@@ -24,6 +27,29 @@ namespace EventManagement.WebApp.Shared.Mvc
             return Url.ActionAbsoluteUrl<TicketValidationController>(
                 nameof(TicketValidationController.ValidateTicketByQrCodeValueAsync),
                 new { secret = secret });
+        }
+
+        /// <summary>
+        /// Tries to resolve the authenticated user by using multiple authentication schemes in this order:
+        /// 
+        /// 1. The user is an event admin authenticated to the backend.
+        /// 2. It is an API client authenticated with an access token.
+        /// 3. Master QR Code (login for entrance control).
+        /// </summary>
+        protected async Task<ClaimsPrincipal> TryGetAuthenticatedUser()
+        {
+            // check default auth cookie.
+            if (!User.Identity.IsAuthenticated)
+            {
+                var auth = await HttpContext.AuthenticateAsync(
+                    EventManagementConstants.MasterQrCode.AuthenticationScheme);
+                // check master qr auth cookie.
+                if (auth.Succeeded)
+                {
+                    return auth.Principal;
+                }
+            }
+            return User;
         }
     }
 }

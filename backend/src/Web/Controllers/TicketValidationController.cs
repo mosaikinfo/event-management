@@ -1,7 +1,8 @@
-﻿using EventManagement.ApplicationCore.Tickets;
+﻿using AutoMapper;
+using EventManagement.ApplicationCore.Tickets;
+using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Shared.Mvc;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +16,12 @@ using System.Threading.Tasks;
 namespace EventManagement.WebApp.Controllers
 {
     /// <summary>
-    /// Controller to validate tickets either by scanning the QR Code
+    /// API for the ticket validation (check-in) process at the entrance of the event.
+    /// 
+    /// Tickets can be validated by scanning the QR code that is printed on the ticket
     /// or by entering the ticket number manually.
+    /// 
+    /// If the event is a conference, a dialog will with some questions will be displayed.
     /// </summary>
     [OpenApiIgnore]
     [AllowAnonymous]
@@ -24,14 +29,17 @@ namespace EventManagement.WebApp.Controllers
     {
         private readonly EventsDbContext _context;
         private readonly ITicketRedirectService _ticketRedirectService;
+        private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public TicketValidationController(EventsDbContext context,
                                           ITicketRedirectService ticketRedirectService,
+                                          IMapper mapper,
                                           ILogger<TicketValidationController> logger)
         {
             _context = context;
             _ticketRedirectService = ticketRedirectService;
+            _mapper = mapper;
             _logger = logger;
         }
 
@@ -52,14 +60,7 @@ namespace EventManagement.WebApp.Controllers
             ApplicationCore.Models.Ticket ticket =
                 await FindTicketAsync(e => e.TicketNumber == number);
 
-            if (ticket == null)
-            {
-                _logger.LogInformation(
-                    "Ticket with number {number} was not found in the database.",
-                    number);
-                return TicketNotFound();
-            }
-            return await ValidateTicketAsync(ticket);
+            return await ValidateTicketAsync(ticket, ticketNumber: number);
         }
 
         /// <summary>
@@ -76,18 +77,21 @@ namespace EventManagement.WebApp.Controllers
             ApplicationCore.Models.Ticket ticket =
                 await FindTicketAsync(e => e.TicketSecret == secret);
 
-            if (ticket == null)
-            {
-                _logger.LogInformation("Ticket with secret {secret} was not found in the database.", secret);
-                return TicketNotFound();
-            }
-            return await ValidateTicketAsync(ticket);
+            return await ValidateTicketAsync(ticket, ticketSecret: secret);
         }
 
-        private async Task<IActionResult> ValidateTicketAsync(ApplicationCore.Models.Ticket ticket)
+        private async Task<IActionResult> ValidateTicketAsync(ApplicationCore.Models.Ticket ticket,
+                                                              string ticketNumber = null,
+                                                              string ticketSecret = null)
         {
             if (ticket == null)
-                throw new ArgumentNullException(nameof(ticket));
+            {
+                string lookupValueType = ticketNumber == null ? "secret" : "number";
+                string lookupValue = ticketNumber ?? ticketSecret;
+                _logger.LogInformation(
+                    $"Ticket with {lookupValueType} {lookupValue} was not found in the database.", lookupValue);
+                return TicketNotFound();
+            }
 
             ClaimsPrincipal currentUser = await TryGetAuthenticatedUser();
 
@@ -102,6 +106,22 @@ namespace EventManagement.WebApp.Controllers
 
                 return Redirect(redirectUrl);
             }
+
+            var currentEvent = ticket.Event;
+            if (currentEvent == null)
+            {
+                // try to get the event for which the master qr code was issued.
+                UserContext userContext = User.GetContext();
+                if (userContext?.EventId != null)
+                {
+                    currentEvent = _context.Events.Find(userContext.EventId);
+                }
+            }
+            if (currentEvent != null && currentEvent.IsConference)
+            {
+                return ConferenceCheckInDialog(ticket);
+            }
+
             if (ticket.Validated)
             {
                 _logger.LogInformation("The ticket has already been used before.");
@@ -121,26 +141,16 @@ namespace EventManagement.WebApp.Controllers
                     .SingleOrDefaultAsync(filter);
         }
 
-        private async Task<ClaimsPrincipal> TryGetAuthenticatedUser()
-        {
-            // check default auth cookie.
-            if (!User.Identity.IsAuthenticated)
-            {
-                var auth = await HttpContext.AuthenticateAsync(
-                    EventManagementConstants.MasterQrCode.AuthenticationScheme);
-                // check master qr auth cookie.
-                if (auth.Succeeded)
-                {
-                    return auth.Principal;
-                }
-            }
-            return User;
-        }
-
         private IActionResult TicketNotFound()
         {
             ViewBag.ErrorMessage = "Dieses Ticket existiert leider nicht!";
             return View("TicketError");
+        }
+
+        private IActionResult ConferenceCheckInDialog(ApplicationCore.Models.Ticket ticket)
+        {
+            var model = _mapper.Map<Models.ConferenceDialogModel>(ticket);
+            return View("ConferenceDialog", model);
         }
     }
 }

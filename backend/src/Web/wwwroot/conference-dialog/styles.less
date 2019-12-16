@@ -1,0 +1,200 @@
+﻿@bg-color-server: #f2f2f2;
+@bg-color-user: #d1ecf1;
+@bg-color-success: #d4edda;
+@bg-color-warning: #fff3cd;
+@bg-color-danger: #f8d7da;
+@fg-color-server: #000;
+@fg-color-user: #000;
+@fg-color-success: #155724;
+@fg-color-warning: #856404;
+@fg-color-danger: #721c24;
+
+body {
+    margin: 0px;
+    padding-top: 1em;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.9em;
+}
+
+#chat-root {
+    z-index: 1;
+    padding-bottom: 200px;
+}
+
+.message {
+    overflow: auto;
+
+    .message-body {
+        display: inline-block;
+        position: relative;
+        max-width: 70%;
+        margin-bottom: 10px;
+        margin-left: 1em;
+        margin-right: 1em;
+        padding: 1em;
+        border-radius: 0.5em 0 0.5em 0.5em;
+        letter-spacing: 0.02em;
+        line-height: 1.4;
+
+        &:after {
+            width: 0;
+            height: 0;
+            border-left: 0.5em solid transparent;
+            border-right: 0.5em solid transparent;
+            border-top: 0.75em solid @bg-color-server;
+            border-radius: 0.2em 0.2em 0.2em 0.2em;
+            position: absolute;
+            content: "";
+            top: 0px;
+        }
+
+        .message-icon {
+            margin-bottom: 0.3em;
+            text-align: center;
+            font-size: 2em;
+        }
+    }
+
+    &.message-left .message-body {
+        float: left;
+
+        &:after {
+            left: -0.5em;
+        }
+    }
+
+    &.message-right .message-body {
+        float: right;
+
+        &:after {
+            right: -0.5em;
+        }
+    }
+
+    &.message-server {
+        .message-body {
+            background-color: @bg-color-server;
+            color: @fg-color-server;
+
+            &:after {
+                border-top-color: @bg-color-server;
+            }
+        }
+    }
+
+    &.message-user {
+        .message-body {
+            background-color: @bg-color-user;
+            color: @fg-color-user;
+
+            &:after {
+                border-top-color: @bg-color-user;
+            }
+        }
+    }
+
+    &.message-success {
+        .message-body {
+            background-color: @bg-color-success;
+            color: @fg-color-success;
+
+            &:after {
+                border-top-color: @bg-color-success;
+            }
+        }
+    }
+
+    &.message-warning {
+        .message-body {
+            background-color: @bg-color-warning;
+            color: @fg-color-warning;
+
+            &:after {
+                border-top-color: @bg-color-warning;
+            }
+        }
+    }
+
+    &.message-danger {
+        .message-body {
+            background-color: @bg-color-danger;
+            color: @fg-color-danger;
+
+            &:after {
+                border-top-color: @bg-color-danger;
+            }
+        }
+    }
+}
+
+.answer-panel {
+    height: 200px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0px 5px 10px black;
+    overflow: auto;
+    z-index: 2;
+
+    .splitter {
+        height: auto;
+        margin: 1em 0;
+        width: 100%;
+
+        .splitter-icon {
+            width: 0;
+            height: 0;
+            margin-left: auto;
+            margin-right: auto;
+            border-left: 0.75em solid transparent;
+            border-right: 0.75em solid transparent;
+            border-bottom: 1.5em solid #2E2E2E;
+            position: relative;
+            content: "";
+
+            &:after {
+                width: 0;
+                height: 0;
+                margin-left: auto;
+                margin-right: auto;
+                border-left: 0.12em solid transparent;
+                border-right: 0.12em solid transparent;
+                border-bottom: 0.4em solid white;
+                position: absolute;
+                bottom: -1.5em;
+                left: -0.12em;
+                content: "";
+            }
+        }
+    }
+}
+
+button.answer {
+    display: block;
+    position: relative;
+    width: 95%;
+    margin-top: 0.2em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.6em;
+    padding-top: 0.75em;
+    padding-bottom: 0.75em;
+    padding-left: 1em;
+    padding-right: 1em;
+    border: transparent;
+    border-radius: 0.5em 0.5em 0.5em 0.5em;
+    box-shadow: transparent;
+    background-color: @bg-color-user;
+    color: @fg-color-user;
+    text-align: center;
+    letter-spacing: 0.02em;
+
+    &:active {
+        box-shadow: inset 0px 0px 5px rgba(0,0,0,0.2);
+    }
+
+    &:focus {
+        outline: none;
+    }
+}

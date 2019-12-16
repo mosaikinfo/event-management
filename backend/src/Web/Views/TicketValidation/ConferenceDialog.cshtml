@@ -1,0 +1,49 @@
+﻿@model EventManagement.WebApp.Models.ConferenceDialogModel
+@{
+    Layout = null;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>@Model.EventName</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" />
+    <link rel="stylesheet" href="~/css/conference-dialog.css" />
+</head>
+
+<body>
+
+    <script id="message-template" type="text/x-handlebars-template">
+        <div class="message message-{{ alignment }} message-{{ category }}">
+            <div class="message-body">
+                {{#if iconCssClass }}
+                    <div class="message-icon">
+                        <i class="{{ iconCssClass }}"></i>
+                    </div>
+                {{/if}}
+                {{ breaklines content }}
+            </div>
+        </div>
+    </script>
+
+    <script id="answer-dialog-template" type="text/x-handlebars-template">
+        <div class="answer-panel">
+            <div class="splitter">
+                <div class="splitter-icon"></div>
+            </div>
+            {{#each answerOptions }}
+                <button class="answer" data-index="{{ @@index }}">{{ label }}</button>
+            {{/each}}
+        </div>
+    </script>
+
+    @* This is the area for answers and questions. *@
+    <div id="chat-root"></div>
+
+    <script type="text/javascript">
+        var model = @Html.Raw(Json.Serialize(Model))
+    </script>
+    <script src="~/js/conference-dialog.js"></script>
+</body>
+</html>
