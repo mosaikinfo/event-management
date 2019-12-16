@@ -30,6 +30,13 @@
       <span *ngSwitchCase="'ticket_validated'">
         <i [ngClass]="{ 
           'fas': true,
+          'fa-check': entry.level === 'success',
+          'fa-times': entry.level === 'fail'
+        }"></i>
+      </span>
+      <span *ngSwitchCase="'ticket_status_changed'">
+        <i [ngClass]="{ 
+          'fas': true,
           'fa-user-check': entry.level === 'success',
           'fa-user-times': entry.level === 'fail'
         }"></i>

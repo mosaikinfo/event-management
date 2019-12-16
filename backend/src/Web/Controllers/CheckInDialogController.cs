@@ -1,4 +1,5 @@
-﻿using EventManagement.Infrastructure.Data;
+﻿using EventManagement.ApplicationCore.Auditing;
+using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Shared.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
@@ -17,10 +18,12 @@ namespace EventManagement.WebApp.Controllers
     public class CheckInDialogController : EventManagementController
     {
         private readonly EventsDbContext _db;
+        private readonly IAuditEventLog _auditEventLog;
 
-        public CheckInDialogController(EventsDbContext dbContext)
+        public CheckInDialogController(EventsDbContext dbContext, IAuditEventLog auditEventLog)
         {
             _db = dbContext;
+            _auditEventLog = auditEventLog;
         }
 
         [HttpPost("checkin/setTermsAccepted")]
@@ -29,7 +32,15 @@ namespace EventManagement.WebApp.Controllers
             var context = await ValidateAndReturnContextAsync(model);
             if (context.Result != null)
                 return context.Result;
-            // TODO: log audit event.
+
+            await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent
+            {
+                Time = DateTime.UtcNow,
+                TicketId = model.TicketId,
+                Action = EventManagementConstants.Auditing.Actions.TermsAccepted,
+                Detail = "Die Einverständniserklärung der Eltern wurde beim Check-in abgegeben."
+            });
+
             context.Ticket.TermsAccepted = true;
             _db.SaveChanges();
             return Ok();
@@ -41,9 +52,36 @@ namespace EventManagement.WebApp.Controllers
             var context = await ValidateAndReturnContextAsync(model);
             if (context.Result != null)
                 return context.Result;
-            // TODO: log audit event.
+
+            await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent
+            {
+                Time = DateTime.UtcNow,
+                TicketId = model.TicketId,
+                Action = EventManagementConstants.Auditing.Actions.TicketValidated,
+                Detail = $"Check-in war erfolgreich."
+            });
+
             context.Ticket.Validated = true;
             _db.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPost("checkin/failed")]
+        public async Task<IActionResult> CheckInFailedAsync(CheckInFailedResult model)
+        {
+            var context = await ValidateAndReturnContextAsync(model);
+            if (context.Result != null)
+                return context.Result;
+
+            await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent
+            {
+                Time = DateTime.UtcNow,
+                TicketId = model.TicketId,
+                Action = EventManagementConstants.Auditing.Actions.TicketValidated,
+                Level = ApplicationCore.Models.AuditEventLevel.Fail,
+                Detail = $"Check-in fehlgeschlagen. Grund: {model.Reason}."
+            });
+
             return Ok();
         }
 
@@ -82,5 +120,11 @@ namespace EventManagement.WebApp.Controllers
     {
         [Required]
         public Guid TicketId { get; set; }
+    }
+
+    public class CheckInFailedResult : ConferenceDialogResult
+    {
+        [Required]
+        public string Reason { get; set; }
     }
 }

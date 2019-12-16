@@ -6,38 +6,6 @@
         throw "Ticket data is missing.";
     }
 
-    /** Samples:
-      
-    chat.addMessage({
-        content: `${ticket.firstName} ${ticket.lastName}\n` +
-                 `${ticket.age} Jahre alt`
-    });
-    chat.addMessage({
-        category: 'user',
-        alignment: 'right',
-        content: 'Ja, das stimmmt!'
-    });
-    chat.addMessage({
-        category: 'success',
-        iconCssClass: 'far fa-check-circle',
-        content: 'Check-in erfolgreich'
-    });
-    chat.addMessage({
-        category: 'warning',
-        iconCssClass: 'far fa-question-circle',
-        content: 'Hast du die Einverständniserklärung deiner Eltern dabei?'
-    });
-    chat.addMessage({
-        category: 'danger',
-        iconCssClass: 'far fa-times-circle',
-        content: 'Leider gibt es ein Problem beim Check-in. Bitte gehe zur Support Line, unsere Mitarbeiter dort helfen dir weiter.'
-    });
-    const selectedOption = await chat.ask([
-        { value: true, label: 'Ja, habe ich.' },
-        { value: false, label: 'Nein' },
-    ]);
-    console.log(`Decision: ${selectedOption.value}`);
-    */
     class Chat {
         constructor(containerCssSelector) {
             this.container = $(containerCssSelector);
@@ -48,7 +16,7 @@
         addMessage(options) {
             options = options || {};
             options.alignment = options.alignment || 'left';
-            options.category = options.category || 'server'
+            options.category = options.category || 'server';
 
             const html = this.messageTemplate(options);
             this.container.append(html);
@@ -99,21 +67,20 @@
             });
         }
 
-        goToSupportLine(reason) {
+        showSupportLineMessage(reason) {
             this.addMessage({
                 category: 'danger',
                 iconCssClass: 'far fa-times-circle',
                 content: reason ? `${reason}. ${TEXT_SUPPORT_LINE}` : TEXT_SUPPORT_LINE
             });
         }
-
     }
 
     const chat = new CheckInDialog("#chat-root");
 
     /**
      * Improved secure implementation of the fetch() method.
-     * 
+     *
      * The standard behavior of the fetch() method is that it doesn't fail,
      * when a http status code 4xx or 5xx is returned from the server.
      * This method returns a Promise that will perform the http request
@@ -150,6 +117,14 @@
         });
     }
 
+    async function goToSupportLine(reason) {
+        await await postJson('/checkin/failed', {
+            ticketId: ticket.ticketId,
+            reason: reason
+        });
+        chat.showSupportLineMessage(reason);
+    }
+
     async function main() {
         Handlebars.registerHelper('breaklines', function (text) {
             text = Handlebars.Utils.escapeExpression(text);
@@ -160,14 +135,18 @@
         console.log(ticket);
 
         if (ticket.validated) {
-            chat.goToSupportLine('Das Ticket wurde bereits verwendet');
+            goToSupportLine('Das Ticket wurde bereits verwendet');
             return;
         }
 
-        chat.addMessage({
-            content: `${ticket.firstName} ${ticket.lastName}\n` +
-                     `${ticket.age} Jahre alt`
-        });
+        ticket.firstName = ticket.firstName || '';
+        ticket.lastName = ticket.lastName || '';
+        let name = `${ticket.firstName} ${ticket.lastName}`;
+        name = name.trim();
+        name = name || 'Name unbekannt';
+        let age = ticket.age;
+        age = age ? `${ticket.age} Jahre alt` : 'Alter unbekannt';
+        chat.addMessage({ content: `${name}\n${age}` });
 
         if (ticket.age < 18) {
             if (ticket.termsAccepted) {
@@ -184,36 +163,41 @@
                 const answer = await chat.ask([
                     { value: true, label: 'Ja, habe ich' },
                     { value: false, label: 'Nein, habe ich nicht' },
+                    { value: 18, label: 'Ich bin volljährig' }
                 ]);
 
-                if (answer.value) {
-                    chat.addMessage({
-                        category: 'warning',
-                        iconCssClass: 'fas fa-hand-holding',
-                        content: 'Nimm die Einverständniserklärung entgegen.'
-                    })
-                    await chat.ask([{ label: 'Erledigt' }]);
-                    await postJson(
-                        '/checkin/setTermsAccepted', { ticketId: ticket.ticketId })
-                } else {
-                    chat.goToSupportLine();
-                    return;
+                if (answer.value !== 18) {
+                    if (answer.value) {
+                        chat.addMessage({
+                            category: 'warning',
+                            iconCssClass: 'fas fa-hand-holding',
+                            content: 'Nimm die Einverständniserklärung entgegen.'
+                        });
+                        await chat.ask([{ label: 'Erledigt' }]);
+                        await postJson(
+                            '/checkin/setTermsAccepted', { ticketId: ticket.ticketId });
+                    } else {
+                        goToSupportLine("Die Einverständniserklärung der Eltern fehlt");
+                        return;
+                    }
                 }
             }
         }
 
+        const roomNumber = ticket.roomNumber || 'unbekannt';
         chat.addMessage({
-            content: `Ticket-Typ: ${ticket.ticketTypeName}\n` +
-                     `Zimmernummer: ${ticket.roomNumber}`
+            content:
+                `Ticket-Typ: ${ticket.ticketTypeName}\n` +
+                `Zimmernummer: ${roomNumber}`
         });
 
         if (ticket.paymentStatus !== 'Paid') {
-            chat.goToSupportLine("Das Ticket ist noch nicht vollständig bezahlt");
+            goToSupportLine("Das Ticket ist noch nicht vollständig bezahlt");
             return;
         }
 
         await postJson(
-            '/checkin/complete', { ticketId: ticket.ticketId })
+            '/checkin/complete', { ticketId: ticket.ticketId });
 
         chat.addMessage({
             category: 'success',
