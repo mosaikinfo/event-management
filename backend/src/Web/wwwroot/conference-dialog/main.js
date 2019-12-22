@@ -162,24 +162,21 @@
 
                 const answer = await chat.ask([
                     { value: true, label: 'Ja, habe ich' },
-                    { value: false, label: 'Nein, habe ich nicht' },
-                    { value: 18, label: 'Ich bin volljährig' }
+                    { value: false, label: 'Nein, habe ich nicht' }
                 ]);
 
-                if (answer.value !== 18) {
-                    if (answer.value) {
-                        chat.addMessage({
-                            category: 'warning',
-                            iconCssClass: 'fas fa-hand-holding',
-                            content: 'Nimm die Einverständniserklärung entgegen.'
-                        });
-                        await chat.ask([{ label: 'Erledigt' }]);
-                        await postJson(
-                            '/checkin/setTermsAccepted', { ticketId: ticket.ticketId });
-                    } else {
-                        goToSupportLine("Die Einverständniserklärung der Eltern fehlt");
-                        return;
-                    }
+                if (answer.value) {
+                    chat.addMessage({
+                        category: 'warning',
+                        iconCssClass: 'fas fa-hand-holding',
+                        content: 'Nimm die Einverständniserklärung entgegen.'
+                    });
+                    await chat.ask([{ label: 'Erledigt' }]);
+                    await postJson(
+                        '/checkin/setTermsAccepted', { ticketId: ticket.ticketId });
+                } else {
+                    goToSupportLine("Die Einverständniserklärung der Eltern fehlt");
+                    return;
                 }
             }
         }
