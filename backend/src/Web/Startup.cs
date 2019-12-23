@@ -19,6 +19,7 @@ using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -33,6 +34,7 @@ using NSwag.AspNetCore;
 using NSwag.Generation.Processors.Security;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using static EventManagement.EventManagementConstants;
 
@@ -40,7 +42,6 @@ namespace EventManagement.WebApp
 {
     public class Startup
     {
-
         public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
             Configuration = configuration;
@@ -133,7 +134,6 @@ namespace EventManagement.WebApp
 
                 if (!Environment.IsDevelopment())
                     confDialogBundler.MinifyJavaScript();
-
             });
 
             // Configure authentication to protect our web api.
@@ -225,6 +225,20 @@ namespace EventManagement.WebApp
             {
                 app.UseExceptionHandler("/Error");
             }
+
+            // TODO: support multiple cultures. allow to configure the culture for each single event.
+            var supportedCultures = new[]
+            {
+                new CultureInfo("de-DE")
+            };
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("de-DE"),
+                // Formatting numbers, dates, etc.
+                SupportedCultures = supportedCultures,
+                // UI strings that we have localized.
+                SupportedUICultures = supportedCultures
+            });
 
             app.UseWebOptimizer();
             app.UseStaticFiles();
