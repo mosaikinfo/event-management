@@ -27,6 +27,9 @@
       <span *ngSwitchCase="'payment_status_updated'">
         <i class="fas fa-coins"></i>
       </span>
+      <span *ngSwitchCase="'ticket_type_changed'">
+        <i class="fas fa-ticket-alt"></i>
+      </span>
       <span *ngSwitchCase="'ticket_validated'">
         <i [ngClass]="{ 
           'fas': true,

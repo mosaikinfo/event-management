@@ -238,7 +238,22 @@ namespace EventManagement.WebApp.Controllers
             _mapper.Map(model, entity);
             SetAuthorInfo(entity);
 
-            if (_context.Entry(entity).Property(e => e.PaymentStatus).IsModified)
+            bool ticketTypeModified = _context.Entry(entity).Property(e => e.TicketTypeId).IsModified;
+            bool paymentStatusModified = _context.Entry(entity).Property(e => e.PaymentStatus).IsModified;
+
+            if (ticketTypeModified)
+            {
+                _context.Entry(entity).Reference(e => e.TicketType).Load();
+                await _auditEventLog.AddAsync(new ApplicationCore.Models.AuditEvent
+                {
+                    Time = DateTime.UtcNow,
+                    TicketId = entity.Id,
+                    Action = EventManagementConstants.Auditing.Actions.TicketTypeChanged,
+                    Detail = $"Der Ticket-Typ wurde auf \"{entity.TicketType.Name}\" geändert."
+                });
+            }
+
+            if (paymentStatusModified)
             {
                 string description = entity.PaymentStatus.GetDescription();
                 float amountPaid = entity.AmountPaid.GetValueOrDefault();

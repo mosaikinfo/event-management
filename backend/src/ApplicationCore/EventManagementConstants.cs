@@ -44,6 +44,7 @@
                 public const string PaymentStatusUpdated = "payment_status_updated";
                 public const string TicketValidated = "ticket_validated";
                 public const string TicketStatusChanged = "ticket_status_changed";
+                public const string TicketTypeChanged = "ticket_type_changed";
             }
         }
     }
