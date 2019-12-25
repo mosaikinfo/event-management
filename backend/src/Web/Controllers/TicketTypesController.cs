@@ -35,6 +35,7 @@ namespace EventManagement.WebApp.Controllers
             return _context.TicketTypes
                 .AsNoTracking()
                 .Where(e => e.EventId == eventId)
+                .OrderBy(e => e.Name)
                 .ToList()
                 .Select(_mapper.Map<TicketType>)
                 .ToList();
