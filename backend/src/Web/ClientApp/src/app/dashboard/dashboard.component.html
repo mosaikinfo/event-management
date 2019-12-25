@@ -1,13 +1,5 @@
 <h1>Dashboard</h1>
 
-<h3 class="mt-4 h5">
-    Status
-    <span class="badge badge-primary fade" *ngIf="timer"
-          [ngClass]="{'fade-in': blink}">Live</span>
-</h3>
-Tickets versendet: <span *ngIf="status">{{ status.ticketsDelivered }} / {{ status.ticketsTotal }}</span><br>
-Check-In: <span *ngIf="status">{{ status.ticketsCheckedIn }} / {{ status.ticketsTotal }}</span>
-
 <h3 class="mt-5 h5">Kontingente</h3>
 <div class="table-responsive">
     <table class="table table-striped">

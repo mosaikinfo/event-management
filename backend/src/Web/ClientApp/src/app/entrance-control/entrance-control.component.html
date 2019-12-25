@@ -1,13 +1,7 @@
 <h1>Einlasskontrolle</h1>
 
 <div class="card-deck mt-4">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">QR-Code scannen</h5>
-      <p class="card-text">Scanne die Tickets mit deinem Smartphone.</p>
-      <a [routerLink]='["/entrance-control/app"]' class="stretched-link"></a>
-    </div>
-  </div>
+  <app-live-status class="card"></app-live-status>
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">Manuelle Eingabe der Ticketnummer</h5>

@@ -35,6 +35,11 @@
             <div ngbDropdownMenu aria-labelledby="accountDropDown">
               <h6 class="dropdown-header">Hallo {{ currentUser }}!</h6>
               <div class="dropdown-divider"></div>
+              <a class="dropdown-item" [routerLink]='["/entrance-control/app"]'>
+                <i class="fas fa-qrcode"></i>
+                Mein Master-QR-Code
+              </a>
+              <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="swagger">
                 <i class="fas fa-code"></i>
                 API Documentation

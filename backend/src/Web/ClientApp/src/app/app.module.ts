@@ -52,6 +52,7 @@ import { TicketDetailComponent } from './ticket-detail/ticket-detail.component';
 import { TicketAuditLogComponent } from './ticket-audit-log/ticket-audit-log.component';
 import { EventDangerZoneComponent } from './event-danger-zone/event-danger-zone.component';
 import { BatchSendComponent } from './batch-send/batch-send.component';
+import { LiveStatusComponent } from './live-status/live-status.component';
 
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
@@ -75,7 +76,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     TicketDetailComponent,
     TicketAuditLogComponent,
     EventDangerZoneComponent,
-    BatchSendComponent
+    BatchSendComponent,
+    LiveStatusComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

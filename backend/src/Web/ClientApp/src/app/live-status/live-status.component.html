@@ -1,0 +1,11 @@
+<div class="card-body">
+  <h5 class="card-title">
+    Status
+    <span class="badge badge-primary fade" *ngIf="timer"
+          [ngClass]="{'fade-in': blink}">Live</span>
+  </h5>
+  <p class="card-text">
+    Tickets versendet: <span *ngIf="status">{{ status.ticketsDelivered }} / {{ status.ticketsTotal }}</span><br>
+    Check-In: <span *ngIf="status">{{ status.ticketsCheckedIn }} / {{ status.ticketsTotal }}</span>
+  </p>
+</div>
