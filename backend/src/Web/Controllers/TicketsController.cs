@@ -119,7 +119,10 @@ namespace EventManagement.WebApp.Controllers
             if (model.Id != Guid.Empty)
                 return BadRequest(
                     new ProblemDetails { Detail = "This method can't be used to update tickets." });
-            var evt = _context.Events.Find(model.EventId);
+            if (await _context.Tickets.AnyAsync(t => t.TicketNumber == model.TicketNumber))
+                return BadRequest(
+                    new ProblemDetails { Detail = $"The ticket number \"{model.TicketNumber}\" is already in use." });
+            var evt = await _context.Events.FindAsync(model.EventId);
             if (evt == null)
                 return BadRequest(
                     new ProblemDetails { Detail = $"There's no event with id {model.EventId}." });
