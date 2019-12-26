@@ -173,7 +173,17 @@ namespace EventManagement.Infrastructure.Data
                     .HasMaxLength(100)
                     .HasConversion(
                         value => value.GetStringValue(),
-                        value => (AuditEventLevel) Enum.Parse(typeof(AuditEventLevel), value, true));
+                        value => (AuditEventLevel)Enum.Parse(typeof(AuditEventLevel), value, true));
+
+                entity.HasOne(e => e.Ticket)
+                      .WithMany()
+                      .HasForeignKey(e => e.TicketId);
+            });
+
+            modelBuilder.Entity<SupportTicket>(entity =>
+            {
+                entity.ToTable("SupportTickets");
+                entity.Property(e => e.Description).HasMaxLength(1000);
 
                 entity.HasOne(e => e.Ticket)
                       .WithMany()
