@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LazyLoadEvent, SelectItem } from 'primeng/components/common/api';
-import { Event, Ticket, EventManagementApiClient, TicketType, PaymentStatus } from '../services/event-management-api.client';
+import { Event, Ticket, EventManagementApiClient, PaymentStatus } from '../services/event-management-api.client';
 import { SessionService } from '../services/session.service';
 
 @Component({
@@ -118,7 +118,7 @@ export class TicketListComponent implements OnInit {
 
   edit() {
     if (this.selectedTicket) {
-      this.router.navigate(["/tickets", this.selectedTicket.id]);
+      this.router.navigate(["/tickets", this.selectedTicket.id, "false"]);
     }
   }
 }

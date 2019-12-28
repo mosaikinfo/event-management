@@ -14,6 +14,7 @@ export class TicketEditComponent implements OnInit {
   ticketTypes: TicketType[] = [];
   PaymentStatus = PaymentStatus;
   birthDateMax = new Date();
+  isEntranceControl: boolean;
 
   constructor(
     private session: SessionService,
@@ -24,6 +25,9 @@ export class TicketEditComponent implements OnInit {
     @Inject('BASE_URL') public baseUrl: string,
   ) {
     this.model.paymentStatus = PaymentStatus.Open;
+    this.isEntranceControl = 
+      this.route.snapshot.paramMap
+        .get('entranceControl') === "true";
   }
 
   async ngOnInit() {
@@ -53,18 +57,16 @@ export class TicketEditComponent implements OnInit {
         .tickets_CreateTicket(this.model)
         .toPromise();
       this.alertService.showSaveSuccessAlert()
-      this.router.navigate(['/tickets', ticket.id]);
+      this.router.navigate(['/tickets', ticket.id, 'false']);
     } else {
       await this.apiClient
         .tickets_UpdateTicket(this.model.id, this.model)
         .toPromise();
       this.alertService.showSaveSuccessAlert();
+      if (this.isEntranceControl) {
+        this.goBack();
+      }
     }
-  }
-
-  async saveAndGoBack() {
-    await this.saveChanges();
-    this.goBack();
   }
 
   async sendMail() {
@@ -95,6 +97,10 @@ export class TicketEditComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/tickets']);
+    if (this.isEntranceControl) {
+      this.router.navigate(['/entrance-control']);
+    } else {
+      this.router.navigate(['/tickets']);
+    }
   }
 }

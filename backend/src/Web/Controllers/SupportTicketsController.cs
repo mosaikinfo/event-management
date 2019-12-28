@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EventManagement.WebApp.Controllers
 {
@@ -17,19 +19,24 @@ namespace EventManagement.WebApp.Controllers
     [ApiController]
     [Route("api")]
     [Authorize(EventManagementConstants.AdminApi.PolicyName)]
-    public class SupportTicketController : ControllerBase
+    public class SupportTicketsController : ControllerBase
     {
         private readonly EventsDbContext _context;
         private readonly IMapper _mapper;
 
-        public SupportTicketController(EventsDbContext context, IMapper mapper)
+        public SupportTicketsController(EventsDbContext context, IMapper mapper)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        /// <summary>
+        /// Lists all support tickets for a given event.
+        /// </summary>
+        /// <param name="eventId">Id of the event.</param>
+        /// <param name="status">Filter the support tickets by status (new, inprogress, closed).</param>
         [HttpGet("events/{eventId}/supporttickets")]
-        public ActionResult<List<SupportTicket>> ListSupportTickets(Guid eventId,
+        public ActionResult<List<SupportTicket>> List(Guid eventId,
             ApplicationCore.Models.SupportTicketStatus? status)
         {
             IEnumerable<ApplicationCore.Models.SupportTicket> supportTickets =
@@ -37,7 +44,7 @@ namespace EventManagement.WebApp.Controllers
                     .AsNoTracking()
                     .Include(e => e.Ticket)
                     .Where(e => e.Ticket.EventId == eventId)
-                    .OrderByDescending(e => e.CreatedAt);
+                    .OrderBy(e => e.CreatedAt);
 
             if (status != null)
             {
@@ -53,5 +60,37 @@ namespace EventManagement.WebApp.Controllers
                 .Select(_mapper.Map<SupportTicket>)
                 .ToList();
         }
+
+        /// <summary>
+        /// Update the status of a support ticket.
+        /// </summary>
+        /// <param name="id">Id of the ticket.</param>
+        /// <param name="args">new status of the ticket.</param>
+        [HttpPost("/supporttickets/{id}/status")]
+        public async Task<IActionResult> SetStatusAsync(Guid id, SetStatusCommandArgs args)
+        {
+            var supportTicket = await _context.SupportTickets.FindAsync(id);
+
+            if (supportTicket == null)
+                return NotFound();
+
+            if (supportTicket.Status != args.NewStatus)
+            {
+                supportTicket.Status = args.NewStatus;
+
+                if (args.NewStatus == ApplicationCore.Models.SupportTicketStatus.Closed)
+                {
+                    supportTicket.ClosedAt = DateTime.UtcNow;
+                }
+                await _context.SaveChangesAsync();
+            }
+            return Ok();
+        }
+    }
+
+    public class SetStatusCommandArgs
+    {
+        [Required]
+        public ApplicationCore.Models.SupportTicketStatus NewStatus { get; set; }
     }
 }

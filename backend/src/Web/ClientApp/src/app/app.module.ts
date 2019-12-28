@@ -17,6 +17,9 @@ import { BlockUIModule } from 'primeng/blockui';
 import { PanelModule } from 'primeng/panel';
 import { FieldsetModule } from 'primeng/fieldset';
 
+import { MomentModule } from 'ngx-moment';
+import 'moment/locale/de';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
@@ -53,6 +56,7 @@ import { TicketAuditLogComponent } from './ticket-audit-log/ticket-audit-log.com
 import { EventDangerZoneComponent } from './event-danger-zone/event-danger-zone.component';
 import { BatchSendComponent } from './batch-send/batch-send.component';
 import { LiveStatusComponent } from './live-status/live-status.component';
+import { SupportTicketsListComponent } from './support-tickets-list/support-tickets-list.component';
 
 registerLocaleData(localeDe, 'de-DE', localeDeExtra);
 
@@ -77,7 +81,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     TicketAuditLogComponent,
     EventDangerZoneComponent,
     BatchSendComponent,
-    LiveStatusComponent
+    LiveStatusComponent,
+    SupportTicketsListComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -97,7 +102,8 @@ registerLocaleData(localeDe, 'de-DE', localeDeExtra);
     CheckboxModule,
     BlockUIModule,
     PanelModule,
-    FieldsetModule
+    FieldsetModule,
+    MomentModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'de-DE' },

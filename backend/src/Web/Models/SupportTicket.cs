@@ -8,6 +8,8 @@ namespace EventManagement.WebApp.Models
 
         public Guid TicketId { get; set; }
 
+        public string TicketNumber { get; set; }
+
         public int SupportNumber { get; set; }
 
         public string Description { get; set; }

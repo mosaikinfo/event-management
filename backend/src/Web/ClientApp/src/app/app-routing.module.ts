@@ -57,7 +57,7 @@ const routes: Routes = [
         canActivate: [AuthGuardService, EventGuardService] 
     },
     { 
-        path: 'tickets/:id', 
+        path: 'tickets/:id/:entranceControl', 
         component: TicketDetailComponent, 
         canActivate: [AuthGuardService, EventGuardService] 
     },
