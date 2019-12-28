@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EventManagement.Infrastructure.Data.Migrations
 {
-    public partial class SupportTickets : Migration
+    public partial class SupportTicket : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,8 +15,8 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     TicketId = table.Column<Guid>(nullable: false),
                     SupportNumber = table.Column<int>(nullable: false),
                     Description = table.Column<string>(maxLength: 1000, nullable: true),
+                    Status = table.Column<string>(maxLength: 100, nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    Closed = table.Column<bool>(nullable: false),
                     ClosedAt = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>

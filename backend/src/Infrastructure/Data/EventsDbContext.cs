@@ -185,6 +185,13 @@ namespace EventManagement.Infrastructure.Data
                 entity.ToTable("SupportTickets");
                 entity.Property(e => e.Description).HasMaxLength(1000);
 
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasConversion(
+                        value => value.GetStringValue(),
+                        value => SupportTicketStatusExtensions.FromStringValue(value));
+
                 entity.HasOne(e => e.Ticket)
                       .WithMany()
                       .HasForeignKey(e => e.TicketId);

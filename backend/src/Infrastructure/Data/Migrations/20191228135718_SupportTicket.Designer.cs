@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventManagement.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(EventsDbContext))]
-    [Migration("20191226091234_SupportTickets")]
-    partial class SupportTickets
+    [Migration("20191228135718_SupportTicket")]
+    partial class SupportTicket
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -211,14 +211,16 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("Closed");
-
                     b.Property<DateTime?>("ClosedAt");
 
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000);
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
                     b.Property<int>("SupportNumber");
 

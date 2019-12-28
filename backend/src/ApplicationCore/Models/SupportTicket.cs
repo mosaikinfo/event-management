@@ -10,9 +10,9 @@ namespace EventManagement.ApplicationCore.Models
 
         public string Description { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public SupportTicketStatus Status { get; set; }
 
-        public bool Closed { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public DateTime? ClosedAt { get; set; }
 

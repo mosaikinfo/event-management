@@ -209,14 +209,16 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("Closed");
-
                     b.Property<DateTime?>("ClosedAt");
 
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000);
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
                     b.Property<int>("SupportNumber");
 
