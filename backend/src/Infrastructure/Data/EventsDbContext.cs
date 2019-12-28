@@ -20,6 +20,8 @@ namespace EventManagement.Infrastructure.Data
         public DbSet<MailSettings> MailSettings { get; set; }
         public DbSet<AuditEvent> AuditEventLog { get; set; }
 
+        public DbSet<SupportTicket> SupportTickets { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(entity =>

@@ -6,6 +6,7 @@ using EventManagement.ApplicationCore.Services;
 using EventManagement.ApplicationCore.TicketDelivery;
 using EventManagement.ApplicationCore.TicketGeneration;
 using EventManagement.ApplicationCore.Tickets;
+using EventManagement.ApplicationCore.TicketSupport;
 using EventManagement.Identity;
 using EventManagement.Infrastructure.Data;
 using EventManagement.Infrastructure.Data.Repositories;
@@ -70,6 +71,7 @@ namespace EventManagement.WebApp
             services.TryAddTransient<ITicketDeliveryService, TicketDeliveryService>();
             services.TryAddTransient<IPdfTicketService, PdfTicketService>();
             services.TryAddTransient<ITicketRedirectService, TicketRedirectService>();
+            services.TryAddTransient<ISupportTicketRepository, SupportTicketRepository>();
 
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential(persistKey: true)
