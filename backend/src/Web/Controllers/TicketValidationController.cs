@@ -17,10 +17,10 @@ namespace EventManagement.WebApp.Controllers
 {
     /// <summary>
     /// API for the ticket validation (check-in) process at the entrance of the event.
-    /// 
+    ///
     /// Tickets can be validated by scanning the QR code that is printed on the ticket
     /// or by entering the ticket number manually.
-    /// 
+    ///
     /// If the event is a conference, a dialog will with some questions will be displayed.
     /// </summary>
     [OpenApiIgnore]
@@ -94,8 +94,15 @@ namespace EventManagement.WebApp.Controllers
             }
 
             ClaimsPrincipal currentUser = await TryGetAuthenticatedUser();
+            UserContext context = currentUser.GetContext();
 
-            // TODO: check if the user has the permission for the event.
+            // If the user is logged in for a single event only,
+            // check if the ticket and the event are the same.
+            if (context.EventId != null &&
+                context.EventId != ticket.EventId)
+            {
+                return WrongEvent();
+            }
 
             if (!currentUser.Identity.IsAuthenticated)
             {
@@ -144,6 +151,12 @@ namespace EventManagement.WebApp.Controllers
         private IActionResult TicketNotFound()
         {
             ViewBag.ErrorMessage = "Dieses Ticket existiert leider nicht!";
+            return View("TicketError");
+        }
+
+        private IActionResult WrongEvent()
+        {
+            ViewBag.ErrorMessage = "Das Ticket ist für dieses Event nicht gültig!";
             return View("TicketError");
         }
 
