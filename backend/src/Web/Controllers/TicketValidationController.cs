@@ -94,7 +94,6 @@ namespace EventManagement.WebApp.Controllers
             }
 
             ClaimsPrincipal currentUser = await TryGetAuthenticatedUser();
-            UserContext context = currentUser.GetContext();
 
             if (currentUser == null || !currentUser.Identity.IsAuthenticated)
             {
