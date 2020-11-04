@@ -20,6 +20,8 @@ namespace EventManagement.Infrastructure.Data
         public DbSet<MailSettings> MailSettings { get; set; }
         public DbSet<AuditEvent> AuditEventLog { get; set; }
 
+        public DbSet<SupportTicket> SupportTickets { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(entity =>
@@ -173,7 +175,24 @@ namespace EventManagement.Infrastructure.Data
                     .HasMaxLength(100)
                     .HasConversion(
                         value => value.GetStringValue(),
-                        value => (AuditEventLevel) Enum.Parse(typeof(AuditEventLevel), value, true));
+                        value => (AuditEventLevel)Enum.Parse(typeof(AuditEventLevel), value, true));
+
+                entity.HasOne(e => e.Ticket)
+                      .WithMany()
+                      .HasForeignKey(e => e.TicketId);
+            });
+
+            modelBuilder.Entity<SupportTicket>(entity =>
+            {
+                entity.ToTable("SupportTickets");
+                entity.Property(e => e.Description).HasMaxLength(1000);
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasConversion(
+                        value => value.GetStringValue(),
+                        value => SupportTicketStatusExtensions.FromStringValue(value));
 
                 entity.HasOne(e => e.Ticket)
                       .WithMany()

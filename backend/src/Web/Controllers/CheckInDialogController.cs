@@ -1,4 +1,5 @@
 ﻿using EventManagement.ApplicationCore.Auditing;
+using EventManagement.ApplicationCore.TicketSupport;
 using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Shared.Mvc;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,15 @@ namespace EventManagement.WebApp.Controllers
     {
         private readonly EventsDbContext _db;
         private readonly IAuditEventLog _auditEventLog;
+        private readonly ISupportTicketRepository _supportTickets;
 
-        public CheckInDialogController(EventsDbContext dbContext, IAuditEventLog auditEventLog)
+        public CheckInDialogController(EventsDbContext dbContext,
+                                       IAuditEventLog auditEventLog,
+                                       ISupportTicketRepository supportTickets)
         {
-            _db = dbContext;
-            _auditEventLog = auditEventLog;
+            _db = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _auditEventLog = auditEventLog ?? throw new ArgumentNullException(nameof(auditEventLog));
+            _supportTickets = supportTickets ?? throw new ArgumentNullException(nameof(supportTickets));
         }
 
         [HttpPost("checkin/setTermsAccepted")]
@@ -82,7 +87,10 @@ namespace EventManagement.WebApp.Controllers
                 Detail = $"Check-in fehlgeschlagen. Grund: {model.Reason}."
             });
 
-            return Ok();
+            var supportTicket = await _supportTickets
+                .CreateSupportTicketAsync(model.TicketId, model.Reason);
+
+            return Ok(new { supportTicket.SupportNumber });
         }
 
         private async Task<DialogContext> ValidateAndReturnContextAsync(ConferenceDialogResult model)

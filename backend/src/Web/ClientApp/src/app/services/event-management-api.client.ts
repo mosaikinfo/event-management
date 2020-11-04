@@ -874,6 +874,130 @@ export class EventManagementApiClient extends ServiceBase {
     }
 
     /**
+     * Lists all support tickets for a given event.
+     * @param eventId Id of the event.
+     * @param status (optional) Filter the support tickets by status (new, inprogress, closed).
+     */
+    supportTickets_List(eventId: string, status: SupportTicketStatus | null | undefined): Observable<SupportTicket[]> {
+        let url_ = this.baseUrl + "/api/events/{eventId}/supporttickets?";
+        if (eventId === undefined || eventId === null)
+            throw new Error("The parameter 'eventId' must be defined.");
+        url_ = url_.replace("{eventId}", encodeURIComponent("" + eventId)); 
+        if (status !== undefined)
+            url_ += "status=" + encodeURIComponent("" + status) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processSupportTickets_List(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSupportTickets_List(<any>response_);
+                } catch (e) {
+                    return <Observable<SupportTicket[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SupportTicket[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSupportTickets_List(response: HttpResponseBase): Observable<SupportTicket[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SupportTicket.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SupportTicket[]>(<any>null);
+    }
+
+    /**
+     * Update the status of a support ticket.
+     * @param id Id of the ticket.
+     * @param args new status of the ticket.
+     */
+    supportTickets_SetStatus(id: string, args: SetStatusCommandArgs): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/supporttickets/{id}/status";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(args);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_)).pipe(_observableMergeMap(transformedOptions_ => {
+            return this.http.request("post", url_, transformedOptions_);
+        })).pipe(_observableMergeMap((response_: any) => {
+            return this.processSupportTickets_SetStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSupportTickets_SetStatus(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSupportTickets_SetStatus(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse>(<any>null);
+    }
+
+    /**
      * Send a ticket via e-mail.
      * @param ticketId Id of the ticket.
      */
@@ -2053,6 +2177,120 @@ export interface IMailSettings {
     body: string;
     enableDemoMode?: boolean;
     demoEmailRecipients?: string[] | undefined;
+}
+
+export class SupportTicket implements ISupportTicket {
+    id?: string;
+    ticketId?: string;
+    ticketNumber?: string | undefined;
+    supportNumber?: number;
+    description?: string | undefined;
+    status?: SupportTicketStatus;
+    createdAt?: Date;
+    closedAt?: Date | undefined;
+    lastName?: string | undefined;
+    firstName?: string | undefined;
+
+    constructor(data?: ISupportTicket) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.ticketId = data["ticketId"];
+            this.ticketNumber = data["ticketNumber"];
+            this.supportNumber = data["supportNumber"];
+            this.description = data["description"];
+            this.status = data["status"];
+            this.createdAt = data["createdAt"] ? new Date(data["createdAt"].toString()) : <any>undefined;
+            this.closedAt = data["closedAt"] ? new Date(data["closedAt"].toString()) : <any>undefined;
+            this.lastName = data["lastName"];
+            this.firstName = data["firstName"];
+        }
+    }
+
+    static fromJS(data: any): SupportTicket {
+        data = typeof data === 'object' ? data : {};
+        let result = new SupportTicket();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["ticketId"] = this.ticketId;
+        data["ticketNumber"] = this.ticketNumber;
+        data["supportNumber"] = this.supportNumber;
+        data["description"] = this.description;
+        data["status"] = this.status;
+        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>undefined;
+        data["closedAt"] = this.closedAt ? this.closedAt.toISOString() : <any>undefined;
+        data["lastName"] = this.lastName;
+        data["firstName"] = this.firstName;
+        return data; 
+    }
+}
+
+export interface ISupportTicket {
+    id?: string;
+    ticketId?: string;
+    ticketNumber?: string | undefined;
+    supportNumber?: number;
+    description?: string | undefined;
+    status?: SupportTicketStatus;
+    createdAt?: Date;
+    closedAt?: Date | undefined;
+    lastName?: string | undefined;
+    firstName?: string | undefined;
+}
+
+export enum SupportTicketStatus {
+    New = 0,
+    InProgress = 1,
+    Closed = 2,
+}
+
+export class SetStatusCommandArgs implements ISetStatusCommandArgs {
+    newStatus?: SupportTicketStatus;
+
+    constructor(data?: ISetStatusCommandArgs) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.newStatus = data["newStatus"];
+        }
+    }
+
+    static fromJS(data: any): SetStatusCommandArgs {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetStatusCommandArgs();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["newStatus"] = this.newStatus;
+        return data; 
+    }
+}
+
+export interface ISetStatusCommandArgs {
+    newStatus?: SupportTicketStatus;
 }
 
 export class BatchSendResult implements IBatchSendResult {

@@ -2,7 +2,11 @@
   
   <nav class="navbar navbar-light mt-3 mb-3 p-0">
     <div class="form-inline">
-        <app-button-back *ngIf="isNew()" class="mr-4 mb-2"></app-button-back>
+        <button type="button"
+                class="mr-2 btn btn-light d-flex align-items-center"
+                (click)="goBack()">
+          <i class="material-icons mr-1">arrow_back</i> Zurück
+        </button>
         <button type="submit" class="btn btn-primary mr-2" [disabled]="!form.form.valid">Speichern</button>
         <a *ngIf="!isNew()"
            [href]="baseUrl + '/tickets/' + model.id + '/pdf'"
@@ -135,7 +139,7 @@
   </div>
   
   <div>
-    <button type="button" (click)="saveAndGoBack()" class="btn btn-primary" [disabled]="!form.form.valid">Speichern</button>
+    <button type="button" (click)="saveChanges()" class="btn btn-primary" [disabled]="!form.form.valid">Speichern</button>
   </div>
 </form>
 

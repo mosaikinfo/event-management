@@ -204,6 +204,33 @@ namespace EventManagement.Infrastructure.Data.Migrations
                     b.ToTable("MasterQrCodes");
                 });
 
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.SupportTicket", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime?>("ClosedAt");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<int>("SupportNumber");
+
+                    b.Property<Guid>("TicketId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("SupportTickets");
+                });
+
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.Ticket", b =>
                 {
                     b.Property<Guid>("Id")
@@ -385,6 +412,14 @@ namespace EventManagement.Infrastructure.Data.Migrations
                         .WithMany("MasterQrCodes")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("EventManagement.ApplicationCore.Models.SupportTicket", b =>
+                {
+                    b.HasOne("EventManagement.ApplicationCore.Models.Ticket", "Ticket")
+                        .WithMany()
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("EventManagement.ApplicationCore.Models.Ticket", b =>

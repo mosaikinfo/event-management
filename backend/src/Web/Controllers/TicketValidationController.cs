@@ -96,15 +96,7 @@ namespace EventManagement.WebApp.Controllers
             ClaimsPrincipal currentUser = await TryGetAuthenticatedUser();
             UserContext context = currentUser.GetContext();
 
-            // If the user is logged in for a single event only,
-            // check if the ticket and the event are the same.
-            if (context.EventId != null &&
-                context.EventId != ticket.EventId)
-            {
-                return WrongEvent();
-            }
-
-            if (!currentUser.Identity.IsAuthenticated)
+            if (currentUser == null || !currentUser.Identity.IsAuthenticated)
             {
                 _logger.LogInformation("Unauthorized. Redirect to event homepage.");
 
@@ -112,6 +104,18 @@ namespace EventManagement.WebApp.Controllers
                 string redirectUrl = await _ticketRedirectService.GetRedirectUrlAsync(ticket.Id, validationUri);
 
                 return Redirect(redirectUrl);
+            }
+
+            UserContext context = currentUser.GetContext();
+            if (context == null)
+                throw new Exception("user context is null");
+
+            // If the user is logged in for a single event only,
+            // check if the ticket and the event are the same.
+            if (context.EventId != null &&
+                context.EventId != ticket.EventId)
+            {
+                return WrongEvent();
             }
 
             var currentEvent = ticket.Event;

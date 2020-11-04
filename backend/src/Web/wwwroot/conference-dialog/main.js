@@ -67,11 +67,17 @@
             });
         }
 
-        showSupportLineMessage(reason) {
+        showSupportLineMessage(reason, supportNumber) {
+            let text = reason
+                ? `${reason}. ${TEXT_SUPPORT_LINE}`
+                : TEXT_SUPPORT_LINE;
+            if (supportNumber) {
+                text += `\n\nDeine Support-Nummer: ${supportNumber}`;
+            }
             this.addMessage({
                 category: 'danger',
                 iconCssClass: 'far fa-times-circle',
-                content: reason ? `${reason}. ${TEXT_SUPPORT_LINE}` : TEXT_SUPPORT_LINE
+                content: text
             });
         }
     }
@@ -118,11 +124,12 @@
     }
 
     async function goToSupportLine(reason) {
-        await await postJson('/checkin/failed', {
+        var response = await postJson('/checkin/failed', {
             ticketId: ticket.ticketId,
             reason: reason
         });
-        chat.showSupportLineMessage(reason);
+        let result = await response.json();
+        chat.showSupportLineMessage(reason, result.supportNumber);
     }
 
     async function main() {

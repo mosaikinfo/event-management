@@ -3,6 +3,9 @@ import { SessionService } from '../services/session.service';
 import { EventManagementApiClient, Event, EventStatus } from '../services/event-management-api.client';
 import { PageAlertService } from '../services/page-alert.service';
 
+const TIMER_INTERVAL = 5000;
+const TIMER_ANIMATION_INTERVAL = 1000;
+
 @Component({
   selector: 'app-live-status',
   templateUrl: './live-status.component.html',
@@ -25,7 +28,7 @@ export class LiveStatusComponent implements OnInit, OnDestroy {
     this.event = await this.session.getCurrentEvent();
     if (this.event) {
       this.loadStatus();
-      this.timerAnimation = setInterval(() => this.blink = !this.blink, 1000);
+      this.timerAnimation = setInterval(() => this.blink = !this.blink, TIMER_ANIMATION_INTERVAL);
     }
   }
 
@@ -40,7 +43,7 @@ export class LiveStatusComponent implements OnInit, OnDestroy {
       this.timer = null;
       return;
     }
-    this.timer = setTimeout(() => this.loadStatus(), 1000);
+    this.timer = setTimeout(() => this.loadStatus(), TIMER_INTERVAL);
   }
 
   ngOnDestroy(): void {
