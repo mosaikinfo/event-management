@@ -42,7 +42,7 @@ namespace EventManagement.ApplicationCore.TicketGeneration
                 ticket.TicketSecret);
 
             // TODO: configure logo in event settings.
-            string logoUrl = new Uri(new Uri(validationUri), "/jesussaves_black.png").AbsoluteUri;
+            string logoUrl = new Uri(new Uri(validationUri), "/mosaik.png").AbsoluteUri;
 
             var values = new TicketData
             {
