@@ -44,6 +44,12 @@ namespace EventManagement.ApplicationCore.TicketGeneration
             // TODO: configure logo in event settings.
             string logoUrl = new Uri(new Uri(validationUri), "/mosaik.png").AbsoluteUri;
 
+            // TODO: configure timezone in event settings.
+            // (UTC+01:00) Amsterdam, Berlin, Bern, Rom, Stockholm, Wien
+            var timezone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+            DateTime startTime = TimeZoneInfo.ConvertTimeFromUtc(ticket.Event.StartTime, timezone);
+
+            // TODO: make date time format configurable in event settings.
             var values = new TicketData
             {
                 EventName = ticket.Event.Name,
@@ -51,11 +57,11 @@ namespace EventManagement.ApplicationCore.TicketGeneration
                 TicketId = ticket.TicketNumber,
                 QrValue = validationUri,
                 Host = ticket.Event.Host,
-                EventDate = ticket.Event.StartTime.ToString("dddd, dd.MM.yyyy"),
+                EventDate = startTime.ToString("dddd, dd.MM.yyyy"),
                 EventLocation = ticket.Event.Location,
                 TicketType = ticket.TicketType.Name,
                 Transmissible = "false",
-                BeginTime = ticket.Event.StartTime.ToString("hh:mm") + " Uhr",
+                BeginTime = startTime.ToString("HH:mm") + " Uhr",
                 Address = GetAddressRows(ticket).ToList(),
                 BookingDate = ticket.BookingDate?.ToString("dd.MM.yyyy"),
             };
@@ -65,8 +71,9 @@ namespace EventManagement.ApplicationCore.TicketGeneration
             }
             if (ticket.Event.EntranceTime != null)
             {
-                values.EntranceTime =
-                    ticket.Event.EntranceTime.Value.ToString("hh:mm") + " Uhr";
+                DateTime entranceTime = TimeZoneInfo.ConvertTimeFromUtc(
+                    ticket.Event.EntranceTime.Value, timezone);
+                values.EntranceTime = entranceTime.ToString("HH:mm") + " Uhr";
             }
             return values;
         }
