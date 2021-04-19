@@ -18,6 +18,7 @@ namespace EventManagement.WebApp.Controllers
     [AllowAnonymous]
     public class MasterQrCodeLoginController : Controller
     {
+        public const string LoginRouteName = "QrCodeLogin";
         private readonly EventsDbContext _context;
         private readonly ILogger _logger;
 
@@ -28,7 +29,7 @@ namespace EventManagement.WebApp.Controllers
             _logger = logger;
         }
 
-        [HttpGet("qrauth/{token}")]
+        [HttpGet("qrauth/{token}", Name = LoginRouteName)]
         public async Task<IActionResult> LoginAsync(string token)
         {
             _logger.LogInformation("Validate token");

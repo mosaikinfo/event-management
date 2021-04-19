@@ -1,24 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
 
 namespace EventManagement.WebApp.Shared.Mvc
 {
     public static class UrlHelperExtensions
     {
         /// <summary>
-        /// Generates an absolute url to the controller action.
+        /// Generates an absolute url for the given named route.
         /// </summary>
-        public static string ActionAbsoluteUrl<TController>(
-            this IUrlHelper helper, string action, object values)
-            where TController : ControllerBase
+        /// <remarks>
+        /// You have to use the Route-attribute in the controller class specifying a name for the route.
+        /// Example:
+        /// <c>[Route("foo/bar", Name = "routeName")]</c>
+        /// </remarks>
+        public static string RouteAbsoluteUrl(this IUrlHelper helper, string routeName, object values)
         {
             // this makes sure that an absolute url is created.
             string protocol = helper.ActionContext.HttpContext.Request.Scheme;
 
-            string controllerName = Regex.Replace(
-                typeof(TController).Name, "controller$", "", RegexOptions.IgnoreCase);
-
-            return helper.Action(action, controllerName, values, protocol);
+            return helper.RouteUrl(new Microsoft.AspNetCore.Mvc.Routing.UrlRouteContext
+            {
+                Protocol = protocol,
+                RouteName = routeName,
+                Values = values
+            });
         }
     }
 }
