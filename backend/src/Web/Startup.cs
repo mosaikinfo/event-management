@@ -21,13 +21,13 @@ using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
 using NSwag;
@@ -43,14 +43,14 @@ namespace EventManagement.WebApp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment environment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
             Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
-        private readonly IHostingEnvironment Environment;
+        private readonly IWebHostEnvironment Environment;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -110,24 +110,25 @@ namespace EventManagement.WebApp
                 options.LowercaseUrls = true;
             });
 
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            services.AddControllersWithViews()
                 .AddApplicationPart(typeof(AccountController).Assembly)
-                .AddJsonOptions(options =>
+                .AddNewtonsoftJson(options =>
                 {
                     // Important: ASP.NET Core is serializing dates to JSON as local time.
                     options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
 
+            services.AddRazorPages();
+
             services.AddWebOptimizer(pipeline =>
             {
-                pipeline.AddLessBundle("css/site.css", "css/site.less");
-                pipeline.AddLessBundle("css/ticket-validation.css", "css/ticket-validation.less");
-                pipeline.AddLessBundle("css/conference-dialog.css", "conference-dialog/styles.less");
+                pipeline.AddLessBundle("/css/site.css", "css/site.less");
+                pipeline.AddLessBundle("/css/ticket-validation.css", "css/ticket-validation.less");
+                pipeline.AddLessBundle("/css/conference-dialog.css", "conference-dialog/styles.less");
 
                 var confDialogBundler = pipeline
-                    .AddBundle("js/conference-dialog.js",
+                    .AddBundle("/js/conference-dialog.js",
                         "text/javascript; charset=UTF-8",
                         "lib/jquery/jquery.min.js",
                         "lib/handlebars/handlebars.min.js",
@@ -148,7 +149,7 @@ namespace EventManagement.WebApp
                 .AddCookie(MasterQrCode.AuthenticationScheme, options =>
                 {
                     options.Cookie.HttpOnly = true;
-                    options.Cookie.Expiration = TimeSpan.FromDays(1);
+                    options.ExpireTimeSpan = TimeSpan.FromDays(1);
                 });
 
             services.AddAuthorization(options =>
@@ -212,7 +213,7 @@ namespace EventManagement.WebApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
                               BackgroundJobsDashboardAuthorizationFilter authorizationFilter)
         {
             if (env.IsDevelopment())
@@ -227,6 +228,11 @@ namespace EventManagement.WebApp
             {
                 app.UseExceptionHandler("/Error");
             }
+
+            // For IdentityServer's cookie, the SameSite attribute must be set to None for authentication to work.
+            // Since recent changes in all modern browsers SameSite=None cookies are blocked for non-HTTPS connections.
+            // Therefore we have to use HTTPS even for local development.
+            app.UseHttpsRedirection();
 
             // TODO: support multiple cultures. allow to configure the culture for each single event.
             var supportedCultures = new[]
@@ -264,11 +270,12 @@ namespace EventManagement.WebApp
                 Authorization = new[] { authorizationFilter }
             });
 
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapRazorPages();
             });
 
             app.UseSpa(spa =>

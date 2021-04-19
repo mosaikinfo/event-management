@@ -24,8 +24,8 @@ namespace EventManagement.WebApp.Shared.Mvc
         /// </summary>
         protected string GetTicketValidationUri(string secret)
         {
-            return Url.ActionAbsoluteUrl<TicketValidationController>(
-                nameof(TicketValidationController.ValidateTicketByQrCodeValueAsync),
+            return Url.RouteAbsoluteUrl(
+                TicketValidationController.TicketValidationRouteName,
                 new { secret = secret });
         }
 

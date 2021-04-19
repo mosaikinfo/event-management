@@ -1,7 +1,7 @@
 using EventManagement.Infrastructure.Data;
 using EventManagement.WebApp.Configuration;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,7 +13,7 @@ namespace EventManagement.WebApp
     {
         public static void Main(string[] args)
         {
-            var host = CreateWebHostBuilder(args).Build();
+            var host = CreateHostBuilder(args).Build();
 
             using (var scope = host.Services.CreateScope())
             {
@@ -23,22 +23,27 @@ namespace EventManagement.WebApp
             host.Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .ConfigureLogging(logging =>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Microsoft.Extensions.Hosting.Host
+                .CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    // Enables the "Log stream" feature of Azure App Service.
-                    logging.AddAzureWebAppDiagnostics();
+                    webBuilder
+                        .UseStartup<Startup>()
+                        .ConfigureLogging(logging =>
+                        {
+                            // Enables the "Log stream" feature of Azure App Service.
+                            logging.AddAzureWebAppDiagnostics();
 
-                    // Enables logging to the Hangfire Dashboard Console.
-                    logging.AddHangfireConsole();
+                            // Enables logging to the Hangfire Dashboard Console.
+                            logging.AddHangfireConsole();
+                        });
                 });
 
         private static void SetupDatabase(IServiceProvider services)
         {
             var logger = services.GetRequiredService<ILogger<Program>>();
-            var env = services.GetRequiredService<IHostingEnvironment>();
+            var env = services.GetRequiredService<IWebHostEnvironment>();
             try
             {
                 var dbContext = services.GetRequiredService<EventsDbContext>();

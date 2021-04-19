@@ -1,15 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>EventManagement.Infrastructure</RootNamespace>
     <AssemblyName>EventManagement.Infrastructure</AssemblyName>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Data\Migrations\20191226091234_SupportTickets.cs" />
-    <Compile Remove="Data\Migrations\20191226091234_SupportTickets.Designer.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MailKit" Version="2.3.2" />

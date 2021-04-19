@@ -27,6 +27,7 @@ namespace EventManagement.WebApp.Controllers
     [AllowAnonymous]
     public class TicketValidationController : EventManagementController
     {
+        public const string TicketValidationRouteName = "TicketValidation";
         private readonly EventsDbContext _context;
         private readonly ITicketRedirectService _ticketRedirectService;
         private readonly IMapper _mapper;
@@ -68,7 +69,7 @@ namespace EventManagement.WebApp.Controllers
         /// </summary>
         /// <param name="secret">The secret key that was stored within the URL.</param>
         /// <returns>result page that tells whether the ticket was valid or not.</returns>
-        [HttpGet("v/{secret}")]
+        [HttpGet("v/{secret}", Name = TicketValidationRouteName)]
         public async Task<IActionResult> ValidateTicketByQrCodeValueAsync(string secret)
         {
             if (secret == null)
