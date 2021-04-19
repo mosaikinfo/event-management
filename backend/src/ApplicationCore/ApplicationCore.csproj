@@ -1,14 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>EventManagement.ApplicationCore</RootNamespace>
     <AssemblyName>EventManagement.ApplicationCore</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityModel" Version="3.10.6" />
-    <PackageReference Include="ServiceStack.Common.Core" Version="5.7.0" />
+    <PackageReference Include="ServiceStack.Common.Core" Version="5.10.4" />
   </ItemGroup>
 
   <ItemGroup>

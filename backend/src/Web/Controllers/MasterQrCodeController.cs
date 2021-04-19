@@ -53,8 +53,8 @@ namespace EventManagement.WebApp.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            string loginUrl = Url.ActionAbsoluteUrl<MasterQrCodeLoginController>(
-                nameof(MasterQrCodeLoginController.LoginAsync),
+            string loginUrl = Url.RouteAbsoluteUrl(
+                MasterQrCodeLoginController.LoginRouteName,
                 new { token = masterQrCode.Id.ToString() });
 
             return new QrCodeResult(loginUrl);
