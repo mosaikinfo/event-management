@@ -1,0 +1,9 @@
+Dockerfile
+**/bin/
+**/obj/
+test/
+**/test/
+**/samples/
+**/.vs
+**/.vscode
+**/node_modules
