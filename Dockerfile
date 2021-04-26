@@ -6,7 +6,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
 
 # Install node_modules
 WORKDIR /source/backend/src/Web/ClientApp/
-COPY backend/src/Web/ClientApp/*.json .
+COPY backend/src/Web/ClientApp/*.json ./
 RUN npm install
 
 # copy csproj and restore as distinct layers
