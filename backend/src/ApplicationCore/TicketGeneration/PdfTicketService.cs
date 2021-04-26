@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TimeZoneConverter;
 
 namespace EventManagement.ApplicationCore.TicketGeneration
 {
@@ -45,8 +46,8 @@ namespace EventManagement.ApplicationCore.TicketGeneration
             string logoUrl = new Uri(new Uri(validationUri), "/mosaik.png").AbsoluteUri;
 
             // TODO: configure timezone in event settings.
-            // (UTC+01:00) Amsterdam, Berlin, Bern, Rom, Stockholm, Wien
-            var timezone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+            // See https://devblogs.microsoft.com/dotnet/cross-platform-time-zones-with-net-core/
+            var timezone = TZConvert.GetTimeZoneInfo("Europe/Berlin");
             DateTime startTime = TimeZoneInfo.ConvertTimeFromUtc(ticket.Event.StartTime, timezone);
 
             // TODO: make date time format configurable in event settings.
