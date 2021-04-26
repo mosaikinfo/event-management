@@ -19,7 +19,7 @@ COPY ticket-generation/src/TicketGeneration/*.csproj ./ticket-generation/src/Tic
 RUN dotnet restore ./backend/src/Web/Web.csproj
 
 # copy everything else and build app
-COPY . .
+COPY . ./
 RUN dotnet publish ./backend/src/Web/Web.csproj -c Release -o /app --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:3.1-buster-slim
