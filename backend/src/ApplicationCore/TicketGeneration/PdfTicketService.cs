@@ -2,6 +2,7 @@
 using EventManagement.ApplicationCore.Models;
 using EventManagement.ApplicationCore.Tickets;
 using EventManagement.TicketGeneration;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,10 +15,12 @@ namespace EventManagement.ApplicationCore.TicketGeneration
     public class PdfTicketService : IPdfTicketService
     {
         private readonly ITicketsRepository _tickets;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public PdfTicketService(ITicketsRepository tickets)
+        public PdfTicketService(ITicketsRepository tickets, IWebHostEnvironment hostingEnvironment)
         {
             _tickets = tickets;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task<Stream> GeneratePdfAsync(Guid ticketId, string ticketValidationUriFormat)
@@ -43,7 +46,7 @@ namespace EventManagement.ApplicationCore.TicketGeneration
                 ticket.TicketSecret);
 
             // TODO: configure logo in event settings.
-            string logoUrl = new Uri(new Uri(validationUri), "/mosaik.png").AbsoluteUri;
+            string logoPath = _hostingEnvironment.WebRootFileProvider.GetFileInfo("mosaik.png").PhysicalPath;
 
             // TODO: configure timezone in event settings.
             // See https://devblogs.microsoft.com/dotnet/cross-platform-time-zones-with-net-core/
@@ -54,7 +57,7 @@ namespace EventManagement.ApplicationCore.TicketGeneration
             var values = new TicketData
             {
                 EventName = ticket.Event.Name,
-                EventLogo = logoUrl,
+                EventLogo = logoPath,
                 TicketId = ticket.TicketNumber,
                 QrValue = validationUri,
                 Host = ticket.Event.Host,

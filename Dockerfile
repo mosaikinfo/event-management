@@ -24,5 +24,9 @@ RUN dotnet publish ./backend/src/Web/Web.csproj -c Release -o /app --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:3.1-buster-slim
 WORKDIR /app
+RUN apt-get update && apt-get install -y \
+  # required for QR code generation
+  libgdiplus \
+  && rm -rf /var/lib/apt/lists/*
 COPY --from=build /app ./
 ENTRYPOINT ["dotnet", "EventManagement.WebApp.dll"]
