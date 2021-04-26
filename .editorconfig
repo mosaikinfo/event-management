@@ -1,0 +1,28 @@
+
+# editorconfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Default settings:
+# A newline ending every file
+# Use 4 spaces as indentation
+[*]
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+# YAML config files
+[*.{yml,yaml}]
+indent_size = 2
+
+# JavaScript
+[*.{js,json}]
+indent_size = 2
+
+# Shell scripts
+[*.sh]
+end_of_line = lf
+[*.{cmd, bat}]
+end_of_line = crlf
