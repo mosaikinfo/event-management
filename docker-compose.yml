@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  backend:
+  web:
     image: ${REGISTRY:-mosaik}/event-management:${TAG:-latest}
     depends_on:
       - sqlserver
@@ -15,6 +15,10 @@ services:
       ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
       ASPNETCORE_Kestrel__Certificates__Default__Password: secret
       ConnectionStrings__EventManagement: Server=sqlserver;Database=EventManagement;User ID=sa;Password=Start123
+    deploy:
+      resources:
+        limits:
+          memory: 2G
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -26,6 +30,10 @@ services:
     environment:
       ACCEPT_EULA: Y
       SA_PASSWORD: Start123
+    deploy:
+      resources:
+        limits:
+          memory: 2G
 
 volumes:
   mssqldata:
