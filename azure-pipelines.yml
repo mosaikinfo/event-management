@@ -17,11 +17,12 @@ steps:
 - task: DockerCompose@0
   displayName: 'docker-compose build'
   inputs:
-    action: 'Build services'
+    containerregistrytype: 'Azure Container Registry'
     dockerComposeFile: '**/docker-compose.yml'
-    dockerComposeFileArgs: REGISTRY=$(dockerRegistry)
-    includeLatestTag: true
+    dockerComposeFileArgs: 'REGISTRY=$(dockerRegistry)'
+    action: 'Build services'
     additionalImageTags: '$(imageTags)'
+    includeLatestTag: true
 - task: DockerCompose@0
   displayName: 'docker-compose push'
   inputs:
@@ -31,5 +32,5 @@ steps:
     dockerComposeFile: '**/docker-compose.yml'
     dockerComposeFileArgs: 'REGISTRY=$(dockerRegistry)'
     action: 'Push services'
-    includeLatestTag: true
     additionalImageTags: '$(imageTags)'
+    includeLatestTag: true
