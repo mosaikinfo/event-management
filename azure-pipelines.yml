@@ -10,7 +10,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  imageTags: '$(Build.BuildId)'
+  imageTags: '$(Build.BuildNumber)'
   dockerRegistry: 'mosaik.azurecr.io'
 
 steps:
