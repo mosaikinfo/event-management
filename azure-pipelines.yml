@@ -27,7 +27,7 @@ steps:
   displayName: 'docker-compose push'
   inputs:
     containerregistrytype: 'Azure Container Registry'
-    azureSubscription: 'Microsoft Azure Sponsorship(c43f6884-3e86-4d2c-87eb-61b9f5e59d5e)'
+    azureSubscription: 'Microsoft Azure Sponsorship(c43f6884-3e86-4d2c-87eb-61b9f5e59d5e)-EventManagement'
     azureContainerRegistry: '{"loginServer":"mosaik.azurecr.io", "id" : "/subscriptions/c43f6884-3e86-4d2c-87eb-61b9f5e59d5e/resourceGroups/rg-shared/providers/Microsoft.ContainerRegistry/registries/mosaik"}'
     dockerComposeFile: '**/docker-compose.yml'
     dockerComposeFileArgs: 'REGISTRY=$(dockerRegistry)'
