@@ -1,34 +1,36 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
-- master
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - README.md
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  buildConfiguration: 'Release'
+  imageTags: '$(Build.BuildId)'
+  dockerRegistry: 'mosaik.azurecr.io'
 
 steps:
-- task: DotNetCoreInstaller@1
+- task: DockerCompose@0
+  displayName: 'docker-compose build'
   inputs:
-    version: '3.1.x'
-
-- task: UseNode@1
-
-- script: npm ci
-  workingDirectory: 'backend/src/Web/ClientApp'
-  displayName: 'npm ci'
-
-- script: dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
-  displayName: 'dotnet publish $(buildConfiguration)'
-  workingDirectory: 'backend/src/Web'
-
-- task: PublishBuildArtifacts@1
+    containerregistrytype: 'Azure Container Registry'
+    dockerComposeFile: '**/docker-compose.yml'
+    dockerComposeFileArgs: 'REGISTRY=$(dockerRegistry)'
+    action: 'Build services'
+    additionalImageTags: '$(imageTags)'
+    includeLatestTag: true
+- task: DockerCompose@0
+  displayName: 'docker-compose push'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'backend'
-    publishLocation: 'Container'
+    containerregistrytype: 'Azure Container Registry'
+    azureSubscription: 'Microsoft Azure Sponsorship(c43f6884-3e86-4d2c-87eb-61b9f5e59d5e)-EventManagement'
+    azureContainerRegistry: '{"loginServer":"mosaik.azurecr.io", "id" : "/subscriptions/c43f6884-3e86-4d2c-87eb-61b9f5e59d5e/resourceGroups/rg-shared/providers/Microsoft.ContainerRegistry/registries/mosaik"}'
+    dockerComposeFile: '**/docker-compose.yml'
+    dockerComposeFileArgs: 'REGISTRY=$(dockerRegistry)'
+    action: 'Push services'
+    additionalImageTags: '$(imageTags)'
+    includeLatestTag: true
