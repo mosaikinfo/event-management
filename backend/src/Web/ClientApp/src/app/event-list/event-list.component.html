@@ -8,6 +8,14 @@
 
 <div *ngIf="events && events.length > 0" class="row mt-3">
   <div class="col-md">
+
+    <div class="form-group">
+      <div class="form-group input-switch">
+        <label>Vergangene Events anzeigen</label>
+        <p-inputSwitch name="includePersonalInformation" [(ngModel)]="showPastEvents" (onChange)="reloadData()"></p-inputSwitch>
+      </div>
+    </div>
+
     <div class="list-group">
       <a *ngFor="let event of events" [routerLink]='["/"]' (click)="select(event, true)"
          class="list-group-item list-group-item-action flex-column align-items-start">

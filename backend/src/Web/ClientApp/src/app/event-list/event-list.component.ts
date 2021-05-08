@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { EventManagementApiClient, Event } from '../services/event-management-api.client';
 import { SessionService } from '../services/session.service';
 import { Router } from '@angular/router';
@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 export class EventListComponent implements OnInit {
 
   events = [];
+  showPastEvents = false;
 
   constructor(
     private router: Router,
@@ -18,7 +19,11 @@ export class EventListComponent implements OnInit {
     private session: SessionService) { }
 
   ngOnInit() {
-    this.apiClient.events_GetAll()
+    this.reloadData();
+  }
+
+  reloadData() {
+    this.apiClient.events_List(null, !this.showPastEvents)
       .subscribe(events => this.events = events);
   }
 

@@ -36,7 +36,7 @@ namespace EventManagement.WebApp.Controllers
                 query = query.Where(x => x.Location.Contains(parameters.Location));
 
             if (parameters.Future)
-                query = query.Where(x => x.StartTime < DateTime.UtcNow);
+                query = query.Where(x => x.StartTime > DateTime.UtcNow);
 
             return query.OrderBy(x => x.StartTime)
                         .Select(_mapper.Map<Event>);
