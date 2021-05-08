@@ -28,12 +28,18 @@ namespace EventManagement.WebApp.Controllers
         /// List events.
         /// </summary>
         [HttpGet]
-        public IEnumerable<Event> GetAll()
+        public IEnumerable<Event> List([FromQuery] EventFilterParams parameters)
         {
-            return _context.Events
-                .AsNoTracking()
-                .OrderBy(x => x.StartTime)
-                .Select(_mapper.Map<Event>);
+            var query = _context.Events.AsNoTracking();
+
+            if (parameters.Location != null)
+                query = query.Where(x => x.Location.Contains(parameters.Location));
+
+            if (parameters.Future)
+                query = query.Where(x => x.StartTime < DateTime.UtcNow);
+
+            return query.OrderBy(x => x.StartTime)
+                        .Select(_mapper.Map<Event>);
         }
 
         /// <summary>
