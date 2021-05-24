@@ -51,7 +51,7 @@ export class NavMenuComponent implements OnInit {
   }
 
   async checkIsDemoMode() {
-    if (await this.authService.isLoggedIn()) {
+    if (await this.authService.isLoggedIn() && this.currentEvent) {
       this.apiClient.mailSettings_GetMailSettings(this.currentEvent.id)
           .subscribe((settings: MailSettings) => {
             this.demoModeEnabled = settings.enableDemoMode;

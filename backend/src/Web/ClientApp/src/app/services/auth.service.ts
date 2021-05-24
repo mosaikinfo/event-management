@@ -33,10 +33,12 @@ export class AuthService {
   }
 
   async init() {
-    // If the user is was already logged in before 
+    // If the user is was already logged in before
     // we trigger this event on application startup.
     let user: User = await this._userManager.getUser();
-    this.onUserLoggedIn.emit(user.profile);
+    if (user) {
+      this.onUserLoggedIn.emit(user.profile);
+    }
   }
 
   public getUser(): Promise<User> {

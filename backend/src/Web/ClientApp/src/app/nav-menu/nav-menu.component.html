@@ -1,11 +1,12 @@
 <header>
   <nav class='navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3'>
     <div class="container">
-      <a class="navbar-brand" [routerLink]='["/events", currentEvent == null ? "" : currentEvent.id]' (click)="collapse()">
+      <a class="navbar-brand" [routerLink]='["/events", currentEvent?.id || ""]' (click)="collapse()">
         {{ currentEvent?.name || 'Event Management' }}
         <span class="badge badge-pill badge-dark" *ngIf="demoModeEnabled" ngbTooltip="Wenn der Demo-Modus in den E-Mail-Einstellungen aktiviert wurde, werden alle E-Mails im System an einen
         vordefinierten Empfängerkreis gesendet. Somit kann der E-Mail-Versand
         getestet werden.">Demo</span>
+        <span class="d-none d-md-block" style="font-size: 1rem">{{ currentEvent?.startTime | date:'shortDate' }}</span>
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-label="Toggle navigation"
         [attr.aria-expanded]="isExpanded" (click)="toggle()">
