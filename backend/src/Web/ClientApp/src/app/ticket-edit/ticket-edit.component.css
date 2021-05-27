@@ -9,3 +9,7 @@
         margin-bottom: 10px;
     }
 }
+
+form .col {
+  max-width: 600px;
+}
