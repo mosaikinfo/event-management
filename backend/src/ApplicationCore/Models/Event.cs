@@ -19,6 +19,8 @@ namespace EventManagement.ApplicationCore.Models
 
         public DateTime? EntranceTime { get; set; }
 
+        public DateTime? TicketSalesStartTime { get; set; }
+
         public string Location { get; set; }
 
         public string HomepageUrl { get; set; }

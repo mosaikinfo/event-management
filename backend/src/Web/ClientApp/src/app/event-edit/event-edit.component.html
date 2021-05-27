@@ -55,6 +55,18 @@
   </div>
 
   <div class="form-group">
+    <label for="ticketSalesStartTime">Ticketverkauf beginnt ab</label>
+    <div class="input-group">
+      <p-calendar name="ticketSalesStartTime"
+                  [(ngModel)]="model.ticketSalesStartTime"
+                  [showTime]="true" [showOnFocus]="false"
+                  dateFormat="dd.mm.yy" hourFormat="24"
+                  placeholder="dd.mm.yyyy hh:mm">
+        </p-calendar>
+    </div>
+  </div>
+
+  <div class="form-group">
     <label for="location">Location</label>
     <input type="text" class="form-control" name="location" id="location"
            maxlength="300" placeholder="Ratiopharm Arena Neu-Ulm, Europastraße 25, 89231 Neu-Ulm"
@@ -104,7 +116,7 @@
       <p-inputSwitch name="includePersonalInformation" [(ngModel)]="model.includePersonalInformation"></p-inputSwitch>
     </div>
     <small class="form-text text-muted">
-      Wenn die Option aktiviert ist, werden personenbezogene Information 
+      Wenn die Option aktiviert ist, werden personenbezogene Information
       in der URL in Form eines JSON Web Tokens (JWT) mitgesendet.
       <a href="https://gist.github.com/doeringp/a0f7e66f18c32e1017c726d8374d4c18" target="_blank">Mehr Informationen</a>
     </small>

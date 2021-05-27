@@ -131,6 +131,8 @@ namespace EventManagement.Infrastructure.Data.Migrations
 
                     b.Property<DateTime>("StartTime");
 
+                    b.Property<DateTime?>("TicketSalesStartTime");
+
                     b.Property<string>("ZipCode")
                         .IsRequired()
                         .HasMaxLength(300);

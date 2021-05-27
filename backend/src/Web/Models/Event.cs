@@ -25,6 +25,8 @@ namespace EventManagement.WebApp.Models
 
         public DateTime? EntranceTime { get; set; }
 
+        public DateTime? TicketSalesStartTime { get; set; }
+
         [Required]
         public string Location { get; set; }
 

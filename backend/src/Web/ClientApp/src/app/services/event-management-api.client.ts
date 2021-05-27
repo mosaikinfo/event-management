@@ -2043,6 +2043,7 @@ If it's not a conference (eg: a concert) the personal information doesn't matter
     startTime!: Date;
     endTime!: Date;
     entranceTime?: Date | undefined;
+    ticketSalesStartTime?: Date | undefined;
     location!: string;
     host!: string;
     address!: string;
@@ -2070,6 +2071,7 @@ of a JSON Web Token (JWT) when redirecting to the homepage. */
             this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
             this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
             this.entranceTime = _data["entranceTime"] ? new Date(_data["entranceTime"].toString()) : <any>undefined;
+            this.ticketSalesStartTime = _data["ticketSalesStartTime"] ? new Date(_data["ticketSalesStartTime"].toString()) : <any>undefined;
             this.location = _data["location"];
             this.host = _data["host"];
             this.address = _data["address"];
@@ -2095,6 +2097,7 @@ of a JSON Web Token (JWT) when redirecting to the homepage. */
         data["startTime"] = this.startTime ? this.startTime.toISOString() : <any>undefined;
         data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
         data["entranceTime"] = this.entranceTime ? this.entranceTime.toISOString() : <any>undefined;
+        data["ticketSalesStartTime"] = this.ticketSalesStartTime ? this.ticketSalesStartTime.toISOString() : <any>undefined;
         data["location"] = this.location;
         data["host"] = this.host;
         data["address"] = this.address;
@@ -2115,6 +2118,7 @@ If it's not a conference (eg: a concert) the personal information doesn't matter
     startTime: Date;
     endTime: Date;
     entranceTime?: Date | undefined;
+    ticketSalesStartTime?: Date | undefined;
     location: string;
     host: string;
     address: string;

@@ -23,7 +23,8 @@ export class EventListComponent implements OnInit {
   }
 
   reloadData() {
-    this.apiClient.events_List(null, !this.showPastEvents)
+    const future = this.showPastEvents ? undefined : true;
+    this.apiClient.events_List(null, future)
       .subscribe(events => this.events = events);
   }
 

@@ -35,8 +35,18 @@ namespace EventManagement.WebApp.Controllers
             if (parameters.Location != null)
                 query = query.Where(x => x.Location.Contains(parameters.Location));
 
-            if (parameters.Future)
-                query = query.Where(x => x.StartTime > DateTime.UtcNow);
+            if (parameters.Future != null)
+            {
+                query = parameters.Future.Value
+                    ? query.Where(x => x.StartTime > DateTime.UtcNow)
+                    : query.Where(x => x.StartTime < DateTime.UtcNow);
+            }
+            if (parameters.TicketSaleHasStarted != null)
+            {
+                query = parameters.TicketSaleHasStarted.Value
+                    ? query.Where(x => x.TicketSalesStartTime < DateTime.UtcNow)
+                    : query.Where(x => x.TicketSalesStartTime > DateTime.UtcNow);
+            }
 
             return query.OrderBy(x => x.StartTime)
                         .Select(_mapper.Map<Event>);
